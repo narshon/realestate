@@ -1,0 +1,35 @@
+<?//= Html::a('Create Accounts', ['create'], ['class' => 'btn btn-success btn-new pull-right']) ?>
+
+
+
+
+
+$model = new accounts();
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
+		
+		
+		
+		
+		 // <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+		 
+		 
+		 <div class="accounts-form">
+		 
+		 
+		 
+		 // $model = $this->findModel($id);
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->render('update', [
+                'model' => $model,
+            ]);
+        }
