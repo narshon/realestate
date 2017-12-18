@@ -1,6 +1,6 @@
 /*
-SQLyog Community v11.51 (64 bit)
-MySQL - 5.7.17-log : Database - real_estate2
+SQLyog Community v12.3.2 (64 bit)
+MySQL - 5.7.17-log : Database - rentkeny_realestate
 *********************************************************************
 */
 
@@ -12,9 +12,107 @@ MySQL - 5.7.17-log : Database - real_estate2
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`real_estate2` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`rentkeny_realestate` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `real_estate2`;
+USE `rentkeny_realestate`;
+
+/*Table structure for table `re_account_chart` */
+
+DROP TABLE IF EXISTS `re_account_chart`;
+
+CREATE TABLE `re_account_chart` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `code` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `fk_re_account_type` int(11) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  `description` text,
+  `created_by` int(11) DEFAULT NULL,
+  `modified_by` int(11) DEFAULT NULL,
+  `created_on` int(11) DEFAULT NULL,
+  `modified_on` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_re_account_type` (`fk_re_account_type`),
+  CONSTRAINT `re_account_chart_ibfk_1` FOREIGN KEY (`fk_re_account_type`) REFERENCES `re_account_type` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8;
+
+/*Data for the table `re_account_chart` */
+
+insert  into `re_account_chart`(`id`,`code`,`name`,`fk_re_account_type`,`status`,`description`,`created_by`,`modified_by`,`created_on`,`modified_on`) values 
+(32,1101,'Cash',1,1,'Cash Account',1,NULL,NULL,NULL),
+(33,1102,'Bank',1,1,'Bank Account',1,NULL,NULL,NULL),
+(34,1103,'Accounts Receivable',1,1,'Accounts Receivable\r\n',1,NULL,NULL,NULL),
+(35,1104,'Accounts Payable',2,1,'Accounts Payable\r\n',1,NULL,NULL,NULL),
+(36,1105,'Rent Income',4,1,NULL,1,NULL,NULL,NULL),
+(37,1106,'Penaties Income',4,1,NULL,1,NULL,NULL,NULL);
+
+/*Table structure for table `re_account_entries` */
+
+DROP TABLE IF EXISTS `re_account_entries`;
+
+CREATE TABLE `re_account_entries` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_account_chart` int(11) NOT NULL,
+  `trasaction_type` enum('credit','debit') NOT NULL,
+  `amount` double NOT NULL,
+  `entry_date` date NOT NULL,
+  `created_on` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `re_account_entries` */
+
+/*Table structure for table `re_account_map` */
+
+DROP TABLE IF EXISTS `re_account_map`;
+
+CREATE TABLE `re_account_map` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_term` int(11) NOT NULL,
+  `fk_account_chart` int(11) NOT NULL,
+  `transaction_type` enum('credit','debit') NOT NULL,
+  `status` tinyint(4) NOT NULL,
+  `created_on` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `modified_on` datetime DEFAULT NULL,
+  `modified_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_term` (`fk_term`),
+  KEY `fk_account_chart` (`fk_account_chart`),
+  CONSTRAINT `re_account_map_ibfk_1` FOREIGN KEY (`fk_term`) REFERENCES `re_term` (`id`),
+  CONSTRAINT `re_account_map_ibfk_2` FOREIGN KEY (`fk_account_chart`) REFERENCES `re_account_chart` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+/*Data for the table `re_account_map` */
+
+insert  into `re_account_map`(`id`,`fk_term`,`fk_account_chart`,`transaction_type`,`status`,`created_on`,`created_by`,`modified_on`,`modified_by`) values 
+(1,2,36,'debit',1,'2017-12-18 15:00:25',NULL,NULL,NULL),
+(2,2,34,'credit',1,'2017-12-18 15:00:54',NULL,NULL,NULL);
+
+/*Table structure for table `re_account_type` */
+
+DROP TABLE IF EXISTS `re_account_type`;
+
+CREATE TABLE `re_account_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  `Description` varchar(255) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `modified_by` int(11) DEFAULT NULL,
+  `created_on` datetime DEFAULT NULL,
+  `modified_on` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+/*Data for the table `re_account_type` */
+
+insert  into `re_account_type`(`id`,`name`,`Description`,`created_by`,`modified_by`,`created_on`,`modified_on`) values 
+(1,'Assets','Assets',1,1,NULL,NULL),
+(2,'Liabilities','Liabilities',1,1,NULL,NULL),
+(3,'Equity','Equity',1,1,NULL,NULL),
+(4,'Revenue','Revenue',1,1,NULL,NULL),
+(5,'Expenses','Expenses',1,1,NULL,NULL);
 
 /*Table structure for table `re_accounts` */
 
@@ -37,7 +135,8 @@ CREATE TABLE `re_accounts` (
 
 /*Data for the table `re_accounts` */
 
-insert  into `re_accounts`(`id`,`account_name`,`account_description`,`account_no`,`bank_name`,`branch`,`bank_code`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (1,'Petty Cash','','1','Petty Cash','001','001',NULL,NULL,NULL,NULL);
+insert  into `re_accounts`(`id`,`account_name`,`account_description`,`account_no`,`bank_name`,`branch`,`bank_code`,`date_created`,`created_by`,`date_modified`,`modified_by`) values 
+(1,'Petty Cash','',1,'Petty Cash','001','001',NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_accounts_transaction` */
 
@@ -67,11 +166,17 @@ CREATE TABLE `re_accounts_transaction` (
   CONSTRAINT `ac_ibfk_2` FOREIGN KEY (`fk_journal`) REFERENCES `re_journal` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `ac_ibfk_3` FOREIGN KEY (`fk_source`) REFERENCES `re_source` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `re_accounts_transaction_ibfk_1` FOREIGN KEY (`fk_account`) REFERENCES `re_accounts` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 /*Data for the table `re_accounts_transaction` */
 
-insert  into `re_accounts_transaction`(`id`,`fk_journal`,`fk_account`,`fk_source`,`dr`,`cr`,`running_balance`,`details`,`date_created`,`created_by`,`date_modified`,`modified_by`,`reconciled`,`reconciled_amount`,`reconciled_by`,`reconciled_date`) values (1,1,1,8,NULL,'1000.00','-1000.00',NULL,NULL,NULL,NULL,NULL,1,NULL,'karisa  nzaro','2017-11-09 18:36:51'),(2,2,1,5,NULL,'1000.00','-2000.00',NULL,NULL,NULL,NULL,NULL,1,NULL,'karisa  nzaro','2017-12-02 09:41:10');
+insert  into `re_accounts_transaction`(`id`,`fk_journal`,`fk_account`,`fk_source`,`dr`,`cr`,`running_balance`,`details`,`date_created`,`created_by`,`date_modified`,`modified_by`,`reconciled`,`reconciled_amount`,`reconciled_by`,`reconciled_date`) values 
+(1,1,1,8,NULL,1000.00,-1000.00,NULL,NULL,NULL,NULL,NULL,1,NULL,'karisa  nzaro','2017-11-09 18:36:51'),
+(2,2,1,5,NULL,1000.00,-2000.00,NULL,NULL,NULL,NULL,NULL,1,NULL,'karisa  nzaro','2017-12-02 09:41:10'),
+(3,3,1,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(4,4,1,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(5,5,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(6,6,1,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_advert` */
 
@@ -166,7 +271,27 @@ CREATE TABLE `re_county` (
 
 /*Data for the table `re_county` */
 
-insert  into `re_county`(`id`,`county_desc`,`county_name`,`county_lat`,`county_long`) values (1,'tetststs','Kilifi',NULL,NULL),(2,'test','Lamu',NULL,NULL),(3,'test.test','mombasa',NULL,NULL),(4,'test','kwale',NULL,NULL);
+insert  into `re_county`(`id`,`county_desc`,`county_name`,`county_lat`,`county_long`) values 
+(1,'tetststs','Kilifi',NULL,NULL),
+(2,'test','Lamu',NULL,NULL),
+(3,'test.test','mombasa',NULL,NULL),
+(4,'test','kwale',NULL,NULL);
+
+/*Table structure for table `re_disbursements` */
+
+DROP TABLE IF EXISTS `re_disbursements`;
+
+CREATE TABLE `re_disbursements` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_occupancy_rent` int(11) NOT NULL,
+  `amount` double NOT NULL,
+  `entry_date` date NOT NULL,
+  `created_on` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `re_disbursements` */
 
 /*Table structure for table `re_estate` */
 
@@ -193,7 +318,10 @@ CREATE TABLE `re_estate` (
 
 /*Data for the table `re_estate` */
 
-insert  into `re_estate`(`id`,`fk_sub_location`,`estate_name`,`estate_desc`,`estate_review`,`estate_media`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`,`estate_lat`,`estate_long`) values (1,3,'kwa mike ','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL),(2,2,'Tumaini','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL),(3,2,'prisons','test estate','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
+insert  into `re_estate`(`id`,`fk_sub_location`,`estate_name`,`estate_desc`,`estate_review`,`estate_media`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`,`estate_lat`,`estate_long`) values 
+(1,3,'kwa mike ','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(2,2,'Tumaini','','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(3,2,'prisons','test estate','','',NULL,NULL,NULL,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_feature` */
 
@@ -213,7 +341,10 @@ CREATE TABLE `re_feature` (
 
 /*Data for the table `re_feature` */
 
-insert  into `re_feature`(`id`,`feature_name`,`feature_desc`,`date_created`,`created_by`,`date_modified`,`modified_by`,`_status`) values (1,'Gate',NULL,NULL,NULL,NULL,NULL,1),(2,'Door',NULL,NULL,NULL,NULL,NULL,1),(3,'Room',NULL,NULL,NULL,NULL,NULL,1);
+insert  into `re_feature`(`id`,`feature_name`,`feature_desc`,`date_created`,`created_by`,`date_modified`,`modified_by`,`_status`) values 
+(1,'Gate',NULL,NULL,NULL,NULL,NULL,1),
+(2,'Door',NULL,NULL,NULL,NULL,NULL,1),
+(3,'Room',NULL,NULL,NULL,NULL,NULL,1);
 
 /*Table structure for table `re_group` */
 
@@ -228,7 +359,11 @@ CREATE TABLE `re_group` (
 
 /*Data for the table `re_group` */
 
-insert  into `re_group`(`id`,`group_name`,`_status`) values (1,'Admin',1),(2,'Agent',1),(3,'Landlord',1),(4,'Tenant',1);
+insert  into `re_group`(`id`,`group_name`,`_status`) values 
+(1,'Admin',1),
+(2,'Agent',1),
+(3,'Landlord',1),
+(4,'Tenant',1);
 
 /*Table structure for table `re_journal` */
 
@@ -256,11 +391,17 @@ CREATE TABLE `re_journal` (
   KEY `account_type` (`account_type`),
   CONSTRAINT `re_journal_ibfk_1` FOREIGN KEY (`transaction_type`) REFERENCES `re_source` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `re_journal_ibfk_2` FOREIGN KEY (`account_type`) REFERENCES `re_accounts` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 /*Data for the table `re_journal` */
 
-insert  into `re_journal`(`id`,`date`,`receipt_invoice_no`,`fk_occupancy_rent`,`fk_user`,`account_type`,`transaction_type`,`cheque_no`,`details`,`transacted_by`,`date_created`,`created_by`,`date_modified`,`modified_by`,`amount`,`post_status`) values (1,'2017-11-01','050',NULL,NULL,1,8,'004','asasas','1','2017-11-09 18:36:31','1',NULL,NULL,1000.00,1),(2,'2017-11-01','212',NULL,NULL,1,5,'12121','sasasas','1','2017-11-14 14:45:03','1',NULL,NULL,1000.00,1);
+insert  into `re_journal`(`id`,`date`,`receipt_invoice_no`,`fk_occupancy_rent`,`fk_user`,`account_type`,`transaction_type`,`cheque_no`,`details`,`transacted_by`,`date_created`,`created_by`,`date_modified`,`modified_by`,`amount`,`post_status`) values 
+(1,'2017-11-01','050',NULL,NULL,1,8,'004','asasas','1','2017-11-09 18:36:31','1',NULL,NULL,1000.00,1),
+(2,'2017-11-01','212',NULL,NULL,1,5,'12121','sasasas','1','2017-11-14 14:45:03','1',NULL,NULL,1000.00,1),
+(3,'2017-12-05','569548',29,12,1,1,'','','1','2017-12-05 08:38:16','1',NULL,NULL,NULL,1),
+(4,'2017-12-05','56954',29,12,1,1,'','','1','2017-12-05 08:43:46','1',NULL,NULL,NULL,1),
+(5,'2017-12-13','1',1,17,1,NULL,NULL,NULL,'1','2017-12-13 08:32:08','1',NULL,NULL,NULL,NULL),
+(6,'2017-12-13','2',2,17,1,NULL,NULL,NULL,'1','2017-12-13 08:36:51','1',NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_location` */
 
@@ -280,7 +421,10 @@ CREATE TABLE `re_location` (
 
 /*Data for the table `re_location` */
 
-insert  into `re_location`(`id`,`fk_ward`,`location_name`,`location_desc`,`location_lat`,`location_long`) values (1,2,'kaya','test',NULL,NULL),(2,2,'mabirikani','test',NULL,NULL),(3,3,'pwani','test',NULL,NULL);
+insert  into `re_location`(`id`,`fk_ward`,`location_name`,`location_desc`,`location_lat`,`location_long`) values 
+(1,2,'kaya','test',NULL,NULL),
+(2,2,'mabirikani','test',NULL,NULL),
+(3,3,'pwani','test',NULL,NULL);
 
 /*Table structure for table `re_lookup` */
 
@@ -300,11 +444,21 @@ CREATE TABLE `re_lookup` (
   PRIMARY KEY (`id`),
   KEY `category` (`category`),
   CONSTRAINT `re_lookup_ibfk_1` FOREIGN KEY (`category`) REFERENCES `re_lookup_category` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
 /*Data for the table `re_lookup` */
 
-insert  into `re_lookup`(`id`,`_key`,`_value`,`category`,`_order`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (1,'1','Single Rooms',1,NULL,0,NULL,NULL,NULL,NULL),(2,'2','Double Rooms',1,NULL,NULL,NULL,NULL,NULL,NULL),(3,'m','Male',2,NULL,NULL,NULL,NULL,NULL,NULL),(4,'f','Female',2,NULL,NULL,NULL,NULL,NULL,NULL),(5,'1','ON',3,NULL,NULL,NULL,NULL,NULL,NULL),(6,'2','OFF',3,NULL,NULL,NULL,NULL,NULL,NULL);
+insert  into `re_lookup`(`id`,`_key`,`_value`,`category`,`_order`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values 
+(1,'1','Single Rooms',1,NULL,0,NULL,NULL,NULL,NULL),
+(2,'2','Double Rooms',1,NULL,NULL,NULL,NULL,NULL,NULL),
+(3,'m','Male',2,NULL,NULL,NULL,NULL,NULL,NULL),
+(4,'f','Female',2,NULL,NULL,NULL,NULL,NULL,NULL),
+(5,'1','ON',3,NULL,NULL,NULL,NULL,NULL,NULL),
+(6,'2','OFF',3,NULL,NULL,NULL,NULL,NULL,NULL),
+(7,'1','Cash',4,NULL,1,NULL,NULL,NULL,NULL),
+(8,'2','Cheque',4,NULL,1,NULL,NULL,NULL,NULL),
+(9,'1','Pending',5,NULL,1,NULL,NULL,NULL,NULL),
+(10,'2','Paid',5,NULL,1,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_lookup_category` */
 
@@ -314,11 +468,16 @@ CREATE TABLE `re_lookup_category` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `category_name` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 /*Data for the table `re_lookup_category` */
 
-insert  into `re_lookup_category`(`id`,`category_name`) values (1,'Property Type'),(2,'Gender'),(3,'Status');
+insert  into `re_lookup_category`(`id`,`category_name`) values 
+(1,'Property Type'),
+(2,'Gender'),
+(3,'Status'),
+(4,'Payment Method'),
+(5,'Payment Status');
 
 /*Table structure for table `re_management` */
 
@@ -345,7 +504,11 @@ CREATE TABLE `re_management` (
 
 /*Data for the table `re_management` */
 
-insert  into `re_management`(`id`,`fk_user_id`,`management_type`,`management_name`,`location`,`address`,`profile_desc`,`featured_property`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (1,1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(2,NULL,1,'Jongeto Agency',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),(3,NULL,NULL,'','','','',NULL,NULL,NULL,NULL,NULL,NULL),(4,2,NULL,'Jongeto','Kibarani','Some address','Some description',2,NULL,NULL,NULL,NULL,NULL);
+insert  into `re_management`(`id`,`fk_user_id`,`management_type`,`management_name`,`location`,`address`,`profile_desc`,`featured_property`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values 
+(1,1,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(2,NULL,1,'Jongeto Agency',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL),
+(3,NULL,NULL,'','','','',NULL,NULL,NULL,NULL,NULL,NULL),
+(4,2,NULL,'Jongeto','Kibarani','Some address','Some description',2,NULL,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_migration` */
 
@@ -383,11 +546,62 @@ CREATE TABLE `re_occupancy` (
   CONSTRAINT `re_occupancy_ibfk_1` FOREIGN KEY (`fk_property_id`) REFERENCES `re_property` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `re_occupancy_ibfk_2` FOREIGN KEY (`fk_sublet_id`) REFERENCES `re_property_sublet` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `re_occupancy_ibfk_3` FOREIGN KEY (`fk_user_id`) REFERENCES `sys_users` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 /*Data for the table `re_occupancy` */
 
-insert  into `re_occupancy`(`id`,`fk_property_id`,`fk_sublet_id`,`fk_user_id`,`start_date`,`end_date`,`notes`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (1,3,1,4,'2017-10-31','2017-10-31',NULL,1,NULL,NULL,NULL,NULL),(2,4,3,5,'2017-10-05','2017-11-27','',2,NULL,NULL,NULL,NULL),(3,4,2,5,'2017-10-10','2017-11-29','sasasas',2,NULL,NULL,NULL,NULL),(4,4,2,1,'2017-11-01',NULL,'sasasas',2,NULL,NULL,NULL,NULL),(5,4,1,2,'2017-11-01',NULL,'sasasas',2,NULL,NULL,NULL,NULL),(6,4,3,2,'2017-11-01',NULL,'sasasa',2,NULL,NULL,NULL,NULL),(7,4,4,2,'2017-11-01',NULL,'',2,NULL,NULL,NULL,NULL),(8,3,5,12,'2017-11-01',NULL,'asasas',1,NULL,NULL,NULL,NULL),(9,4,1,1,'2017-11-01',NULL,'asas',1,NULL,NULL,NULL,NULL),(10,5,6,1,'2017-11-01',NULL,'',1,NULL,NULL,NULL,NULL),(11,5,7,13,'2017-11-02',NULL,'',1,NULL,NULL,NULL,NULL),(12,6,10,1,'2017-11-01',NULL,'New home for him',1,NULL,NULL,NULL,NULL),(13,7,12,15,'2016-12-02',NULL,'',1,NULL,NULL,NULL,NULL),(14,7,13,1,'2017-11-01',NULL,'xzss',1,NULL,NULL,NULL,NULL),(15,7,14,7,'2017-12-01',NULL,'',1,NULL,NULL,NULL,NULL);
+insert  into `re_occupancy`(`id`,`fk_property_id`,`fk_sublet_id`,`fk_user_id`,`start_date`,`end_date`,`notes`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values 
+(1,3,1,4,'2017-10-31','2017-10-31',NULL,1,NULL,NULL,NULL,NULL),
+(2,4,3,5,'2017-10-05','2017-11-27','',2,NULL,NULL,NULL,NULL),
+(3,4,2,5,'2017-10-10','2017-11-29','sasasas',2,NULL,NULL,NULL,NULL),
+(4,4,2,1,'2017-11-01',NULL,'sasasas',2,NULL,NULL,NULL,NULL),
+(5,4,1,2,'2017-11-01',NULL,'sasasas',2,NULL,NULL,NULL,NULL),
+(6,4,3,2,'2017-11-01',NULL,'sasasa',2,NULL,NULL,NULL,NULL),
+(7,4,4,2,'2017-11-01',NULL,'',2,NULL,NULL,NULL,NULL),
+(8,3,5,12,'2017-11-01',NULL,'asasas',1,NULL,NULL,NULL,NULL),
+(9,4,1,1,'2017-11-01',NULL,'asas',1,NULL,NULL,NULL,NULL),
+(10,5,6,1,'2017-11-01',NULL,'',1,NULL,NULL,NULL,NULL),
+(11,5,7,13,'2017-11-02',NULL,'',1,NULL,NULL,NULL,NULL),
+(12,6,10,1,'2017-11-01',NULL,'New home for him',1,NULL,NULL,NULL,NULL),
+(13,7,12,15,'2016-12-02',NULL,'',1,NULL,NULL,NULL,NULL),
+(14,7,13,1,'2017-11-01',NULL,'xzss',1,NULL,NULL,NULL,NULL),
+(15,7,14,7,'2017-12-01',NULL,'',1,NULL,NULL,NULL,NULL),
+(16,5,15,17,'2017-10-01','2018-05-31','',1,NULL,NULL,NULL,NULL);
+
+/*Table structure for table `re_occupancy_invoice` */
+
+DROP TABLE IF EXISTS `re_occupancy_invoice`;
+
+CREATE TABLE `re_occupancy_invoice` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `invoice_no` varchar(100) NOT NULL,
+  `fk_occupancy_rent` int(11) NOT NULL,
+  `created_on` date DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+
+/*Data for the table `re_occupancy_invoice` */
+
+insert  into `re_occupancy_invoice`(`id`,`invoice_no`,`fk_occupancy_rent`,`created_on`,`created_by`) values 
+(1,'INV-10-13',158,'2017-12-11',1),
+(2,'INV-10-13',159,'2017-12-11',1),
+(3,'INV-10-13',160,'2017-12-11',1),
+(4,'INV-11-13',161,'2017-12-11',1),
+(5,'INV-11-13',162,'2017-12-11',1),
+(6,'INV-11-13',163,'2017-12-11',1),
+(7,'INV-13-13',164,'2017-12-11',1),
+(8,'INV-13-13',165,'2017-12-11',1),
+(9,'INV-13-13',166,'2017-12-11',1),
+(10,'INV-14-13',167,'2017-12-11',1),
+(11,'INV-14-13',168,'2017-12-11',1),
+(12,'INV-14-13',169,'2017-12-11',1),
+(13,'INV-15-13',170,'2017-12-11',1),
+(14,'INV-15-13',171,'2017-12-11',1),
+(15,'INV-15-13',172,'2017-12-11',1),
+(16,'INV-16-13',173,'2017-12-11',1),
+(17,'INV-16-13',174,'2017-12-11',1),
+(18,'INV-16-13',175,'2017-12-11',1);
 
 /*Table structure for table `re_occupancy_issue` */
 
@@ -415,21 +629,49 @@ CREATE TABLE `re_occupancy_issue` (
 
 /*Data for the table `re_occupancy_issue` */
 
+/*Table structure for table `re_occupancy_payments` */
+
+DROP TABLE IF EXISTS `re_occupancy_payments`;
+
+CREATE TABLE `re_occupancy_payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `fk_occupancy_id` int(11) NOT NULL,
+  `amount` float NOT NULL,
+  `payment_date` date NOT NULL,
+  `fk_receipt_id` int(11) NOT NULL,
+  `payment_method` int(11) NOT NULL,
+  `ref_no` varchar(50) DEFAULT NULL,
+  `status` tinyint(1) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` date DEFAULT NULL,
+  `modified_by` int(11) DEFAULT NULL,
+  `modified_on` date DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_occupancy_id` (`fk_occupancy_id`),
+  KEY `fk_receipt_id` (`fk_receipt_id`),
+  CONSTRAINT `re_occupancy_payments_ibfk_1` FOREIGN KEY (`fk_occupancy_id`) REFERENCES `re_occupancy` (`id`),
+  CONSTRAINT `re_occupancy_payments_ibfk_2` FOREIGN KEY (`fk_receipt_id`) REFERENCES `re_receipt` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+/*Data for the table `re_occupancy_payments` */
+
+insert  into `re_occupancy_payments`(`id`,`fk_occupancy_id`,`amount`,`payment_date`,`fk_receipt_id`,`payment_method`,`ref_no`,`status`,`created_by`,`created_on`,`modified_by`,`modified_on`) values 
+(1,16,10000,'2017-12-13',1,1,'',2,1,'2017-12-13',NULL,NULL),
+(2,16,10000,'2017-12-13',2,1,'',2,1,'2017-12-13',NULL,NULL),
+(3,16,10000,'2017-12-13',3,1,'',2,1,'2017-12-13',NULL,NULL);
+
 /*Table structure for table `re_occupancy_rent` */
 
 DROP TABLE IF EXISTS `re_occupancy_rent`;
 
 CREATE TABLE `re_occupancy_rent` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `fk_occupancy_id` int(11) DEFAULT NULL,
-  `fk_source` int(11) DEFAULT NULL,
+  `fk_occupancy_id` int(11) NOT NULL,
+  `fk_term` int(11) NOT NULL,
+  `fk_source` int(11) NOT NULL,
   `month` int(11) DEFAULT NULL,
   `year` int(11) DEFAULT NULL,
   `amount` float(11,2) DEFAULT NULL,
-  `amount_paid` float(11,2) DEFAULT NULL,
-  `date_paid` date DEFAULT NULL,
-  `pay_rent_due` float(11,2) DEFAULT NULL,
-  `balance_due` float(11,2) DEFAULT NULL,
   `_status` int(11) DEFAULT NULL,
   `date_created` datetime DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
@@ -438,13 +680,13 @@ CREATE TABLE `re_occupancy_rent` (
   PRIMARY KEY (`id`),
   KEY `fk_occupancy_id` (`fk_occupancy_id`),
   KEY `fk_source` (`fk_source`),
+  KEY `fk_term` (`fk_term`),
   CONSTRAINT `re_occupancy_rent_ibfk_1` FOREIGN KEY (`fk_occupancy_id`) REFERENCES `re_occupancy` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `re_occupancy_rent_ibfk_2` FOREIGN KEY (`fk_source`) REFERENCES `re_source` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
+  CONSTRAINT `re_occupancy_rent_ibfk_2` FOREIGN KEY (`fk_source`) REFERENCES `re_source` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `re_occupancy_rent_ibfk_3` FOREIGN KEY (`fk_term`) REFERENCES `re_term` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=176 DEFAULT CHARSET=latin1;
 
 /*Data for the table `re_occupancy_rent` */
-
-insert  into `re_occupancy_rent`(`id`,`fk_occupancy_id`,`fk_source`,`month`,`year`,`amount`,`amount_paid`,`date_paid`,`pay_rent_due`,`balance_due`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (6,13,1,10,2017,3000.00,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL),(7,14,1,10,2017,3000.00,2000.00,NULL,NULL,NULL,2,NULL,NULL,NULL,NULL),(8,1,1,11,2017,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL),(9,8,1,11,2017,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL),(10,9,1,11,2017,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL),(11,10,1,11,2017,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL),(12,11,1,11,2017,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL),(13,12,1,11,2017,NULL,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL),(14,13,1,9,2017,3500.00,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL),(15,14,1,9,2017,3000.00,5000.00,NULL,NULL,NULL,3,NULL,NULL,NULL,NULL),(20,13,1,8,2017,3500.00,NULL,NULL,3500.00,3500.00,1,NULL,NULL,NULL,NULL),(22,13,1,7,2017,3500.00,NULL,NULL,3500.00,7000.00,1,NULL,NULL,NULL,NULL),(23,13,1,11,2017,3500.00,5000.00,NULL,3500.00,10500.00,1,NULL,NULL,NULL,NULL),(24,13,11,11,2017,200.00,NULL,NULL,200.00,10700.00,1,NULL,NULL,NULL,NULL),(25,13,1,12,2017,3500.00,NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL),(28,14,1,12,2017,3000.00,NULL,NULL,NULL,NULL,1,'2017-12-02 12:03:49',1,NULL,NULL),(29,8,1,12,2017,3000.00,NULL,NULL,NULL,NULL,1,'2017-12-02 18:19:08',1,NULL,NULL);
 
 /*Table structure for table `re_occupancy_term` */
 
@@ -462,16 +704,21 @@ CREATE TABLE `re_occupancy_term` (
   `created_by` int(11) DEFAULT NULL,
   `date_modified` datetime DEFAULT NULL,
   `modified_by` int(11) DEFAULT NULL,
+  `frequency` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_occupancy_id` (`fk_occupancy_id`),
   KEY `fk_property_term_id` (`fk_property_term_id`),
   CONSTRAINT `re_occupancy_term_ibfk_1` FOREIGN KEY (`fk_occupancy_id`) REFERENCES `re_occupancy` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `re_occupancy_term_ibfk_2` FOREIGN KEY (`fk_property_term_id`) REFERENCES `re_property_term` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `re_occupancy_term` */
 
-insert  into `re_occupancy_term`(`id`,`fk_occupancy_id`,`fk_property_term_id`,`value`,`term_date`,`date_signed`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (1,11,1,'1000','2017-11-01','2017-11-15',1,NULL,NULL,NULL,NULL),(2,13,4,'3500','2017-11-01','2017-11-01',1,NULL,NULL,NULL,NULL);
+insert  into `re_occupancy_term`(`id`,`fk_occupancy_id`,`fk_property_term_id`,`value`,`term_date`,`date_signed`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`,`frequency`) values 
+(1,11,1,'1000','2017-11-01','2017-11-15',1,NULL,NULL,NULL,NULL,NULL),
+(2,13,4,'3500','2017-11-01','2017-11-01',1,NULL,NULL,NULL,NULL,NULL),
+(3,16,14,'10000','2017-12-01','2017-12-01',1,NULL,NULL,NULL,NULL,NULL),
+(4,16,15,'20000','2017-12-01','2017-12-01',1,NULL,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_preference` */
 
@@ -523,7 +770,14 @@ CREATE TABLE `re_property` (
 
 /*Data for the table `re_property` */
 
-insert  into `re_property`(`id`,`property_name`,`property_desc`,`fk_property_location`,`property_type`,`management_id`,`owner_id`,`property_video_url`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (1,'bungalow','www',1,1,2,3,NULL,1,NULL,NULL,NULL,NULL),(2,'massionates','sssssefgr',1,2,2,3,NULL,2,NULL,NULL,NULL,NULL),(3,'Monk Villa','asaasa',3,2,2,3,NULL,1,NULL,NULL,NULL,NULL),(4,'Miguna Island','Island of merci',2,2,2,4,NULL,1,NULL,NULL,NULL,NULL),(5,'Hayes','',1,1,2,4,NULL,1,NULL,NULL,NULL,NULL),(6,'ssss','aaa',1,1,2,2,NULL,1,NULL,NULL,NULL,NULL),(7,'Monkey Villa','sdsdsds  s dsds ds s sfsds s ssds s sssd sdsd',1,2,2,14,NULL,1,NULL,NULL,NULL,NULL);
+insert  into `re_property`(`id`,`property_name`,`property_desc`,`fk_property_location`,`property_type`,`management_id`,`owner_id`,`property_video_url`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values 
+(1,'bungalow','www',1,1,2,3,NULL,1,NULL,NULL,NULL,NULL),
+(2,'massionates','sssssefgr',1,2,2,3,NULL,2,NULL,NULL,NULL,NULL),
+(3,'Monk Villa','asaasa',3,2,2,3,NULL,1,NULL,NULL,NULL,NULL),
+(4,'Miguna Island','Island of merci',2,2,2,4,NULL,1,NULL,NULL,NULL,NULL),
+(5,'Hayes','',1,1,2,4,NULL,1,NULL,NULL,NULL,NULL),
+(6,'ssss','aaa',1,1,2,2,NULL,1,NULL,NULL,NULL,NULL),
+(7,'Monkey Villa','sdsdsds  s dsds ds s sfsds s ssds s sssd sdsd',1,2,2,14,NULL,1,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_property_area` */
 
@@ -577,7 +831,13 @@ CREATE TABLE `re_property_feature` (
 
 /*Data for the table `re_property_feature` */
 
-insert  into `re_property_feature`(`id`,`fk_feature`,`fk_property_id`,`fk_sublet_id`,`feature_narration`,`feature_video_url`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (1,1,4,1,'Strong',NULL,1,NULL,NULL,NULL,NULL),(2,2,2,2,'ssss',NULL,1,NULL,NULL,NULL,NULL),(3,1,2,1,'ss',NULL,1,NULL,NULL,NULL,NULL),(4,2,6,2,'aa',NULL,2,NULL,NULL,NULL,NULL),(5,2,6,2,'Metallic',NULL,1,NULL,NULL,NULL,NULL),(6,1,7,2,'Metalic Gate',NULL,1,NULL,NULL,NULL,NULL);
+insert  into `re_property_feature`(`id`,`fk_feature`,`fk_property_id`,`fk_sublet_id`,`feature_narration`,`feature_video_url`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values 
+(1,1,4,1,'Strong',NULL,1,NULL,NULL,NULL,NULL),
+(2,2,2,2,'ssss',NULL,1,NULL,NULL,NULL,NULL),
+(3,1,2,1,'ss',NULL,1,NULL,NULL,NULL,NULL),
+(4,2,6,2,'aa',NULL,2,NULL,NULL,NULL,NULL),
+(5,2,6,2,'Metallic',NULL,1,NULL,NULL,NULL,NULL),
+(6,1,7,2,'Metalic Gate',NULL,1,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_property_feature_image` */
 
@@ -617,11 +877,26 @@ CREATE TABLE `re_property_sublet` (
   `date_modified` datetime DEFAULT NULL,
   `modified_by` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
 
 /*Data for the table `re_property_sublet` */
 
-insert  into `re_property_sublet`(`id`,`fk_property_id`,`sublet_name`,`sublet_desc`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (1,4,'RM 1','sasaasa',1,NULL,NULL,NULL,NULL),(2,4,'RM 2','',1,NULL,NULL,NULL,NULL),(3,4,'RM3','sasasas',2,NULL,NULL,NULL,NULL),(4,4,'RM 4','asasasa',1,NULL,NULL,NULL,NULL),(5,3,'RM 1','sasas',1,NULL,NULL,NULL,NULL),(6,5,'RM 1','',1,NULL,NULL,NULL,NULL),(7,5,'Unit 2','',1,NULL,NULL,NULL,NULL),(8,2,'rum2','test',1,NULL,NULL,NULL,NULL),(9,2,'rum3','trregefd',2,NULL,NULL,NULL,NULL),(10,6,'RM 1','',1,NULL,NULL,NULL,NULL),(11,1,'ee','sss',1,NULL,NULL,NULL,NULL),(12,7,'RM 1','sasa',1,NULL,NULL,NULL,NULL),(13,7,'RM 2','asaas',1,NULL,NULL,NULL,NULL),(14,7,'RM3','',1,NULL,NULL,NULL,NULL);
+insert  into `re_property_sublet`(`id`,`fk_property_id`,`sublet_name`,`sublet_desc`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values 
+(1,4,'RM 1','sasaasa',1,NULL,NULL,NULL,NULL),
+(2,4,'RM 2','',1,NULL,NULL,NULL,NULL),
+(3,4,'RM3','sasasas',2,NULL,NULL,NULL,NULL),
+(4,4,'RM 4','asasasa',1,NULL,NULL,NULL,NULL),
+(5,3,'RM 1','sasas',1,NULL,NULL,NULL,NULL),
+(6,5,'RM 1','',1,NULL,NULL,NULL,NULL),
+(7,5,'Unit 2','',1,NULL,NULL,NULL,NULL),
+(8,2,'rum2','test',1,NULL,NULL,NULL,NULL),
+(9,2,'rum3','trregefd',2,NULL,NULL,NULL,NULL),
+(10,6,'RM 1','',1,NULL,NULL,NULL,NULL),
+(11,1,'ee','sss',1,NULL,NULL,NULL,NULL),
+(12,7,'RM 1','sasa',1,NULL,NULL,NULL,NULL),
+(13,7,'RM 2','asaas',1,NULL,NULL,NULL,NULL),
+(14,7,'RM3','',1,NULL,NULL,NULL,NULL),
+(15,5,'RM3','',1,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_property_term` */
 
@@ -645,11 +920,46 @@ CREATE TABLE `re_property_term` (
   KEY `fk_term_id` (`fk_term_id`),
   CONSTRAINT `re_property_term_ibfk_1` FOREIGN KEY (`fk_property_id`) REFERENCES `re_property` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `re_property_term_ibfk_2` FOREIGN KEY (`fk_term_id`) REFERENCES `re_term` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 
 /*Data for the table `re_property_term` */
 
-insert  into `re_property_term`(`id`,`fk_property_id`,`fk_term_id`,`term_title`,`term_value`,`term_narration`,`action_handler`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (1,4,1,'Rent Amount',NULL,'3500','',1,NULL,NULL,NULL,NULL),(2,4,3,'Disbursement',NULL,'10000',NULL,1,NULL,NULL,NULL,NULL),(3,2,2,'weee',NULL,'xxxx',NULL,1,NULL,NULL,NULL,NULL),(4,7,1,'Rent per unit','3000','asasasas',NULL,1,NULL,NULL,NULL,NULL),(5,7,3,'Date of disbursement','10','A given day of the month',NULL,1,NULL,NULL,NULL,NULL),(6,7,2,'Date of rent due','1','Day of rent due',NULL,1,NULL,NULL,NULL,NULL),(7,7,4,'Rent Deposit','3000','Rent Deposit',NULL,1,NULL,NULL,NULL,NULL),(8,7,5,'Water Deposit','1000','',NULL,1,NULL,NULL,NULL,NULL),(9,7,6,'Electricity Deposit','2000','',NULL,1,NULL,NULL,NULL,NULL),(10,7,13,'Commission','10','commission in percentage',NULL,1,NULL,NULL,NULL,NULL),(11,7,10,'Date of penalty','5','',NULL,1,NULL,NULL,NULL,NULL),(12,7,11,'Penalty Percentage','20','',NULL,1,NULL,NULL,NULL,NULL),(13,7,9,'Time for closing the gate','9PM','',NULL,1,NULL,NULL,NULL,NULL);
+insert  into `re_property_term`(`id`,`fk_property_id`,`fk_term_id`,`term_title`,`term_value`,`term_narration`,`action_handler`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`) values 
+(1,4,1,'Rent Amount',NULL,'3500','',1,NULL,NULL,NULL,NULL),
+(2,4,3,'Disbursement',NULL,'10000',NULL,1,NULL,NULL,NULL,NULL),
+(3,2,2,'weee',NULL,'xxxx',NULL,1,NULL,NULL,NULL,NULL),
+(4,7,1,'Rent per unit','3000','asasasas',NULL,1,NULL,NULL,NULL,NULL),
+(5,7,3,'Date of disbursement','10','A given day of the month',NULL,1,NULL,NULL,NULL,NULL),
+(6,7,2,'Date of rent due','1','Day of rent due',NULL,1,NULL,NULL,NULL,NULL),
+(7,7,4,'Rent Deposit','3000','Rent Deposit',NULL,1,NULL,NULL,NULL,NULL),
+(8,7,5,'Water Deposit','1000','',NULL,1,NULL,NULL,NULL,NULL),
+(9,7,6,'Electricity Deposit','2000','',NULL,1,NULL,NULL,NULL,NULL),
+(10,7,13,'Commission','10','commission in percentage',NULL,1,NULL,NULL,NULL,NULL),
+(11,7,10,'Date of penalty','5','',NULL,1,NULL,NULL,NULL,NULL),
+(12,7,11,'Penalty Percentage','20','',NULL,1,NULL,NULL,NULL,NULL),
+(13,7,9,'Time for closing the gate','9PM','',NULL,1,NULL,NULL,NULL,NULL),
+(14,5,2,'Rent','10000','Rent Paid Monthly',NULL,1,NULL,NULL,NULL,NULL),
+(15,5,4,'Rent 2 Months Deposit','20000','2 Month Rent Deposit - Refundable ',NULL,1,NULL,NULL,NULL,NULL),
+(16,5,5,'Water Deposit','1000','',NULL,1,NULL,NULL,NULL,NULL);
+
+/*Table structure for table `re_receipt` */
+
+DROP TABLE IF EXISTS `re_receipt`;
+
+CREATE TABLE `re_receipt` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `receipt_no` varchar(50) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+/*Data for the table `re_receipt` */
+
+insert  into `re_receipt`(`id`,`receipt_no`,`date_created`,`created_by`) values 
+(1,'jnr1','2017-12-13 08:32:06',1),
+(2,'jnr2','2017-12-13 08:36:48',1),
+(3,'jnr3','2017-12-13 08:49:28',1);
 
 /*Table structure for table `re_role` */
 
@@ -669,7 +979,13 @@ CREATE TABLE `re_role` (
 
 /*Data for the table `re_role` */
 
-insert  into `re_role`(`id`,`role_name`,`role_description`,`date_created`,`createdby`,`date_modified`,`modified_by`) values (1,'agency admin','system administrator',NULL,NULL,NULL,NULL),(2,'normal','normal user',NULL,NULL,NULL,NULL),(3,'chairman',NULL,NULL,NULL,NULL,NULL),(4,'group leader',NULL,NULL,NULL,NULL,NULL),(5,'secretary',NULL,NULL,NULL,NULL,NULL),(6,'IT coodinator',NULL,NULL,NULL,NULL,NULL);
+insert  into `re_role`(`id`,`role_name`,`role_description`,`date_created`,`createdby`,`date_modified`,`modified_by`) values 
+(1,'agency admin','system administrator',NULL,NULL,NULL,NULL),
+(2,'normal','normal user',NULL,NULL,NULL,NULL),
+(3,'chairman',NULL,NULL,NULL,NULL,NULL),
+(4,'group leader',NULL,NULL,NULL,NULL,NULL),
+(5,'secretary',NULL,NULL,NULL,NULL,NULL),
+(6,'IT coodinator',NULL,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_source` */
 
@@ -686,7 +1002,30 @@ CREATE TABLE `re_source` (
 
 /*Data for the table `re_source` */
 
-insert  into `re_source`(`id`,`source_name`,`source_description`,`source_type`,`category`) values (1,'Rent','','Income','tenant'),(2,'Landlord Imprest','','Expense','landlord'),(3,'Disbursement','','Expense','landlord'),(4,'Agency Allowance','Rent collection allowances','Income','tenant'),(5,'Transport','','Expense','agent'),(6,'Lunch','','Expense','agent'),(7,'Bank Charges','','Expense','agent'),(8,'Salary','','Expense','agent'),(9,'Salary Advance','','Expense','agent'),(10,'Penalty Waiver','Penalty cancellation','Expense','tenant'),(11,'Penalty','Penalty incurred due to late payments','Income','tenant'),(13,'Storage Fees','Goods storage fees','Income','tenant'),(14,'Tenant Transport','Tenant Transport','Income','tenant'),(15,'Breaking Fees','Fees for breaking house','Income','tenant'),(16,'Visit Fees','','Income','tenant'),(17,'Locking Fees','Locking Fees','Income','tenant'),(18,'Agency Fee','Agency Fee','Income','tenant'),(19,'Rent Deposit','Rent Deposit','Income','tenant'),(20,'Water Deposit','Water Deposit','Income','tenant'),(21,'Electricity Deposit','Electricity Deposit','Income','tenant'),(22,'Water Bill','Water Bill','Income','tenant'),(23,'Electricity Bill','Electricity Bill','Income','tenant'),(24,'Garbage Collection','Garbage Collection Bills','Income','tenant');
+insert  into `re_source`(`id`,`source_name`,`source_description`,`source_type`,`category`) values 
+(1,'Rent','','Income','tenant'),
+(2,'Landlord Imprest','','Expense','landlord'),
+(3,'Disbursement','','Expense','landlord'),
+(4,'Agency Allowance','Rent collection allowances','Income','tenant'),
+(5,'Transport','','Expense','agent'),
+(6,'Lunch','','Expense','agent'),
+(7,'Bank Charges','','Expense','agent'),
+(8,'Salary','','Expense','agent'),
+(9,'Salary Advance','','Expense','agent'),
+(10,'Penalty Waiver','Penalty cancellation','Expense','tenant'),
+(11,'Penalty','Penalty incurred due to late payments','Income','tenant'),
+(13,'Storage Fees','Goods storage fees','Income','tenant'),
+(14,'Tenant Transport','Tenant Transport','Income','tenant'),
+(15,'Breaking Fees','Fees for breaking house','Income','tenant'),
+(16,'Visit Fees','','Income','tenant'),
+(17,'Locking Fees','Locking Fees','Income','tenant'),
+(18,'Agency Fee','Agency Fee','Income','tenant'),
+(19,'Rent Deposit','Rent Deposit','Income','tenant'),
+(20,'Water Deposit','Water Deposit','Income','tenant'),
+(21,'Electricity Deposit','Electricity Deposit','Income','tenant'),
+(22,'Water Bill','Water Bill','Income','tenant'),
+(23,'Electricity Bill','Electricity Bill','Income','tenant'),
+(24,'Garbage Collection','Garbage Collection Bills','Income','tenant');
 
 /*Table structure for table `re_sub_location` */
 
@@ -706,7 +1045,10 @@ CREATE TABLE `re_sub_location` (
 
 /*Data for the table `re_sub_location` */
 
-insert  into `re_sub_location`(`id`,`fk_location`,`sub_loc_name`,`sub_loc_desc`,`sub_loc_lat`,`sub_loc_long`) values (1,1,'pwani','test',NULL,NULL),(2,1,'kaya','test',NULL,NULL),(3,3,'kibaoni','test',NULL,NULL);
+insert  into `re_sub_location`(`id`,`fk_location`,`sub_loc_name`,`sub_loc_desc`,`sub_loc_lat`,`sub_loc_long`) values 
+(1,1,'pwani','test',NULL,NULL),
+(2,1,'kaya','test',NULL,NULL),
+(3,3,'kibaoni','test',NULL,NULL);
 
 /*Table structure for table `re_subcounty` */
 
@@ -730,7 +1072,12 @@ CREATE TABLE `re_subcounty` (
 
 /*Data for the table `re_subcounty` */
 
-insert  into `re_subcounty`(`id`,`fk_county`,`subcounty_name`,`subcounty_desc`,`subcounty_lat`,`subcounty_long`,`date_created`,`created_by`,`date_modified`,`modified_by`) values (1,1,'Ganze','',NULL,NULL,NULL,NULL,NULL,NULL),(2,1,'rabai','',NULL,NULL,NULL,NULL,NULL,NULL),(3,1,'kaloleni','test',NULL,NULL,NULL,NULL,NULL,NULL),(4,3,'nyali','test',NULL,NULL,NULL,NULL,NULL,NULL),(5,1,'kilifi north','test',NULL,NULL,NULL,NULL,NULL,NULL);
+insert  into `re_subcounty`(`id`,`fk_county`,`subcounty_name`,`subcounty_desc`,`subcounty_lat`,`subcounty_long`,`date_created`,`created_by`,`date_modified`,`modified_by`) values 
+(1,1,'Ganze','',NULL,NULL,NULL,NULL,NULL,NULL),
+(2,1,'rabai','',NULL,NULL,NULL,NULL,NULL,NULL),
+(3,1,'kaloleni','test',NULL,NULL,NULL,NULL,NULL,NULL),
+(4,3,'nyali','test',NULL,NULL,NULL,NULL,NULL,NULL),
+(5,1,'kilifi north','test',NULL,NULL,NULL,NULL,NULL,NULL);
 
 /*Table structure for table `re_tenant` */
 
@@ -817,7 +1164,20 @@ CREATE TABLE `re_term` (
 
 /*Data for the table `re_term` */
 
-insert  into `re_term`(`id`,`term_type`,`term_name`,`term_desc`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`,`actionhandler`) values (1,NULL,'Rent Amount','Rent payable monthly',1,NULL,NULL,NULL,NULL,''),(2,NULL,'Date Rent Pay','Date rent due',1,NULL,NULL,NULL,NULL,'DateRentPay'),(3,NULL,'Landlord Disbursment','Date of payments to landlord',1,NULL,NULL,NULL,NULL,'LandlordDisbursement'),(4,NULL,'Rent Deposit','Amount paid by tenant as deposit',1,NULL,NULL,NULL,NULL,'RentDeposit'),(5,NULL,'Watert Deposit','Amount paid by tenant as water bill deposit',1,NULL,NULL,NULL,NULL,'WaterDeposit'),(6,NULL,'Electricity Deposit','Amount paid as electricity deposit',1,NULL,NULL,NULL,NULL,'ElectricityDeposit'),(7,NULL,'Water Bills','Whether the agency will collect water bills.',1,NULL,NULL,NULL,NULL,'WaterBills'),(8,NULL,'Electricity Bills','Whether the agency will collect electricity bills',1,NULL,NULL,NULL,NULL,'ElectricityBills'),(9,NULL,'Security Times','Time security gate closes.',1,NULL,NULL,NULL,NULL,''),(10,NULL,'Penalty Date','Date penalty will be calculated.',1,NULL,NULL,NULL,NULL,'PenatlyDate'),(11,NULL,'Penalty Percentage','Percentage of the rent payable as penalty.',1,NULL,NULL,NULL,NULL,'PenaltyPercentage'),(12,NULL,'Rent Due Date','Date rent is due',1,NULL,NULL,NULL,NULL,'RentDueDate'),(13,NULL,'Agent Commission','A percentage of the rent paid to agent as commission.',1,NULL,NULL,NULL,NULL,'AgentCommission');
+insert  into `re_term`(`id`,`term_type`,`term_name`,`term_desc`,`_status`,`date_created`,`created_by`,`date_modified`,`modified_by`,`actionhandler`) values 
+(1,NULL,'Rent Amount','Rent payable monthly',1,NULL,NULL,NULL,NULL,''),
+(2,NULL,'Date Rent Pay','Date rent due',1,NULL,NULL,NULL,NULL,'DateRentPay'),
+(3,NULL,'Landlord Disbursment','Date of payments to landlord',1,NULL,NULL,NULL,NULL,'LandlordDisbursement'),
+(4,NULL,'Rent Deposit','Amount paid by tenant as deposit',1,NULL,NULL,NULL,NULL,'RentDeposit'),
+(5,NULL,'Watert Deposit','Amount paid by tenant as water bill deposit',1,NULL,NULL,NULL,NULL,'WaterDeposit'),
+(6,NULL,'Electricity Deposit','Amount paid as electricity deposit',1,NULL,NULL,NULL,NULL,'ElectricityDeposit'),
+(7,NULL,'Water Bills','Whether the agency will collect water bills.',1,NULL,NULL,NULL,NULL,'WaterBills'),
+(8,NULL,'Electricity Bills','Whether the agency will collect electricity bills',1,NULL,NULL,NULL,NULL,'ElectricityBills'),
+(9,NULL,'Security Times','Time security gate closes.',1,NULL,NULL,NULL,NULL,''),
+(10,NULL,'Penalty Date','Date penalty will be calculated.',1,NULL,NULL,NULL,NULL,'PenatlyDate'),
+(11,NULL,'Penalty Percentage','Percentage of the rent payable as penalty.',1,NULL,NULL,NULL,NULL,'PenaltyPercentage'),
+(12,NULL,'Rent Due Date','Date rent is due',1,NULL,NULL,NULL,NULL,'RentDueDate'),
+(13,NULL,'Agent Commission','A percentage of the rent paid to agent as commission.',1,NULL,NULL,NULL,NULL,'AgentCommission');
 
 /*Table structure for table `re_ward` */
 
@@ -837,7 +1197,10 @@ CREATE TABLE `re_ward` (
 
 /*Data for the table `re_ward` */
 
-insert  into `re_ward`(`id`,`fk_subcounty`,`ward_name`,`ward_desc`,`ward_lat`,`ward_long`) values (1,5,'hosipital','test',NULL,NULL),(2,5,'sokoni','test',NULL,NULL),(3,5,'kibarani','test',NULL,NULL);
+insert  into `re_ward`(`id`,`fk_subcounty`,`ward_name`,`ward_desc`,`ward_lat`,`ward_long`) values 
+(1,5,'hosipital','test',NULL,NULL),
+(2,5,'sokoni','test',NULL,NULL),
+(3,5,'kibarani','test',NULL,NULL);
 
 /*Table structure for table `sys_users` */
 
@@ -869,11 +1232,28 @@ CREATE TABLE `sys_users` (
   KEY `sys_users_ibfk_2` (`fk_management_id`),
   CONSTRAINT `sys_users_ibfk_1` FOREIGN KEY (`fk_group_id`) REFERENCES `re_group` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   CONSTRAINT `sys_users_ibfk_2` FOREIGN KEY (`fk_management_id`) REFERENCES `re_management` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 
 /*Data for the table `sys_users` */
 
-insert  into `sys_users`(`id`,`fk_group_id`,`fk_management_id`,`username`,`pass`,`name1`,`name2`,`name3`,`age`,`email`,`phone`,`id_number`,`address`,`date_added`,`gender`,`color_code`,`icon_id`,`position`,`residence`) values (1,2,2,'karisa','$2y$13$vLlfRhW8Rb5JXww6WVvddewt7qZNVjkzICuYnVr6WIFzu/2WL3K.2','karisa','','nzaro',NULL,'',777748,NULL,'',NULL,'Male',NULL,NULL,NULL,NULL),(2,3,2,'naija','$2y$13$vLlfRhW8Rb5JXww6WVvddewt7qZNVjkzICuYnVr6WIFzu/2WL3K.2','naija','fatma','njoroge',NULL,'pneema@neema.com',2147483647,'34455444','hiii',NULL,'Female',NULL,NULL,NULL,'ssss'),(3,3,2,NULL,NULL,'Grace','Dama','Katana',NULL,'asasasa@sasa.com',2322121,'34333333','',NULL,'Female',NULL,NULL,NULL,'kilifi'),(4,3,2,NULL,NULL,'Fatuma','K','Karisa',NULL,'asasasa@sasa.com',722123456,'43333222','',NULL,'Female',NULL,NULL,NULL,'kilifi'),(5,4,2,NULL,NULL,'Jane','Dama','Smith',NULL,'asasasa@sasa.com',232212167,'2344516178','',NULL,'Female',NULL,NULL,NULL,'kilifi'),(6,4,2,NULL,NULL,'John','Diego','Smith',NULL,'asasasa@sasa.com',2322125,'33637378','',NULL,'Male',NULL,NULL,NULL,'kilifi'),(7,4,2,NULL,NULL,'Neema','','John',NULL,'pneema@neema.com',711992929,'356677727','',NULL,'Female',NULL,NULL,NULL,'kilifi'),(8,4,2,NULL,NULL,'Narsh','','Ngao',NULL,'narshon@gmail.com',711992924,'4562627','',NULL,'Male',NULL,NULL,NULL,'kilifi'),(9,4,2,NULL,NULL,'Eunice','','Mbeyu',NULL,'narshon@gmail.com',2322122,'6777888','',NULL,'Female',NULL,NULL,NULL,'kilifi'),(10,4,2,NULL,NULL,'Test2','asa','sasasa',NULL,'asasa@assa.com',21212112,'90288382','',NULL,'Female',NULL,NULL,NULL,'MSA'),(11,4,2,NULL,NULL,'asasa','sasa','asa',NULL,'asasasa@sasa.com',711992926,'67272288','',NULL,'Male',NULL,NULL,NULL,'sas'),(12,4,2,NULL,NULL,'katana','charo','wamae',NULL,'charo@katana.com',710202020,'30555511','',NULL,'Male',NULL,NULL,NULL,'kilifi'),(13,4,2,NULL,NULL,'Dama','','Charo',NULL,'dama@dm.com',2202929,'30666672','',NULL,'Female',NULL,NULL,NULL,'asasa'),(14,3,2,NULL,NULL,'Hassan','','Omar',NULL,'hassan@gmail.com',711992928,'25123445','P.o Box 1234 Kilifi',NULL,'Male',NULL,NULL,NULL,'Malindi'),(15,4,2,NULL,NULL,'Bila','','Asha',NULL,'narshon5@gmail.com',711992920,'25123445','',NULL,'Female',NULL,NULL,NULL,'kilifi');
+insert  into `sys_users`(`id`,`fk_group_id`,`fk_management_id`,`username`,`pass`,`name1`,`name2`,`name3`,`age`,`email`,`phone`,`id_number`,`address`,`date_added`,`gender`,`color_code`,`icon_id`,`position`,`residence`) values 
+(1,2,2,'karisa','$2y$13$vLlfRhW8Rb5JXww6WVvddewt7qZNVjkzICuYnVr6WIFzu/2WL3K.2','karisa','','nzaro',NULL,'',777748,NULL,'',NULL,'Male',NULL,NULL,NULL,NULL),
+(2,3,2,'naija','$2y$13$vLlfRhW8Rb5JXww6WVvddewt7qZNVjkzICuYnVr6WIFzu/2WL3K.2','naija','fatma','njoroge',NULL,'pneema@neema.com',2147483647,'34455444','hiii',NULL,'Female',NULL,NULL,NULL,'ssss'),
+(3,3,2,NULL,NULL,'Grace','Dama','Katana',NULL,'asasasa@sasa.com',2322121,'34333333','',NULL,'Female',NULL,NULL,NULL,'kilifi'),
+(4,3,2,NULL,NULL,'Fatuma','K','Karisa',NULL,'asasasa@sasa.com',722123456,'43333222','',NULL,'Female',NULL,NULL,NULL,'kilifi'),
+(5,4,2,NULL,NULL,'Jane','Dama','Smith',NULL,'asasasa@sasa.com',232212167,'2344516178','',NULL,'Female',NULL,NULL,NULL,'kilifi'),
+(6,4,2,NULL,NULL,'John','Diego','Smith',NULL,'asasasa@sasa.com',2322125,'33637378','',NULL,'Male',NULL,NULL,NULL,'kilifi'),
+(7,4,2,NULL,NULL,'Neema','','John',NULL,'pneema@neema.com',711992929,'356677727','',NULL,'Female',NULL,NULL,NULL,'kilifi'),
+(8,4,2,NULL,NULL,'Narsh','','Ngao',NULL,'narshon@gmail.com',711992924,'4562627','',NULL,'Male',NULL,NULL,NULL,'kilifi'),
+(9,4,2,NULL,NULL,'Eunice','','Mbeyu',NULL,'narshon@gmail.com',2322122,'6777888','',NULL,'Female',NULL,NULL,NULL,'kilifi'),
+(10,4,2,NULL,NULL,'Test2','asa','sasasa',NULL,'asasa@assa.com',21212112,'90288382','',NULL,'Female',NULL,NULL,NULL,'MSA'),
+(11,4,2,NULL,NULL,'asasa','sasa','asa',NULL,'asasasa@sasa.com',711992926,'67272288','',NULL,'Male',NULL,NULL,NULL,'sas'),
+(12,4,2,NULL,NULL,'katana','charo','wamae',NULL,'charo@katana.com',710202020,'30555511','',NULL,'Male',NULL,NULL,NULL,'kilifi'),
+(13,4,2,NULL,NULL,'Dama','','Charo',NULL,'dama@dm.com',2202929,'30666672','',NULL,'Female',NULL,NULL,NULL,'asasa'),
+(14,3,2,NULL,NULL,'Hassan','','Omar',NULL,'hassan@gmail.com',711992928,'25123445','P.o Box 1234 Kilifi',NULL,'Male',NULL,NULL,NULL,'Malindi'),
+(15,4,2,NULL,NULL,'Bila','','Asha',NULL,'narshon5@gmail.com',711992920,'25123445','',NULL,'Female',NULL,NULL,NULL,'kilifi'),
+(16,3,2,NULL,NULL,'neema','','priscillar',NULL,'nee@gmail.com',887272383,'44445','22',NULL,'Female',NULL,NULL,NULL,'wer'),
+(17,4,2,NULL,NULL,'nicky','Test','kusumu',NULL,'test@gmail.com',NULL,'','',NULL,'Male',NULL,NULL,NULL,'');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
