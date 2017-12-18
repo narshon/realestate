@@ -11,10 +11,11 @@ use yii\bootstrap\Html;
  *
  * @property integer $id
  * @property integer $fk_occupancy_id
+ * @property integer $fk_source
+ * @property integer $fk_term
  * @property integer $month
  * @property integer $year
- * @property string $pay_rent_due
- * @property double $balance_due
+ * @property double $amount
  * @property integer $_status
  * @property string $date_created
  * @property integer $created_by
@@ -46,11 +47,13 @@ class OccupancyRent extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-	    [['fk_occupancy_id', 'month', 'year', '_status','fk_source'], 'required'],
-            [['fk_occupancy_id', 'month', 'year', '_status', 'created_by', 'modified_by'], 'integer'],
-            [[ 'date_created', 'date_modified','date_paid','receipt_no','cheque_no','details','account_type'], 'safe'],
-            [['pay_rent_due','balance_due','amount','amount_paid'], 'number'],
+            [['fk_occupancy_id', 'fk_source'], 'required'],
+            [['fk_occupancy_id', 'fk_source', 'fk_term', 'month', 'year', '_status', 'created_by', 'modified_by'], 'integer'],
+            [['amount'], 'number'],
+            [['date_created', 'date_modified'], 'safe'],
             [['fk_occupancy_id'], 'exist', 'skipOnError' => true, 'targetClass' => Occupancy::className(), 'targetAttribute' => ['fk_occupancy_id' => 'id']],
+            [['fk_source'], 'exist', 'skipOnError' => true, 'targetClass' => Source::className(), 'targetAttribute' => ['fk_source' => 'id']],
+            [['fk_term'], 'exist', 'skipOnError' => true, 'targetClass' => Term::className(), 'targetAttribute' => ['fk_term' => 'id']],
         ];
     }
 
@@ -64,9 +67,7 @@ class OccupancyRent extends \yii\db\ActiveRecord
             'fk_occupancy_id' => 'Fk Occupancy ID',
             'month' => 'Month',
             'year' => 'Year',
-            'pay_rent_due' => 'Pay Rent Due',
-            'balance_due' => 'Balance Due',
-            'date_paid' => 'Date Paid',
+            'amount' => 'Amount',
             '_status' => 'Status',
             'date_created' => 'Date Created',
             'created_by' => 'Created By',
@@ -89,6 +90,14 @@ class OccupancyRent extends \yii\db\ActiveRecord
     public function getFkSource()
     {
         return $this->hasOne(Source::className(), ['id' => 'fk_source']);
+    }
+    
+     /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkTerm()
+    {
+        return $this->hasOne(Term::className(), ['id' => 'fk_term']);
     }
     
     public function getOccupancyName(){
@@ -120,63 +129,63 @@ class OccupancyRent extends \yii\db\ActiveRecord
     }
     
     public function beforeSave($insert=''){
-        parent::beforeSave($insert);
-        
         \app\utilities\DataHelper::recordTimeStamp($this);
-        
-        
-        if($this->hasErrors()){
-            return false;
-        }
-        else{
-            return true;
+        $this->updateAccounts();
+        return parent::beforeSave($insert);
+    }
+    
+    public function updateAccounts()
+    {
+        $accountmap = AccountMap::findAll(['fk_term' => $this->fk_term]);
+        if(is_array($accountmap)) {
+            foreach($accountmap as $account) {
+                AccountEntries::postTransaction($account->fk_account_chart, $account->trasaction_type, $this->amount, $this->date_created);
+            }
         }
     }
     
     public function receivePay(){
         if($this->amount_paid > 0){ //ensure that we have actually received some cash.
             //get all pending bills
-            $bills = new \yii\db\Query();
-            $bills->from('re_occupancy_rent');
-            $bills->andFilterWhere(['=', 'fk_occupancy_id', $this->fk_occupancy_id]);
-             $bills->andFilterWhere(['<', '_status', 3]); //getting all records where status is 1 and 2.
-             $bills->all();
-            if($bills){
-                $count = count($bills); $i = 0;
-                if($count > 0){
-                    foreach($bills as $bill){
-                        if($this->amount_paid > 0){ //check that we still have money for the next transaction.
+            $command = OccupancyRent::find()
+                ->andFilterWhere(['fk_occupancy_id' => $this->fk_occupancy_id])
+                ->andFilterWhere(['<' , '_status', 3])
+                ->orderBy([
+                    'year' => SORT_ASC,
+                    'month' => SORT_ASC,
+                ]);
+            $bills = $command->all();
+            if ( is_array($bills) && count($bills) ) {
+                foreach ($bills as $bill) {
+                    if ($this->amount_paid > 0) { //check that we still have money for the next transaction.
+                    //how much money do I need to top up here?
+                    $balance_needed = $bill->amount - $bill->amount_paid;
 
-                        //how much money do I need to top up here?
-                        $balance_needed = $bill->amount - $bill->amount_paid;
-
-                        if($balance_needed <= $this->amount_paid){ //if what we need for this bill is less than or equal to what we have
-                            //update this  bill and send to journal.
-                            $bill->amount_paid = $bill->amount_paid + $balance_needed;
-                            $bill->date_paid = $this->date_paid;
-                            $bill->_status = 4; //PAID EQUAL
-                            if($bill->save(false)){
-                               $this->postJournal($bill, $balance_needed);
-                            }
+                    if ($balance_needed <= $this->amount_paid) { //if what we need for this bill is less than or equal to what we have
+                        //update this  bill and send to journal.
+                        $bill->amount_paid = $bill->amount_paid + $balance_needed;
+                        $bill->date_paid = $this->date_paid;
+                        $bill->_status = 4; //PAID EQUAL
+                        if($bill->save()){
+                           $this->postJournal($bill, $balance_needed);
                         }
-                        else{  //balance needed is more than what we have received.
-                            //update this  bill and send to journal.
-                            $bill->amount_paid = $bill->amount_paid + $this->amount_paid;
-                            $bill->date_paid = $this->date_paid;
-                            $bill->_status = 2; //PAID LESS
-                            if($bill->save(false)){
-                               $this->postJournal($bill, $this->amount_paid);
-                            }
+                    }
+                    else{  //balance needed is more than what we have received.
+                        //update this  bill and send to journal.
+                        $bill->amount_paid = $bill->amount_paid + $this->amount_paid;
+                        $bill->date_paid = $this->date_paid;
+                        $bill->_status = 2; //PAID LESS
+                        if($bill->save()){
+                           $this->postJournal($bill, $this->amount_paid);
                         }
+                    }
 
-                        //take it from received amount
-                        $this->amount_paid = $this->amount_paid - $balance_needed;
+                    //take it from received amount
+                    $this->amount_paid = $this->amount_paid - $balance_needed;
 
 
-                        }
-
-                       $i++;
-                   }
+                    }
+               }
                    
                    //check if we still have money left over after paying these bills. bundle this amount in the most recent bill. Record excess payment.
                     if($this->amount_paid > 0){
@@ -191,7 +200,7 @@ class OccupancyRent extends \yii\db\ActiveRecord
                             }
                         }
                     }
-                }
+                
             }
             return true;
         }
@@ -208,7 +217,7 @@ class OccupancyRent extends \yii\db\ActiveRecord
         $journal->transaction_type = $occupancyRent->fk_source;
         $journal->cheque_no = $this->cheque_no;
         $journal->details = $this->details;
-        $journal->transacted_by = Yii::app()->user->identity->id;
+        $journal->transacted_by = Yii::$app->user->identity->id;
         $journal->save(false);
         
     }
@@ -274,6 +283,7 @@ class OccupancyRent extends \yii\db\ActiveRecord
     public function getStatus(){
         //get status
         $status = $this->_status;
+        $options = [1=>'PENDING',2=>'PAID LESS',3=>'PAID MORE', 4=>'PAID'];
         $dh = new \app\utilities\DataHelper();
         $url = \yii\helpers\Url::to(['occupancy-rent/printreceipt','id'=>$this->id]);
         

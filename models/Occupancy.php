@@ -20,10 +20,11 @@ use Yii;
  * @property string $date_modified
  * @property integer $modified_by
  *
- * @property Tenant $fkTenant
  * @property Property $fkProperty
  * @property PropertySublet $fkSublet
+ * @property SysUsers $fkUser
  * @property OccupancyIssue[] $occupancyIssues
+ * @property OccupancyPayments[] $occupancyPayments
  * @property OccupancyRent[] $occupancyRents
  * @property OccupancyTerm[] $occupancyTerms
  */
@@ -46,13 +47,13 @@ class Occupancy extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-			[['fk_property_id', 'fk_sublet_id', 'fk_user_id', '_status'], 'required'],
+            [['fk_property_id', 'fk_sublet_id', 'fk_user_id', '_status'], 'required'],
             [['fk_property_id', 'fk_sublet_id', 'fk_user_id', '_status', 'created_by', 'modified_by'], 'integer'],
             [['start_date', 'end_date', 'date_created', 'date_modified'], 'safe'],
-            [['notes','phone','email','id_number'], 'string'],
-            [['fk_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['fk_user_id' => 'id']],
+            [['notes'], 'string'],
             [['fk_property_id'], 'exist', 'skipOnError' => true, 'targetClass' => Property::className(), 'targetAttribute' => ['fk_property_id' => 'id']],
             [['fk_sublet_id'], 'exist', 'skipOnError' => true, 'targetClass' => PropertySublet::className(), 'targetAttribute' => ['fk_sublet_id' => 'id']],
+            [['fk_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => SysUsers::className(), 'targetAttribute' => ['fk_user_id' => 'id']],
         ];
     }
 
@@ -99,6 +100,14 @@ class Occupancy extends \yii\db\ActiveRecord
     public function getFkSublet()
     {
         return $this->hasOne(PropertySublet::className(), ['id' => 'fk_sublet_id']);
+    }
+    
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkUsers()
+    {
+        return $this->hasOne(Users::className(), ['id' => 'fk_user_id']);
     }
 
     /**
@@ -152,6 +161,26 @@ class Occupancy extends \yii\db\ActiveRecord
         }
     }
     
+    public static function getDetail($id, $item)
+    {
+        if(($model = Occupancy::findOne($id)) !== null) {
+            switch($item)
+            {
+                case 'property':
+                    return $model->fkProperty->property_name;
+                    break;
+                case 'sublet':
+                    return $model->fkSublet->sublet_name;
+                    break;
+                case 'name':
+                    return $model->fkUsers->getNames();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
     public static function getOccupancyOptions(){
         $array = [];
         $occupancies = Occupancy::find()->where(['_status'=>1])->all();
@@ -179,20 +208,41 @@ class Occupancy extends \yii\db\ActiveRecord
         $occupants = Self::find()->where(['_status'=>1])->all();
         if($occupants){
             foreach($occupants as $occupant){
+                if($occupant->id == 16 && $occupant->fk_property_id == 5)
+                {
+                    $test = 0;
+                }
                 //get all generic terms and invoke their action handlers
                 $terms = Term::find()->where(['_status'=>1])->all();
                 if($terms){
-                    
+                    $transaction = \yii::$app->db->beginTransaction();
+                    try {
+                        $insertIds = [];
                     foreach($terms as $term){
                         $handler = $term->actionhandler;
                         //call the actions
-                        if($handler){ 
-                            $check = $occupant->$handler($term);
-                            if(!$check){
-                                return false;
+                        if($handler){
+                        $check = $occupant->$handler($term);
+                            if($check===false){
+                                throw new Exception('An Error Occured');
+                            }elseif($check===99)
+                            {
+                                $test = 0;
+                                $insertIds[] = Yii::$app->db->getLastInsertID();
+                                
                             }
-                            
                         }
+                    }
+                    $transaction->commit();
+                    if(count($insertIds)){
+                        $occupant->createInvoice($insertIds, 'INV-' . $occupant->id . '-' . $term->id);
+                    }
+                    } catch (\Exception $e) {
+                        $transaction->rollBack();
+                        throw $e;
+                    } catch (\Throwable $e) {
+                        $transaction->rollBack();
+                        throw $e;
                     }
                 }
             }
@@ -200,6 +250,19 @@ class Occupancy extends \yii\db\ActiveRecord
         
         
         return "Done!";
+    }
+    
+    private function createInvoice($ids, $number)
+    {
+        foreach($ids as $id)
+        {
+            $model = new OccupancyInvoice();
+            $model->fk_occupancy_rent = $id;
+            $model->invoice_no = $number;
+            $model->created_by = \yii::$app->user->identity->id;
+            $model->created_on  = date('Y-m-d');
+            $model->save();
+        }
     }
     
     //Action specific functions to calculate bills.
@@ -210,52 +273,44 @@ class Occupancy extends \yii\db\ActiveRecord
         $month = date('m');
         $year = date('Y');
         $date = date('d');
-        $rent = OccupancyRent::find()->where(['fk_occupancy_id'=>$this->id,'month'=>$month,'year'=>$year])->one();
-        
-        if(!$rent){  
-            
-            //check if it's the right time now to post this rent.
-              //let's check the property term for this issue and check whether we have a occupancy term as well. We shall begin with occupancy term.
-              $property = $this->fkProperty;
-              $propertyterm = PropertyTerm::find()->where(['fk_term_id'=>$term->id,'_status'=>1,'fk_property_id'=>$property->id])->one();
-              if($propertyterm){
-              $term_value = PropertyTerm::getTermValue($term->id,$property->id,$this->id);
-                 
-                if($term_value <= $date){
-                    //we can now post this bill.
-                    $bill = new OccupancyRent();
-                    $bill->fk_occupancy_id = $this->id;
-                    $bill->fk_source = Source::getMonthlyRentID();
-                    $bill->month = $month;
-                    $bill->year = $year;
-                    $bill->amount = PropertyTerm::getTermValue(Term::getRentTermID(),$this->fk_property_id,$this->id);
-                    $bill->_status = 1; //pending
-                    if($bill->save(false)){
-                        return true;
-                    }
-                }
-              }
+        if(($source = Source::findOne(['source_name' => 'Rent'])) !== null) {
+            return $this->generateBill($term, $source->id, ['month'=>$month,'year'=>$year]);
         }
-        return true;
     }
     
     public function LandlordDisbursement($term){
         return true;
     }
     public function RentDeposit($term){
-        return true;
+        if(($source = Source::findOne(['source_name' => 'Rent Deposit'])) !== null) {
+            return $this->generateBill($term, $source->id);
+        }
     }
     public function WaterDeposit($term){
-        return true;
+        if(($source = Source::findOne(['source_name' => 'Water Deposit'])) !== null) {
+            return $this->generateBill($term, $source->id);
+        }
     }
     public function ElectricityDeposit($term){
-        return true;
+        if(($source = Source::findOne(['source_name' => 'Electricity Deposit'])) !== null) {
+            return $this->generateBill($term, $source->id);
+        }
     }
     public function WaterBills($term){
-        return true;
+         $month = date('m');
+        $year = date('Y');
+        $date = date('d');
+        if(($source = Source::findOne(['source_name' => 'Water Bill'])) !== null) {
+            return $this->generateBill($term, $source->id, ['month'=>$month,'year'=>$year]);
+        }
     }
     public function ElectricityBills($term){
-        return true;
+         $month = date('m');
+        $year = date('Y');
+        $date = date('d');
+        if(($source = Source::findOne(['source_name' => 'Electricity Bill'])) !== null) {
+            return $this->generateBill($term, $source->id, ['month'=>$month,'year'=>$year]);
+        }
     }
     public function PenatlyDate($term){
         return true;
@@ -269,5 +324,92 @@ class Occupancy extends \yii\db\ActiveRecord
     public function AgentCommission($term){
         return true;
     }
-
+    
+    private function generateBill($term,$source_id, $conditions = null)
+    {
+       
+        if(($bill = OccupancyRent::findOne(is_array($conditions) ? array_merge($conditions, ['fk_occupancy_id' => $this->id, 'fk_source'=>$source_id]) : ['fk_occupancy_id' => $this->id, 'fk_source'=>$source_id])) === null) {
+            if($this->checkIfTermIsActive($term->id)) {
+                return $this->billTerm($term->id, $source_id, true);
+            }
+        }
+    }
+    
+    private function checkIfTermIsActive($term_id)
+    {
+        if(($term = PropertyTerm::findOne(['fk_property_id' => $this->fk_property_id, 'fk_term_id'=>$term_id, '_status' => 1])) !== null) {
+            if(isset($term->frequency)) {
+                switch ($term->frequency)
+                {
+                    case 'yearly':
+                        $start = $this->GetBillStartTime();
+                        $today = new \DateTime();
+                        $interval = $today->diff($start);
+                        $start->modify('+ '. $interval->y . ' years');
+                        return $start > $today;
+                    case 'monthly':
+                    case 'once':
+                    default:
+                        return true;
+                }
+            }
+            else {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private function GetBillStartTime()
+    {
+        if(isset($this->fkOccupancyTerm->date_signed)){
+            return new \DateTime($this->fkOccupanyTerm->date_signed);
+        }elseif(isset($this->start_date)){
+            return new \DateTime($this->start_date);
+        }else {
+            
+        }
+    }
+    
+    private function billTerm($term_id, $source, $new_bill)
+    {
+        if($new_bill) {
+            $model = new OccupancyRent();
+            $model->fk_source = $source;
+            $model->fk_occupancy_id = $this->id;
+            $model->month = date('m');
+            $model->year = date('Y');
+            $model->fk_term = $term_id;
+            $model->amount = $this->getBillAmount($term_id);
+            $model->_status = 1;
+            return ($model->save()) ? 99 : false;
+        }
+    }
+    private function getBillAmount($term_id)
+    {
+        if(($propertyTerm = PropertyTerm::findOne(['fk_property_id' => $this->fk_property_id, 'fk_term_id'=>$term_id, '_status' => 1])) !== null) {
+            if(($occupancyTerm = OccupancyTerm::findOne(['fk_occupancy_id' => $this->id, 'fk_property_term_id' => $propertyTerm->id])) !== null) {
+                return $occupancyTerm->value;
+            }else
+            {
+                return $propertyTerm->term_value;
+            }
+        }else
+        {
+            return 0;
+        }
+    }
+    
+    public function generateStatement($start = false, $end = false)
+    {
+        $start_date = isset($start) ? new \DateTime($start) : new \DateTime('2000-01-01');
+        $end_date = isset($end) ? new \DateTime($end) : new \DateTime();
+        $payments = Occupancy::find()
+            ->where(['fk_occupancy' => $this->id, 'status' => 1])
+            ->andWhere(['between','payment_date', [$start_date->format('Y-m-d'), $end_date->format('Y-m-d')]])
+            ->all();
+        $bills = OccupancyRent::find()
+            ->where(['fk_occupancy' => $this->id]);
+        
+    }
 }

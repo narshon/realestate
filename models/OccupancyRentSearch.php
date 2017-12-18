@@ -21,7 +21,7 @@ class OccupancyRentSearch extends OccupancyRent
         return [
             [['id', 'fk_occupancy_id', 'fk_source', 'month', 'year', '_status', 'created_by', 'modified_by'], 'integer'],
             [['date_created', 'date_modified', 'fkOccupancy'], 'safe'],
-            [['balance_due','pay_rent_due','amount'], 'number'],
+            [['amount'], 'number'],
         ];
     }
 
@@ -78,9 +78,7 @@ class OccupancyRentSearch extends OccupancyRent
             'fk_occupancy_id' => $this->fk_occupancy_id,
             'month' => $this->month,
             'year' => $this->year,
-            'pay_rent_due' => $this->pay_rent_due,
             'fk_source' => $this->fk_source,
-            'balance_due' => $this->balance_due,
             '_status' => $this->_status,
             'date_created' => $this->date_created,
             'created_by' => $this->created_by,

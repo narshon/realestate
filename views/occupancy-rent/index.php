@@ -16,21 +16,20 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="occupancy-rent-index">
 
     <p>
-       <?php 
-                      $dh = new DataHelper();
-                      $url = Url::to(['occupancy-rent/receivepay','occupancy_id'=>$occupancy->id]);
-                      echo $dh->getModalButton(new \app\models\OccupancyRent, 'occupancy-rent/receivepay', 'Receive Payment', 'btn btn-danger btn-create','Receive Payment',$url);
-        ?>
+       <?= Html::button('<i class="glyphicon glyphicon-ok">  Recieve Payment</i>', [
+                            'type'=>'button',
+                            'title'=>'Receiving Payment', 
+                            'class'=>'btn btn-danger btn-create showModalButton specmargin', 
+                            'value' => yii\helpers\Url::to(['occupancy-payments/create', 'id' => $occupancy->id])])?>
     </p>
             <?php // Pjax::begin(['id'=>'pjax-occupancy-rent',]); ?> 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            //'fk_occupancy_id',
+            [
+                'class' => 'yii\grid\SerialColumn'
+            ],
             [
                 'attribute'=>'fk_source',
                 'value'=>function($data){
@@ -40,27 +39,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'month',
             'year',
             'amount',
-            'amount_paid',
            /* [
                 'attribute'=>'pay_rent_due',
                 'value'=>function($data){
                     return $data->getPayDue();
                 }
             ],  */
-            [
-                'attribute'=>'balance_due',
-                'value'=>function($data){
-                    return $data->getBalanceDue();
-                }
-            ],
             'date_created',
-            [
-                'attribute'=>'_status',
-                'format'=>'raw',
-                'value'=>function($data){
-                    return $data->getStatus();
-                }
-            ],
              
             // 'created_by',
             // 'date_modified',

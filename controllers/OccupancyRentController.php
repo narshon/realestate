@@ -34,11 +34,14 @@ class OccupancyRentController extends Controller
     
     public function actionPrintreceipt($id){
         $model = $this->findModel($id);
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        $receipt = $this->renderAjax('receipt', ['model' => $model],false,false);
-        return array(
-            'div'=>$receipt,
-            );
+        $query = OccupancyRent::find()->where(['id'=>$model->id]);
+        $dataProvider = new ActiveDataProvider(['query' => $query]);
+        if(Yii::$app->request->isAjax){
+            return $this->renderAjax('receipt',[
+                'model' => $model,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
     }
     public function actionReceivepay($occupancy_id = ''){
         $model = new OccupancyRent();
@@ -115,35 +118,25 @@ class OccupancyRentController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate($occupancy_id='')
+    public function actionCreate($occupancy_id)
     {
-        $model = new OccupancyRent();
-        $dh = new DataHelper;
-        $keyword = 'occupancy-rent';
-        if($occupancy_id != ''){
-            $model->fk_occupancy_id = $occupancy_id;
-        }
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            //return $this->redirect(['view', 'id' => $model->id]);
-            if (Yii::$app->request->isAjax)
-            {
-               return $dh->processResponse($this, $model, 'update', 'success', 'Successfully Saved!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);
-               exit;               
-            }
-            
-        } else {
-            if (Yii::$app->request->isAjax)
-            {
-                return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-0');
-               exit; 
-                     
-            }
-            else{
+        if(($occupancy = \app\models\Occupancy::findOne($occupancy_id)) !== null) {
+            $model = new OccupancyRent();
+            $model->fk_occupancy_id = $occupancy->id;
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                //Set Flash Message..
+                return $this->redirect(Yii::$app->request->referrer);
+            } elseif(\yii::$app->request->isAjax) {
+                return $this->renderAjax('create',[
+                    'model' => $model,
+                ]);
+            } else {
                 return $this->render('create', [
                     'model' => $model,
                 ]);
             }
+        } else {
+            throw new NotFoundHttpException('Invalid Occupancy Record');
         }
     }
 

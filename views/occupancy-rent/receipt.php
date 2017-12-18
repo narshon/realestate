@@ -1,85 +1,75 @@
 <?php
-
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\models\OccupancyRentSearch;
 use yii\data\ActiveDataProvider;
 use kartik\grid\GridView;
-
-/* @var $this yii\web\View */
-/* @var $model app\models\OccupancyRent */
-
 ?>
-<a href="#" class="pull-right"  onclick="print($('#occupancy-rent-receipt'));">Print</a>
-<div id="occupancy-rent-receipt" class="occupancy-rent-receipt">
-    
-    <h3 style="text-align: center"><strong><?= Html::encode(Yii::$app->user->identity->fkManagement->management_name) ?></strong></h3>
-    <h3 style="text-align: center; width:100%"> Tenant Receipt </h3>
-<?php
-$pay_account = $model->getPayAccount();
-$occupancy_id = $model->fk_occupancy_id;
-$house_no = $model->fkOccupancy->fkProperty->id;
-$unit_name = $model->fkOccupancy->fkSublet->sublet_name;
-?>
-    <span>
-       Account: <?= $pay_account ?> &nbsp;&nbsp;&nbsp; Occupancy ID: <?= $occupancy_id ?> &nbsp;&nbsp;&nbsp; Hse No: <?= $house_no ?> &nbsp;&nbsp;&nbsp; Unit: <?= $unit_name ?>
-    </span>
-    <?php
-      $searchModel = new OccupancyRentSearch();
-      $query = app\models\OccupancyRent::find()->where(['id'=>$model->id]);
-      $dataProvider = new ActiveDataProvider(['query' => $query]);
-    ?>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        //'filterModel' => $searchModel,
-        'layout' => '{items}{pager}',
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'date_paid',
-            [
-                'attribute'=>'fk_source',
-                'header' =>"Item",
-                'value'=>function($data){
-                    return isset($data->fkSource)?$data->fkSource->source_name:'';
-                }
-            ],
-            [
-                'attribute'=>'month',
-                'header' =>"Period",
-                'value'=>function($data){
-                    return $data->month."/".$data->year;
-                }
-            ],
-            [
-                'attribute'=>'amount',
-                'header' =>"Amount Due",
-                'value'=>function($data){
-                    return $data->amount;
-                }
-            ],
-            [
-                'attribute'=>'amount_paid',
-                'header' =>"Paid",
-                'value'=>function($data){
-                    return $data->amount_paid;
-                }
-            ],
-          ],
-       ]); ?>
-    <small>Thank you for making payments with us.</small>
+<div class="print-area">
+   <div class="col-md-12">
+       <div class="col-md-12">
+            <h3 style="text-align: center">
+                <strong><?= Html::encode(Yii::$app->user->identity->fkManagement->management_name) ?></strong>
+            </h3>
+            <h3 style="text-align: center; width:100%"> Tenant Receipt </h3>
+       </div>
+       <div class="row">
+           <div class="col-md-3">
+               <label>Account:</label>
+           </div>
+           <div class="col-md-3">
+               <label>House No:</label>
+           </div>
+           <div class="col-md-3">
+               <label>Unit:</label>
+           </div>
+           <div class="col-md-3">
+               <label>Occupant</label>
+           </div>
+       </div>
+       <div class="row">
+            <?= GridView::widget([
+                'dataProvider' => $dataProvider,
+                'layout' => '{items}{pager}',
+                'columns' => [
+                    ['class' => 'yii\grid\SerialColumn'],
+                    'date_paid',
+                    [
+                        'attribute'=>'fk_source',
+                        'header' =>"Item",
+                        'value'=>function($data){
+                            return isset($data->fkSource)?$data->fkSource->source_name:'';
+                        }
+                    ],
+                    [
+                        'attribute'=>'month',
+                        'header' =>"Period",
+                        'value'=>function($data){
+                            return $data->month."/".$data->year;
+                        }
+                    ],
+                    [
+                        'attribute'=>'amount',
+                        'header' =>"Amount Due",
+                        'value'=>function($data){
+                            return $data->amount;
+                        }
+                    ],
+                    [
+                        'attribute'=>'amount_paid',
+                        'header' =>"Paid",
+                        'value'=>function($data){
+                            return $data->amount_paid;
+                        }
+                    ],
+                ]
+            ]); ?>
+       </div>
+       <div class="row">
+           <small>Printed on: <?=date('Y-m-d h:s')?> Thank you for making payments with us.</small>  
+       </div>
+    </div> 
 </div>
-<script type="text/javascript">
-function print(selector) {
-    var $print = $(selector)
-        .clone()
-        .addClass('print')
-        .prependTo('body');
-
-    //window.print() stops JS execution
-    window.print();
-
-    //Remove div once printed
-    $print.remove();
-}
-</script>
+<div class="no-print">
+    <button class ="print-modal">Print</button>
+</div>

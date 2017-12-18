@@ -5,6 +5,7 @@ use yii\grid\GridView;
 use app\models\OccupancyTerm;
 use app\utilities\DataHelper;
 use yii\widgets\Pjax;
+use yii\bootstrap\ButtonDropdown;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -25,9 +26,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
+            [
+                'class' => 'yii\grid\SerialColumn'
+            ],
             [
               'header'=>'Term',
                'filter'=>true,
@@ -38,10 +39,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'date_signed',
             'value',
             '_status',
-            // 'date_modified',
-            // 'created_by',
-            // 'modified_by',
-
             ['class' => 'yii\grid\ActionColumn',
                      'template' => '{view} {update}',
                      'buttons' => [

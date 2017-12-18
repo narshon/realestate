@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
 
-                    'id',
+                    //'id',
                     [
                         'attribute' => 'fk_property_id',
                         'format' => 'raw',
@@ -78,10 +78,13 @@ $this->params['breadcrumbs'][] = $this->title;
                         'attribute' => 'rent',
                         'header' => "Rent Bills",
                         'format' => 'raw',
-                        'value' => function ($data) {
-                              $dh = new DataHelper();
-                              $url = Url::to(['occupancy-rent/create','occupancy_id'=>$data->id]);
-                              return $dh->getModalButton($data, "occupancy-rent/create", "Occupancy", 'btn btn-default','Add Bill',$url);
+                        'value' => function($data) {
+                            return Html::button('<i class="glyphicon glyphicon-plus">  Add Bill</i>', [
+                                            'type'=>'button',
+                                            'title'=>'Add Bill', 
+                                            'class'=>'btn btn-default showModalButton', 
+                                            'value' => yii\helpers\Url::to(['occupancy-rent/create','occupancy_id'=>$data->id])]
+                                    );
                         },
                     ],
                     [

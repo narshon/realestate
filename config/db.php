@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=real_estate2',
+    'dsn' => 'mysql:host=localhost;dbname=rentkeny_realestate',
     'username' => 'root',
-    'password' => 'pass',
+    'password' => 'Ict@Dev17**',
 	'tablePrefix' => 're_',
     'charset' => 'utf8',
 ];

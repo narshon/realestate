@@ -19,8 +19,10 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
+        'css/printform.css'
     ];
     public $js = [
+        'js/ajax-modal-popup.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

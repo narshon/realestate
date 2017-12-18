@@ -41,7 +41,7 @@ class OccupancyTerm extends \yii\db\ActiveRecord
         return [
             [['fk_occupancy_id', 'fk_property_term_id', '_status','term_date','value'], 'required'],
             [['fk_occupancy_id', 'fk_property_term_id', '_status', 'created_by', 'modified_by'], 'integer'],
-            [['date_signed', 'date_created', 'date_modified','value'], 'safe'],
+            [['date_signed', 'date_created', 'date_modified','value', 'frequency'], 'safe'],
             [['fk_property_term_id'], 'exist', 'skipOnError' => true, 'targetClass' => PropertyTerm::className(), 'targetAttribute' => ['fk_property_term_id' => 'id']],
             [['fk_occupancy_id'], 'exist', 'skipOnError' => true, 'targetClass' => Occupancy::className(), 'targetAttribute' => ['fk_occupancy_id' => 'id']],
         ];
@@ -62,6 +62,7 @@ class OccupancyTerm extends \yii\db\ActiveRecord
             'date_modified' => 'Date Modified',
             'created_by' => 'Created By',
             'modified_by' => 'Modified By',
+            'frequency' => 'Bill Frequency',
         ];
     }
 
