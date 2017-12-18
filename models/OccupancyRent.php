@@ -139,7 +139,7 @@ class OccupancyRent extends \yii\db\ActiveRecord
         $accountmap = AccountMap::findAll(['fk_term' => $this->fk_term]);
         if(is_array($accountmap)) {
             foreach($accountmap as $account) {
-                AccountEntries::postTransaction($account->fk_account_chart, $account->trasaction_type, $this->amount, $this->date_created);
+                AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->date_created);
             }
         }
     }
