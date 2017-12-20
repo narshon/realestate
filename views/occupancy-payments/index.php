@@ -11,12 +11,12 @@ $this->title = 'Occupancy Payments';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="occupancy-payments-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a('Create Occupancy Payments', ['create'], ['class' => 'btn btn-success']) ?>
+<p>
+       <?= Html::button('<i class="glyphicon glyphicon-ok">  Recieve Payment</i>', [
+                            'type'=>'button',
+                            'title'=>'Receiving Payment', 
+                            'class'=>'btn btn-danger btn-create showModalButton specmargin', 
+                            'value' => yii\helpers\Url::to(['occupancy-payments/create', 'id' => $occupancy->id])])?>
     </p>
 <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -24,18 +24,47 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'fk_occupancy_id',
+            //'id',
+            //'fk_occupancy_id',
             'amount',
             'payment_date',
-            'fk_receipt_id',
-            // 'payment_method',
-            // 'ref_no',
-            // 'status',
-            // 'created_by',
-            // 'created_on',
+            
+            [
+                'attribute' => 'payment_method',
+                'value' => function($data) {
+                $list = \app\models\Lookup::getLookupValues('Payment Method');
+                    return array_key_exists($data->payment_method, $list) ? $list[$data->payment_method] : $data->payment_method;
+                }
+            ],
+            [
+                'attribute' => 'status',
+                'value' => function($data) {
+                $list = \app\models\Lookup::getLookupValues('Payment Status');
+                    return array_key_exists($data->status, $list) ? $list[$data->status] : $data->status;
+                }
+            ],
+            'ref_no',
+            [
+                'attribute' => 'created_by',
+                'value' => function($data) {
+                
+                    return implode(' - ', \app\models\Users::getDetail(['id','username'],$data->created_by ));
+                }
+            ],
+            'created_on',
             // 'modified_by',
             // 'modified_on',
+            [
+                'attribute' => 'fk_receipt_id',
+                'format'=> 'raw',
+                'value' => function ($data) {
+                    return Html::button('<i class="glyphicon glyphicon-print"> _print</i>', [
+                            'type'=>'button',
+                            'title'=>'Print Receipt', 
+                            'class'=>'btn  showModalButton', 
+                            'value' => yii\helpers\Url::to(['occupancy-payments/print-receipt', 'id' => $data->id])]);
+                }
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

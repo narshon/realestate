@@ -15,13 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="occupancy-rent-index">
 
-    <p>
-       <?= Html::button('<i class="glyphicon glyphicon-ok">  Recieve Payment</i>', [
-                            'type'=>'button',
-                            'title'=>'Receiving Payment', 
-                            'class'=>'btn btn-danger btn-create showModalButton specmargin', 
-                            'value' => yii\helpers\Url::to(['occupancy-payments/create', 'id' => $occupancy->id])])?>
-    </p>
+    
             <?php // Pjax::begin(['id'=>'pjax-occupancy-rent',]); ?> 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

@@ -350,4 +350,46 @@ class SysUsersController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionStatement()
+    {
+        $data = [];
+        if(\yii::$app->request->isPost) {
+            if(($id = \yii::$app->request->post('id'))) {
+                $model = \app\models\Occupancy::findOne($id);
+                $payments = \app\models\OccupancyPayments::findAll(['fk_occupancy_id' => $id, 'status' => 1]);
+                $bills = \app\models\OccupancyRent::findAll(['fk_occupancy_id' => $id, '_status' => 1]);
+                $data = array_merge($this->normalizeData($payments, 'payments'), $this->normalizeData($bills, 'bills'));
+                if(\Yii::$app->request->isAjax) {
+                    return \yii\helpers\Json::encode($this->renderAjax('statement', [
+                        'model'=> $model,
+                        'data'=>$data
+                    ]));
+                }else{
+                    return $this->render('statment', [
+                        'model' => $model, 
+                        'data'=> $data,
+                    ]);
+                }              
+            }
+        }
+    }
+    private function normalizeData($data, $type)
+    {
+        switch($type)
+        {
+            case 'payments':
+                $ret = [];
+                foreach($data as $item) {
+                    $ret[] = ['date' => $item->payment_date, 'category' => 'credit', 'amount' => $item->amount, 'description' => $item->ref_no];
+                }
+                return $ret;
+            case 'bills':
+                $ret = [];
+                foreach($data as $item) {
+                    $ret[] = ['date' => $item->date_created, 'category' => 'debit', 'amount' => $item->amount, 'description' => $item->fkTerm->term_name];
+                }
+                return $ret;
+        }
+    }
 }

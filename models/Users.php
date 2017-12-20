@@ -45,6 +45,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     public $authKey;
     public $fk_sublet_id;
 	public $confirmpass;
+    public $selected_property;
     /**
      * @inheritdoc
      */
@@ -428,4 +429,26 @@ public static function getUsersOptions(){
         
         return $return;
     }
+    public function getAllOccupanciesList($active_only = false)
+    {
+        $list = [];
+        $occupancies = Occupancy::findAll($active_only ? ['fk_user_id' => $this->id, '_status' => 1] : ['fk_user_id' => $this->id]);
+        if(is_array($occupancies)) {
+            foreach ($occupancies as $occupancy) {
+                $list[$occupancy->id] = $occupancy->fkProperty->property_name . ' - ' . $occupancy->fkSublet->sublet_name;
+            }
+        }
+        return $list;
+    }
+    public static function getDetail(array $details, $id)
+    {
+        $data = [];
+        if(($model = Users::findOne($id)) !== null) {
+            foreach ($details as $item) {
+                $data[] = $model->$item;
+            }
+        }
+        return $data;
+    }
 }
+

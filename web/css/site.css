@@ -228,3 +228,35 @@ border-radius: 6px !important;
 #calculate-tenant-dues{
     margin-right: 20px;
 }
+.loading-content {
+    background-image: url('../images/radio.gif');
+    background-position:center;
+    background-repeat: no-repeat;
+    z-index: 15000;
+    cursor: wait;
+    opacity: 0.6;
+}
+@media screen {
+  #printSection {
+      display: none;
+  }
+}
+
+@media print {
+  body * {
+    visibility:hidden;
+  }
+  #printSection, #printSection * {
+    visibility:visible;
+  }
+  #printSection {
+    position:absolute;
+    left:0;
+    top:0;
+    box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
+    padding:2mm;
+    margin: 0 auto;
+    width: 44mm;
+    background: #FFF;
+  }
+}

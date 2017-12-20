@@ -9,6 +9,8 @@ use app\models\OccupancyIssueSearch;
 use app\models\OccupancyRentSearch;
 use app\models\OccupancyTermSearch;
 use app\models\OccupancySearch;
+use kartik\tabs\TabsX;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Occupancy */
@@ -27,29 +29,39 @@ $this->params['breadcrumbs'][] = $this->title;
     ?>
 </div>
 <div class="col-md-12">
-    <div class="col-md-6">
-        <h3>Occupancy Bills </h3>
-        <?php
-            $searchModel = new OccupancyRentSearch();
-            $searchModel->fk_occupancy_id = $model->id;
-            $dataProvider =  $searchModel->search(Yii::$app->request->get());                               //new ActiveDataProvider(['query' => OccupancyRent::getSearchQuery($searchModel,$tenant->id)]);
-            echo Yii::$app->controller->renderPartial("../occupancy-rent/index", [
-           'dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'occupancy'=>$model 
-           ]);  
-        ?>
-    </div>
+    <?= TabsX::widget([
+        'containerOptions'=>[
+             'class'=>'row',
+        ],
+        'position'=> TabsX::POS_ABOVE,
+        'align'=> TabsX::ALIGN_LEFT,
+        'bordered' => true,
+        'pluginOptions'=>[
+            'enableCache'=>false,
+        ],
+        'height' => '600px',
+        //'enableStickyTabs'=> false,
+        //'ajaxSettings'=>[],
+        'pluginEvents'=>[],
+        'items'=> [
+            [
+                'label' => 'Occupancy Bills',
+                'active' => true,
+                'linkOptions' => ['id'=>'bills'.rand(1, 1984),'data-url'=>Url::to(['occupancy-rent/occupancy-bills', 'id'=>$model->id])],
+                'data-loading-class' => 'loading-content'
+            ],
+            [
+                'label' => 'Occupancy Payments',
+                'linkOptions' => ['id'=>'payments'.rand(1, 1984),'data-url'=>Url::to(['occupancy-payments/occupancy-payments', 'id'=>$model->id])],
+                'data-loading-class' => 'loading-content'
+            ],
+            [
+                'label' => 'Occupancy Terms',
+                'linkOptions' => ['id'=>'terms'.rand(1, 1984),'data-url'=>Url::to(['occupancy-term/occupancy-terms', 'id'=>$model->id])],
+                'data-loading-class' => 'loading-content'
+            ],
+        ],
+    ]);?>
     
-    <div class="col-md-6">
-        <h3>Occupancy Terms </h3>
-       <?php
-            
-            $searchModel = new OccupancyTermSearch();
-            $searchModel->fk_occupancy_id = $model->id;
-            $dataProvider = $searchModel->search(Yii::$app->request->get());
-            echo Yii::$app->controller->renderPartial("../occupancy-term/index", [
-            'dataProvider' => $dataProvider, 'searchModel' => $searchModel,
-            ]);    
-        ?>
-    </div>
 </div>
 

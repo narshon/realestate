@@ -30,6 +30,7 @@ class ComposerStaticInit52fd550b57c003b7aba13455120e97ea
             'kartik\\typeahead\\' => 17,
             'kartik\\touchspin\\' => 17,
             'kartik\\time\\' => 12,
+            'kartik\\tabs\\' => 12,
             'kartik\\switchinput\\' => 19,
             'kartik\\spinner\\' => 15,
             'kartik\\sortable\\' => 16,
@@ -37,6 +38,7 @@ class ComposerStaticInit52fd550b57c003b7aba13455120e97ea
             'kartik\\select2\\' => 15,
             'kartik\\rating\\' => 14,
             'kartik\\range\\' => 13,
+            'kartik\\plugins\\tabs\\' => 20,
             'kartik\\plugins\\fileinput\\' => 25,
             'kartik\\plugins\\depdrop\\' => 23,
             'kartik\\mpdf\\' => 12,
@@ -120,6 +122,10 @@ class ComposerStaticInit52fd550b57c003b7aba13455120e97ea
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-timepicker',
         ),
+        'kartik\\tabs\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/yii2-tabs-x',
+        ),
         'kartik\\switchinput\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-switchinput',
@@ -147,6 +153,10 @@ class ComposerStaticInit52fd550b57c003b7aba13455120e97ea
         'kartik\\range\\' => 
         array (
             0 => __DIR__ . '/..' . '/kartik-v/yii2-widget-rangeinput',
+        ),
+        'kartik\\plugins\\tabs\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/kartik-v/bootstrap-tabs-x',
         ),
         'kartik\\plugins\\fileinput\\' => 
         array (

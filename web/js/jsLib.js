@@ -366,4 +366,49 @@ function redirectTo(url){
     window.location.replace(url);
 }
 
+$('body').on('click', '.print-modal', function(){
+    printSection($('#print_area'));
+    window.print();
+});
+
+$('body').on('change', '#users-selected_property', function(){
+    var selected = $('#users-selected_property').val();
+    if(selected !== '') {
+        generatestatement(selected);
+    }
+});
+
+function generatestatement(id)
+{
+    $.ajax({
+        url: 'statement',
+        type: 'post',
+        data: {id:id},
+        beforeSend: function(){
+            $('.container-loader').addClass('container-loader');
+            $('.statement').html('');
+        },
+        complete: function(){
+            $('.container-loader').removeClass('container-loader');
+        },
+        success:function(data){
+            $('.statement').html(data);
+        }
+    });
+}
+
+function printSection(elem)
+{
+    var domClone = elem.cloneNode(true);
+    var printSection = document.createElement('div');
+    printSection.id = 'printSection';
+    document.body.appendChild(printSection);
+    printSection.innerHTML = '';
+    printSection.appendChild(domClone);
+    alert('mimi')
+    
+}
+
+
+
 

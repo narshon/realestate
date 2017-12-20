@@ -75,9 +75,9 @@ class OccupancyRentController extends Controller
      * Lists all OccupancyRent models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($id = null)
     {
-	$searchModel = new OccupancyRentSearch();
+        $searchModel = new OccupancyRentSearch();
       //  $dataProvider = $searchModel->search(Yii::$app->request->get());
         $dataProvider = new ActiveDataProvider(['query' => OccupancyRent::getSearchQuery($searchModel,15)]);
 
@@ -87,6 +87,20 @@ class OccupancyRentController extends Controller
         ]);
 		
         
+    }
+    
+    public function actionOccupancyBills($id)
+    {
+        $model = \app\models\Occupancy::findOne($id);
+        $searchModel = new OccupancyRentSearch();
+        $searchModel->fk_occupancy_id = $model->id;
+        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        
+        return \yii\helpers\Json::encode($this->renderAjax('index', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'occupancy' => $model
+            ]));
     }
 
     /**

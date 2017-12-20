@@ -45,6 +45,19 @@ class OccupancyTermController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+    
+    public function actionOccupancyTerms($id)
+    {
+        $model = \app\models\Occupancy::findOne($id);
+        $searchModel = new \app\models\OccupancyTermSearch();
+        $searchModel->fk_occupancy_id = $model->id;
+        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        
+        return \yii\helpers\Json::encode($this->renderAjax('index', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+            ]));
+    }
 
     /**
      * Displays a single OccupancyTerm model.

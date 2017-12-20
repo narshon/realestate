@@ -318,4 +318,13 @@ return array (
       '@kartik/date' => $vendorDir . '/kartik-v/yii2-widget-datepicker',
     ),
   ),
+  'kartik-v/yii2-tabs-x' => 
+  array (
+    'name' => 'kartik-v/yii2-tabs-x',
+    'version' => '1.2.4.0',
+    'alias' => 
+    array (
+      '@kartik/tabs' => $vendorDir . '/kartik-v/yii2-tabs-x',
+    ),
+  ),
 );

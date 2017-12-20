@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\widgets\ActiveForm;
 use app\models\OccupancyIssueSearch;
 use app\utilities\DataHelper;
 use yii\helpers\Url;
@@ -95,7 +96,26 @@ $this->registerCss("
                   'tenant'=>$model
               ]); ?>
         </div>
-	  <div class="tab-pane " id="tenantstatement" role="tabpanel"></div>
+        <div class="tab-pane " id="tenantstatement" role="tabpanel">
+            <div class="col-md-12">
+                <?php $form = ActiveForm::begin(); ?>
+                <div class="col-md-3"></div>
+                <div class="col-md-4">
+                  <?= $form->field($model, 'selected_property')->dropdownList(
+                        $model->getAllOccupanciesList(),
+                        ['prompt'=>'--select occupancy--']); 
+                  ?>
+                </div>
+                <div class="col-md-3"></div>
+                <?php ActiveForm::end(); ?>
+            </div>
+            <div class="col-md-12 print-statement">
+                <div class="container-loader"></div>
+                <div class="statement"></div>
+            </div>
+
+        </div>
+      
 	  </div>
 	  </div>
 </div>

@@ -56,14 +56,14 @@ class OccupancyPayments extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'fk_occupancy_id' => 'Fk Occupancy ID',
+            'fk_occupancy_id' => 'Occupancy',
             'amount' => 'Amount',
             'payment_date' => 'Payment Date',
-            'fk_receipt_id' => 'Fk Receipt ID',
+            'fk_receipt_id' => 'Receipt',
             'payment_method' => 'Payment Method',
             'ref_no' => 'Ref No',
             'status' => 'Status',
-            'created_by' => 'Created By',
+            'created_by' => 'Received By',
             'created_on' => 'Created On',
             'modified_by' => 'Modified By',
             'modified_on' => 'Modified On',
@@ -86,7 +86,8 @@ class OccupancyPayments extends \yii\db\ActiveRecord
         return $this->hasOne(Receipt::className(), ['id' => 'fk_receipt_id']);
     }
     public function beforeValidate() {
-        if(($recept_no = $this->generateReceipt()) !== null) {
+        $class = \yii\helpers\StringHelper::basename(get_class($this));
+        if(($recept_no = $this->generateReceipt()) !== null && $class == 'OccupancyPayments' && $this->isNewRecord ) {
                 $this->fk_receipt_id = $recept_no;
                 return parent::beforeValidate();
         } else {

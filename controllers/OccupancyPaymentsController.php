@@ -8,6 +8,7 @@ use app\models\OccupancyPaymentsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\data\ActiveDataProvider;
 
 /**
  * OccupancyPaymentsController implements the CRUD actions for OccupancyPayments model.
@@ -147,5 +148,36 @@ class OccupancyPaymentsController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+    public function actionPrintReceipt($id)
+    {
+        $model = $this->findModel($id);
+        $query = OccupancyPayments::find()->where(['id'=>$model->id]);
+        $dataProvider = new ActiveDataProvider(['query' => $query]);
+        if(Yii::$app->request->isAjax){
+            return $this->renderAjax('receipt',[
+                'model' => $model,
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
+            return $this->render('receipt', [
+                'model' => $model,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
+    }
+    
+     public function actionOccupancyPayments($id)
+    {
+        $model = \app\models\Occupancy::findOne($id);
+        $searchModel = new OccupancyPaymentsSearch();
+        $searchModel->fk_occupancy_id = $model->id;
+        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        
+        return \yii\helpers\Json::encode($this->renderAjax('index', [
+                'dataProvider' => $dataProvider,
+                'searchModel' => $searchModel,
+                'occupancy' => $model
+            ]));
     }
 }

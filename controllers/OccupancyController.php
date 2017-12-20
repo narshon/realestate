@@ -306,4 +306,5 @@ class OccupancyController extends Controller
         echo Json::encode(['output'=>'', 'selected'=>'']);
     
     }
+    
 }
