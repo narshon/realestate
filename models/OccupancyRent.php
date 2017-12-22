@@ -73,7 +73,8 @@ class OccupancyRent extends \yii\db\ActiveRecord
             'created_by' => 'Created By',
             'date_modified' => 'Date Modified',
             'modified_by' => 'Modified By',
-            'fk_source' => 'Source'
+            'fk_source' => 'Source',
+            'fk_term' => 'Property Term'
         ];
     }
 

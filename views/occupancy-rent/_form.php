@@ -60,6 +60,16 @@ use yii\helpers\Url;
         </div>
         <div class="col-md-4"></div>
     </div>
+    <div class="col-md-12">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <?= $form->field($model, 'fk_term')->dropdownList(
+ app\models\OccupancyTerm::getTermList($model->fk_occupancy_id),
+            ['prompt'=>'Please Select']
+        ); ?>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
 
     <div class="col-md-12">
         <div class="col-md-4"></div>
