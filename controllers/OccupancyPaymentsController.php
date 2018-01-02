@@ -75,7 +75,7 @@ class OccupancyPaymentsController extends Controller
                         'model' => $model,
                     ]);
                 }else{
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(Yii::$app->request->referrer);
                 }
             }elseif(\Yii::$app->request->isAjax) {
                 return $this->renderAjax('create', [

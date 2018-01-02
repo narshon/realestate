@@ -129,10 +129,16 @@ class OccupancyRent extends \yii\db\ActiveRecord
         return $return;
     }
     
-    public function beforeSave($insert=''){
+    public function beforeSave($insert='')
+    {
         \app\utilities\DataHelper::recordTimeStamp($this);
-        $this->updateAccounts();
         return parent::beforeSave($insert);
+    }
+    
+    public function afterSave($insert, $changedAttributes) 
+    {
+        $this->updateAccounts();
+        return parent::afterSave($insert, $changedAttributes);
     }
     
     public function updateAccounts()
