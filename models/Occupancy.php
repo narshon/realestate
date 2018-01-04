@@ -33,6 +33,9 @@ class Occupancy extends \yii\db\ActiveRecord
     public $phone;
     public $email;
     public $id_number;
+    public $name1;
+    public $name2;
+    public $name3;
     /**
      * @inheritdoc
      */
@@ -50,10 +53,10 @@ class Occupancy extends \yii\db\ActiveRecord
             [['fk_property_id', 'fk_sublet_id', 'fk_user_id', '_status'], 'required'],
             [['fk_property_id', 'fk_sublet_id', 'fk_user_id', '_status', 'created_by', 'modified_by'], 'integer'],
             [['start_date', 'end_date', 'date_created', 'date_modified'], 'safe'],
-            [['notes'], 'string'],
+            [['notes','name1','name2','name3','phone', 'email','id_number'], 'string'],
             [['fk_property_id'], 'exist', 'skipOnError' => true, 'targetClass' => Property::className(), 'targetAttribute' => ['fk_property_id' => 'id']],
             [['fk_sublet_id'], 'exist', 'skipOnError' => true, 'targetClass' => PropertySublet::className(), 'targetAttribute' => ['fk_sublet_id' => 'id']],
-            [['fk_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => SysUsers::className(), 'targetAttribute' => ['fk_user_id' => 'id']],
+            [['fk_user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['fk_user_id' => 'id']],
         ];
     }
 
@@ -411,5 +414,34 @@ class Occupancy extends \yii\db\ActiveRecord
         $bills = OccupancyRent::find()
             ->where(['fk_occupancy' => $this->id]);
         
+    }
+    
+    public function getFindTenantQueryString(){
+        $queryString = '';
+        
+        if($this->email != ''){
+            $queryString .= "email = '$this->email' OR ";
+        }
+        if($this->phone != ''){
+            $queryString .= "phone = '$this->phone' OR ";
+        }
+        if($this->id_number != ''){
+            $queryString .= "id_number= '$this->id_number' OR ";
+        }
+        if($this->name1 != ''){
+            $queryString .= "name1 LIKE '%$this->name1%' OR ";
+        }
+        if($this->name2 != ''){
+            $queryString .= "name2 LIKE '%$this->name2%' OR ";
+        }
+        if($this->name3 != ''){
+            $queryString .= "name3 LIKE '%$this->name3%'";
+        }
+        //check if the last chars is OR
+        $check = substr($queryString, -4);
+        if($check == ' OR '){
+            $queryString = substr($queryString, 0, -4);
+        }
+        return $queryString;
     }
 }

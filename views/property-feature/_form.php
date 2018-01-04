@@ -30,13 +30,13 @@ EOD;
         ]);  ?>
 
     <?php  // Usage with ActiveForm and model
-        echo $form->field($model, 'fk_sublet_id')->widget(Select2::classname(), [
+       /* echo $form->field($model, 'fk_sublet_id')->widget(Select2::classname(), [
             'data' => app\models\PropertySublet::find()->select(['sublet_name', 'id'])->indexBy('id')->column(),
             'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_fk_sublet_id'],
             'pluginOptions' => [
                 'allowClear' => true
             ],
-        ]);  ?>
+        ]);  */  ?>
 
     <?= $form->field($model, 'feature_narration')->textarea(['rows' => 6]) ?>
 

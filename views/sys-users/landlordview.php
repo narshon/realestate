@@ -43,7 +43,7 @@ $this->registerCss("
 	  <div class="leftbar col-md-2">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
 				<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#landlord" role="tab">Landlord Details</a></li>
-				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tenant" role="tab">Properties & Tenants</a></li>
+				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tenant" role="tab">Properties</a></li>
 				<!-- <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#issue" role="tab">Issues</a></li>  -->
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#imprest" role="tab">Imprest</a></li>
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#disbursement" role="tab">Disbursement</a></li>
@@ -105,8 +105,28 @@ $this->registerCss("
             'dataProvider' => $dataProvider, 'searchModel' => $searchModel,
         ]); */	  ?>
 	  </div>  -->
-	  <div class="tab-pane " id="imprest" role="tabpanel"></div>
-	  <div class="tab-pane " id="disbursement" role="tabpanel"></div>
+        <div class="tab-pane " id="imprest" role="tabpanel">
+            <?php
+                //show properties of this landlord.
+                $searchModel = new \app\models\LandlordImprestSearch();
+
+                $dataProvider = new ActiveDataProvider(['query' => \app\models\LandlordImprest::find()->where(['fk_landlord'=>$model->id])->orderBy("id DESC")]);
+                 echo Yii::$app->controller->renderPartial("../landlord-imprest/index", [
+                      'dataProvider' => $dataProvider, 'searchModel' => $searchModel
+                  ]); 
+             ?>
+        </div>
+          <div class="tab-pane " id="disbursement" role="tabpanel">
+              <?php
+                //show properties of this landlord.
+                $searchModel = new \app\models\DisbursementsSearch();
+
+                $dataProvider = new ActiveDataProvider(['query' => \app\models\Disbursements::find()->where(['fk_landlord'=>$model->id])->orderBy("id DESC")]);
+                 echo Yii::$app->controller->renderPartial("../disbursements/index", [
+                      'dataProvider' => $dataProvider, 'searchModel' => $searchModel
+                  ]); 
+             ?>
+          </div>
 	  </div>
 	  </div>
 </div>

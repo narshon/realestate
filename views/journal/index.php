@@ -108,7 +108,7 @@ $this->registerCss("
 				'filter'=>true,
                 'header'=>'Transaction Type',
                 'value'=>function ($data) {
-                            return $data->transactionType->source_name;
+                            return isset($data->transactionType->source_name)?$data->transactionType->source_name:'';
                         },
             ],
              [

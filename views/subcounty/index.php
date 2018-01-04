@@ -19,6 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
                      $dh = new DataHelper();
 					  $url=Url::to(['subcounty/create']);
                        echo $dh->getModalButton(new \app\models\LookupCategory, 'subcounty/create', 'Subcounties', 'btn btn-danger btn-create',"New",$url,"subcounty");
+                        echo $dh->getModalButton(new \app\models\Group, 'location/create', 'Locations', 'btn btn-danger btn-create',"New Location",$url,"Location");
            ?>
             </p>
             <?php Pjax::begin(['id'=>'pjax-subcounty',]); ?> 
