@@ -40,7 +40,7 @@ class PropertyTerm extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-			[['fk_property_id', 'fk_term_id','term_title'], 'required'],
+			[['fk_property_id', 'fk_term_id'], 'required'],
             [['fk_property_id', 'fk_term_id', '_status', 'created_by', 'modified_by'], 'integer'],
             [['term_narration','term_value'], 'string'],
             [['date_created', 'date_modified'], 'safe'],

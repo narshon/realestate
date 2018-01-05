@@ -65,6 +65,8 @@ $this->registerCss("
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#roles" role="tab">Agent Users</a></li>
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#terms" role="tab">Terms</a></li>
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#home" role="tab">Location</a></li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#lookup" role="tab">Lookup</a></li>
+                                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#features" role="tab">Features</a></li>
 			
 				
 				
@@ -200,6 +202,24 @@ $this->registerCss("
                   $searchModel = new TermSearch();
              $dataProvider = $searchModel->search(Yii::$app->request->get());
             echo Yii::$app->controller->renderPartial("../term/index", [
+            'dataProvider' => $dataProvider, 'searchModel' => $searchModel,
+        ]);  ?>
+            </div>
+            
+             <div class="tab-pane" id="lookup" role="tabpanel">
+                <?php
+                  $searchModel = new app\models\LookupCategorySearch();
+             $dataProvider = $searchModel->search(Yii::$app->request->get());
+            echo Yii::$app->controller->renderPartial("../lookup-category/index", [
+            'dataProvider' => $dataProvider, 'searchModel' => $searchModel,
+        ]);  ?>
+            </div>
+            
+             <div class="tab-pane" id="features" role="tabpanel">
+                <?php
+                  $searchModel = new app\models\FeatureSearch();
+             $dataProvider = $searchModel->search(Yii::$app->request->get());
+            echo Yii::$app->controller->renderPartial("../feature/index", [
             'dataProvider' => $dataProvider, 'searchModel' => $searchModel,
         ]);  ?>
             </div>

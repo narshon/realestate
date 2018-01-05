@@ -21,6 +21,9 @@ use kartik\depdrop\DepDrop;
 EOD;
         $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
 ?>
+    <?= $form->field($model, 'name1')->textInput() ?>
+    <?= $form->field($model, 'name2')->textInput() ?>
+    <?= $form->field($model, 'name3')->textInput() ?>
     <?= $form->field($model, 'phone')->textInput() ?>
     <?= $form->field($model, 'email')->textInput() ?>
     <?= $form->field($model, 'id_number')->textInput() ?>

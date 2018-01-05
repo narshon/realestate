@@ -4,6 +4,9 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use app\utilities\DataHelper;
 use yii\widgets\Pjax;
+use yii\helpers\Url;
+use app\models\Lookup;
+
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -16,10 +19,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-         <?php 
-                      $dh = new DataHelper();
-                       echo $dh->getModalButton(new \app\models\Lookup, 'lookup/create', 'Lookups', 'btn btn-danger btn-create');
-                ?>
+        <?php 
+			$dh = new DataHelper();
+			$url=Url::to(['lookup/create']);
+                       echo $dh->getModalButton(new Lookup, 'lookup/create', 'Lookups', 'btn btn-danger btn-create',"New",$url,"Lookup");
+                    ?>
+         
     </p>
      <?php Pjax::begin(['id'=>'pjax-lookup',]); ?> 
     <?= GridView::widget([

@@ -95,8 +95,17 @@ class WardController extends Controller
         } else {
             if (Yii::$app->request->isAjax)
             {
-                return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-0');
-               exit; 
+                Yii::$app->response->format = Response::FORMAT_JSON;
+               // return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-0');
+                
+                 $form = $this->renderAjax('create', ['model' => $model,'id'=>0],false,false);
+                return array(
+                    'status'=>1, 
+                    'message'=>"",
+                    'div'=>$form,
+                    'gridid'=>"ward-",
+                    'alert_div'=>"ward-alert"
+                    ); 
                      
             }
             else{

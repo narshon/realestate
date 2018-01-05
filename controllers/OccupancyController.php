@@ -131,9 +131,9 @@ class OccupancyController extends Controller
             Yii::$app->response->format = Response::FORMAT_JSON;
             //search tenant
             $searchModel = new \app\models\SysUsersSearch();
-            $dataProvider = new ActiveDataProvider(['query' => \app\models\Users::find()->where("email=:email OR phone=:phone OR id_number=:id_number",[':email' => $model->email, ':phone' => $model->phone, ':id_number' => $model->id_number])]);
+            $dataProvider = new ActiveDataProvider(['query' => \app\models\Users::find()->where($model->getFindTenantQueryString())]);
             //render tenant grid view
-            $grid = $this->renderAjax('findtenantgrid', ['dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'fk_sublet_id'=>$fk_sublet_id],false,false);
+            $grid = $this->renderAjax('findtenantgrid', ['dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'fk_sublet_id'=>$fk_sublet_id,'querystring'=>$model->getFindTenantQueryString()],false,false);
             
             return array('div'=>$grid);
         } else {

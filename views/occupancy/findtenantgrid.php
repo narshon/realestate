@@ -10,9 +10,12 @@ use yii\helpers\Url;
                 <?php 
                       $url = Url::to(['sys-users/setoccupanttenantform','fk_sublet_id'=>$fk_sublet_id,]);
                       echo Html::a("New Tenant","#",['onclick'=>"ajaxUniversalGetRequest('$url','modal_body_div','', 1)",'class'=>"btn btn-danger pull-right"]);
+                     // echo $querystring;
                 ?>
             </p>
-             <?php Pjax::begin(['id'=>'pjax-sys-users',]); ?> 
+             <?php Pjax::begin(['id'=>'pjax-sys-users',]); 
+             
+            // echo "Hapa", $querystring; ?> 
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,

@@ -69,6 +69,8 @@ $this->registerCss("
                     'email:email',
                     'phone',
 					'id_number',
+                   // 'occupation',
+                   // 'employer',
                     //'address:ntext',
                     // 'date_added',
                     // 'gender',

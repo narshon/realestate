@@ -41,7 +41,7 @@ class PropertyFeature extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-			[['fk_feature', 'fk_property_id', 'fk_sublet_id'], 'required'],
+	    [['fk_feature', 'fk_property_id'], 'required'],
             [['fk_feature', 'fk_property_id', 'fk_sublet_id', '_status', 'created_by', 'modified_by'], 'integer'],
             [['feature_narration', 'feature_video_url'], 'string'],
             [['date_created', 'date_modified'], 'safe'],

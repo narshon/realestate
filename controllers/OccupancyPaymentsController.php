@@ -75,7 +75,7 @@ class OccupancyPaymentsController extends Controller
                         'model' => $model,
                     ]);
                 }else{
-                    return $this->redirect(['view', 'id' => $model->id]);
+                    return $this->redirect(Yii::$app->request->referrer);
                 }
             }elseif(\Yii::$app->request->isAjax) {
                 return $this->renderAjax('create', [
@@ -172,7 +172,10 @@ class OccupancyPaymentsController extends Controller
         $model = \app\models\Occupancy::findOne($id);
         $searchModel = new OccupancyPaymentsSearch();
         $searchModel->fk_occupancy_id = $model->id;
-        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        // $dataProvider = $searchModel->search(Yii::$app->request->get());
+        
+        $query = OccupancyPayments::find()->where(['fk_occupancy_id'=>$model->id]);
+        $dataProvider = new ActiveDataProvider(['query' => $query]);
         
         return \yii\helpers\Json::encode($this->renderAjax('index', [
                 'dataProvider' => $dataProvider,
