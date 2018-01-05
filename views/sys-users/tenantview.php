@@ -80,6 +80,8 @@ $this->registerCss("
             'date_added',
             'gender',
             'residence',
+            'occupation',
+            'employer',
            
         ],
     ]) ?>

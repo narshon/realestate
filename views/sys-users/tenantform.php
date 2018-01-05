@@ -33,7 +33,8 @@ EOD;
     <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'id_number')->textInput(['maxlength' => true]) ?>
-
+    <?= $form->field($model, 'occupation')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'employer')->textInput(['maxlength' => true]) ?>
     <?= $form->field($model, 'address')->textarea(['rows' => 6]) ?>
      <?= $form->field($model, 'residence')->textInput(); ?>
 

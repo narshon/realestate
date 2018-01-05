@@ -7,6 +7,7 @@ use app\models\Lookup;
 use app\utilities\DataHelper;
 use yii\widgets\Pjax;
 use app\models\LookupSearch;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -33,10 +34,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <p>
                 <?php 
-                      $dh = new DataHelper();
-                       echo $dh->getModalButton(new \app\models\LookupCategory, 'lookup-category/create', 'Lookups', 'btn btn-danger btn-create');
-                ?>
+                $dh = new DataHelper();
+			$url=Url::to(['lookup-category/create']);
+                       echo $dh->getModalButton(new \app\models\LookupCategory, 'lookup-category/create', 'Lookups', 'btn btn-danger btn-create',"New",$url,"Lookup");
+                      ?>
             </p>
+                       
             <?php Pjax::begin(['id'=>'pjax-lookup-category',]); ?> 
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,

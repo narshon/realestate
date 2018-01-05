@@ -42,8 +42,8 @@ class Feature extends \yii\db\ActiveRecord
             [['created_by', 'modified_by'], 'integer'],
             [['date_created', 'date_modified'], 'safe'],
             [['feature_name'], 'string', 'max' => 200],
-            [['modified_by'], 'exist', 'skipOnError' => true, 'targetClass' => SysUsers::className(), 'targetAttribute' => ['modified_by' => 'id']],
-            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => SysUsers::className(), 'targetAttribute' => ['created_by' => 'id']],
+            [['modified_by'], 'exist', 'skipOnError' => true, 'targetClass' =>Users::className(), 'targetAttribute' => ['modified_by' => 'id']],
+            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['created_by' => 'id']],
         ];
     }
 
@@ -76,7 +76,7 @@ class Feature extends \yii\db\ActiveRecord
      */
     public function getModifiedBy()
     {
-        return $this->hasOne(SysUsers::className(), ['id' => 'modified_by']);
+        return $this->hasOne(Users::className(), ['id' => 'modified_by']);
     }
 
     /**
@@ -84,7 +84,7 @@ class Feature extends \yii\db\ActiveRecord
      */
     public function getCreatedBy()
     {
-        return $this->hasOne(SysUsers::className(), ['id' => 'created_by']);
+        return $this->hasOne(Users::className(), ['id' => 'created_by']);
     }
 
     /**
