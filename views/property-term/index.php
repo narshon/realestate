@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label' => 'Term',
                 'value' => 'fkTerm.term_name'
             ],
-            'term_title',
+            //'term_title',
             'term_value',
             // 'action_handler',
             [

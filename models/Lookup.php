@@ -45,6 +45,30 @@ class Lookup extends \yii\db\ActiveRecord
             [['category'], 'exist', 'skipOnError' => true, 'targetClass' => LookupCategory::className(), 'targetAttribute' => ['category' => 'id']],
         ];
     }
+	public function beforeSave($insert){
+	  parent::beforeSave($insert);
+	
+		if ($this->isNewRecord){
+			$lastCategory =  Self::find()->where(["category"=>$this->category])->orderBy("_key DESC")->one();
+		    
+			if($lastCategory){
+				$prev_key = $lastCategory->_key;
+				$next_key = $prev_key + 1;
+				$this->_key = $next_key;
+			}
+			else{
+				$this->_key = 1;
+			}
+		}
+		
+		if($this->hasErrors()){
+			return false;
+		}
+		else{
+			return true;
+		}
+	}
+	
 
     /**
      * @inheritdoc

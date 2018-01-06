@@ -80,18 +80,13 @@ $this->registerCss("
                              'value' => isset($model->management->management_name)?$model->management->management_name:"",
                          ],
                         [
-                            'label' => 'owner_id',
+                            'label' => 'Owner Name',
                              'format'=>'raw',
-                             'value' =>isset($model->owner->getNames)?$model->owner->getNames():"",
+                             'value' =>$model->getOwnerName(),
 							 
                          ],
                        
-                        'property_video_url',
-                         [
-                            'label' =>  '_status',
-                             'format'=>'raw',
-                             'value' => $model->getStatus(),
-                         ],
+                        
                        
                           
                     ],

@@ -11,8 +11,6 @@ use yii\helpers\Html;
 <div class="ward-create">
 
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+    <?php  echo $this->render('_form', ['model' => $model, ]) ?>
 
 </div>

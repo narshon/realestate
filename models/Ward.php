@@ -6,12 +6,10 @@ use Yii;
 
 /**
  * This is the model class for table "re_ward".
- *
  * @property integer $id
  * @property integer $fk_subcounty
  * @property string $ward_name
  * @property string $ward_desc
- *
  * @property Location[] $locations
  * @property Subcounty $fkSubcounty
  */

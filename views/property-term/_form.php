@@ -29,7 +29,7 @@ EOD;
             ],
         ]);  ?>
 
-    <?= //$form->field($model, 'term_title')->textInput(['maxlength' => true]) ?>
+   
 
     <?= $form->field($model, 'term_narration')->textarea(['rows' => 6]) ?>
 

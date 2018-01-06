@@ -98,7 +98,7 @@ class WardController extends Controller
                 Yii::$app->response->format = Response::FORMAT_JSON;
                // return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-0');
                 
-                 $form = $this->renderAjax('create', ['model' => $model,'id'=>0],false,false);
+                 $form = $this->renderAjax('create', ['model' => $model,'id'=>0],true,true);
                 return array(
                     'status'=>1, 
                     'message'=>"",
