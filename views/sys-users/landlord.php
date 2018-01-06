@@ -50,7 +50,7 @@ $this->registerCss("
                 <?php 
                 
                     $url = Url::to(['occupancy/disburse']);
-                    echo kartik\helpers\Html::a("Disburse Funds","#",['class'=>"btn btn-danger",'id'=>"calculate-disbursement-dues",'onclick'=>"ajaxUniversalGetRequest('$url','calculate-tenant-dues','', 1); return false;"]);
+                    echo kartik\helpers\Html::a("Disburse Funds","#",['class'=>"btn btn-danger",'id'=>"calculate-disbursement-dues",'onclick'=>"ajaxUniversalGetRequest('$url','calculate-disbursement-dues','', 1); return false;"]);
                     
                       $dh = new DataHelper();
                       $url = Url::to('landlordform');

@@ -92,12 +92,12 @@ class Disbursements extends \yii\db\ActiveRecord
         $accountmap = AccountMap::findAll(['fk_term' => Term::getDisbursementTermID()]);
         if(is_array($accountmap)) {
             foreach($accountmap as $account) {
-                AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->date_created);
+                AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->entry_date,$this->id,$this->className());
             }
         }
     }
     
-    public function raise($occupant, $rentbill,$month, $year){
+    public static function raise($occupant, $rentbill,$month, $year){
         $disburse = New Disbursements();
         $disburse->fk_occupancy_rent = $rentbill->id;
         $disburse->fk_landlord = $occupant->fkProperty->owner_id;

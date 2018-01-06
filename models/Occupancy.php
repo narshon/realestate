@@ -255,7 +255,7 @@ class Occupancy extends \yii\db\ActiveRecord
         return "Done!";
     }
     
-    public function calculateDisbursements(){
+    public static function calculateDisbursements(){
         //get occupants that are active
         $occupants = Self::find()->where(['_status'=>1])->all();
         if($occupants){
@@ -268,6 +268,8 @@ class Occupancy extends \yii\db\ActiveRecord
                         //check if the term is ready for this month for this occupant to disburse funds.
                         $property_id = $occupant->fk_property_id;
                         $term = $occupant->getDisbursementTerm();
+                        
+                        
                         if($term){
                             $termvalue = $term->term_value;
                             //check if there is an active occupant term for this.
@@ -279,13 +281,13 @@ class Occupancy extends \yii\db\ActiveRecord
                             $year = date('Y');
                             $date = date('d');
                             //check if we can proceed.
-                            if($termvalue >= $date){
-                                //check if we haven't already disbursed for this month.
-                                $check = Disbursements::find()->where(['month'=>$month, 'year'=>$year])->one();
-                                if(!$check){
-                                   //get the rent bill to be disbursed.
-                                   $rentbill = OccupancyRent::find()->where(['fk_occupancy_id'=>$occupant->id,'fk_term'=>Term::getRentTermID(),'month'=>$month,'year'=>$year,'_status'=>1])->one();
-                                   if($rentbill){
+                            if($termvalue <= $date){
+                                //get the rent bill to be disbursed.
+                                 $rentbill = OccupancyRent::find()->where(['fk_occupancy_id'=>$occupant->id,'fk_term'=>Term::getRentTermID(),'month'=>$month,'year'=>$year,'_status'=>1])->one();
+                                if($rentbill){
+                                    //check if we haven't already disbursed for this bill.
+                                    $check = Disbursements::find()->where(['fk_occupancy_rent'=>$rentbill->id,'month'=>$month, 'year'=>$year])->one();
+                                    if(!$check){
                                      //proceed to raise this disbursement
                                       if(Disbursements::raise($occupant, $rentbill,$month, $year)){
                                        //successfully disbursed.
@@ -301,7 +303,7 @@ class Occupancy extends \yii\db\ActiveRecord
 
                         $transaction->commit();
                         if(count($insertIds)){
-                            $occupant->createInvoice($insertIds, 'INV-' . $occupant->id . '-' . $term->id);
+                          //  $occupant->createInvoice($insertIds, 'INV-' . $occupant->id . '-' . $term->id);
                         }
                     } catch (\Exception $e) {
                         $transaction->rollBack();
