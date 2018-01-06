@@ -3,6 +3,9 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\Url;
+use yii\bootstrap\Button;
+use app\utilities\DataHelper;
 
 /**
  * This is the model class for table "re_account_entries".
@@ -65,4 +68,23 @@ class AccountEntries extends \yii\db\ActiveRecord
         $model->created_on = date('Y-m-d H:i:s');
         $model->save();
     }
+	public static function showButtons(){
+            $journal = Url::to(['journal/index']);
+            $accounts = Url::to(['accounts/index']);
+            $source = Url::to(['source/index']);
+            $transaction = Url::to(['accounts-transaction/index']);
+            $dh = new DataHelper();
+            $url = Url::to(['journal/transfer']);  //'site/update-data'
+            $button = $dh->getModalButton(new journal, '', 'Transfer Funds', 'btn btn-danger btn-create btn-new pull-right','Transfer Funds',$url);
+            
+            $return = '<ul class=" nav nav-pills nav-stacked">';
+            $return .= $button;
+            $return .= Button::widget(["label" => "Accounts Transactions", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$transaction')"]]);            
+            $return .= Button::widget(["label" => "Accounts", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accounts')"]]);
+            $return .= Button::widget(["label" => "Source", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$source')"]]);
+            $return .= Button::widget(["label" => "Journal", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$journal')"]]);
+            $return .= '</ul>';
+      
+             return $return;
+        }
 }

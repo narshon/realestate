@@ -10,8 +10,8 @@ use app\models\Journal;
 use app\models\Source;
 use app\models\Accounts;
 use kartik\widgets\Select2;
-use kartik\export\ExportMenu;
 use kartik\grid\GridView;
+use kartik\export\ExportMenu;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AccountsTransactionSearch */
