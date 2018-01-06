@@ -32,8 +32,8 @@ class AccountEntries extends \yii\db\ActiveRecord
     {
         return [
             [['fk_account_chart', 'trasaction_type', 'amount', 'entry_date'], 'required'],
-            [['fk_account_chart', 'created_by'], 'integer'],
-            [['trasaction_type'], 'string'],
+            [['fk_account_chart', 'created_by', 'origin_id'], 'integer'],
+            [['trasaction_type','origin_model'], 'string'],
             [['amount'], 'number'],
             [['entry_date', 'created_on'], 'safe'],
         ];
@@ -54,7 +54,7 @@ class AccountEntries extends \yii\db\ActiveRecord
             'created_by' => 'Created By',
         ];
     }
-    public static function postTransaction($account_chart, $trasaction_type, $amount, $entry_date)
+    public static function postTransaction($account_chart, $trasaction_type, $amount, $entry_date,$origin_id='', $origin_model='')
     {
         $model = new AccountEntries();
         $model->fk_account_chart = $account_chart;
@@ -63,6 +63,8 @@ class AccountEntries extends \yii\db\ActiveRecord
         $model->entry_date = $entry_date;
         $model->created_by = Yii::$app->user->identity->id;
         $model->created_on = date('Y-m-d H:i:s');
+        $model->origin_id = $origin_id;
+        $model->origin_model = $origin_model;
         $model->save();
     }
 }

@@ -255,6 +255,87 @@ class Occupancy extends \yii\db\ActiveRecord
         return "Done!";
     }
     
+    public function calculateDisbursements(){
+        //get occupants that are active
+        $occupants = Self::find()->where(['_status'=>1])->all();
+        if($occupants){
+            foreach($occupants as $occupant){
+                
+                    $transaction = \yii::$app->db->beginTransaction();
+                    try {
+                        $insertIds = [];
+                        
+                        //check if the term is ready for this month for this occupant to disburse funds.
+                        $property_id = $occupant->fk_property_id;
+                        $term = $occupant->getDisbursementTerm();
+                        if($term){
+                            $termvalue = $term->term_value;
+                            //check if there is an active occupant term for this.
+                            $occupantTerm = OccupancyTerm::find()->where(['fk_occupancy_id'=>$occupant->id,'fk_property_term_id'=>$term->id,'_status'=>1])->one();
+                            if($occupantTerm){
+                                $termvalue = $occupantTerm->value;
+                            }
+                            $month = date('m');
+                            $year = date('Y');
+                            $date = date('d');
+                            //check if we can proceed.
+                            if($termvalue >= $date){
+                                //check if we haven't already disbursed for this month.
+                                $check = Disbursements::find()->where(['month'=>$month, 'year'=>$year])->one();
+                                if(!$check){
+                                   //get the rent bill to be disbursed.
+                                   $rentbill = OccupancyRent::find()->where(['fk_occupancy_id'=>$occupant->id,'fk_term'=>Term::getRentTermID(),'month'=>$month,'year'=>$year,'_status'=>1])->one();
+                                   if($rentbill){
+                                     //proceed to raise this disbursement
+                                      if(Disbursements::raise($occupant, $rentbill,$month, $year)){
+                                       //successfully disbursed.
+                                       $insertIds[] = Yii::$app->db->getLastInsertID();
+                                     }  
+                                   }
+                                   
+                                }
+                            }
+                            
+                        }
+                        
+
+                        $transaction->commit();
+                        if(count($insertIds)){
+                            $occupant->createInvoice($insertIds, 'INV-' . $occupant->id . '-' . $term->id);
+                        }
+                    } catch (\Exception $e) {
+                        $transaction->rollBack();
+                        throw $e;
+                    } catch (\Throwable $e) {
+                        $transaction->rollBack();
+                        throw $e;
+                    }
+                }
+        }
+        
+        
+        return "Done!";
+    }
+    
+    private function getDisbursementTerm(){
+        $property_id = $this->fk_property_id;
+        $term_id = Term::getDisbursementTermID();
+        //check if this property has implemented this term.
+        $propertyTerm = PropertyTerm::find()->where(['fk_property_id'=>$property_id, 'fk_term_id'=>$term_id,'_status'=>1])->one();
+        if($propertyTerm){
+            
+            return $propertyTerm;
+        }
+        else{
+            return false;
+        }
+    }
+    
+    public function LandlordDisbursement($term){
+        
+        return true;
+    }
+    
     private function createInvoice($ids, $number)
     {
         foreach($ids as $id)
@@ -281,9 +362,7 @@ class Occupancy extends \yii\db\ActiveRecord
         }
     }
     
-    public function LandlordDisbursement($term){
-        return true;
-    }
+    
     public function RentDeposit($term){
         if(($source = Source::findOne(['source_name' => 'Rent Deposit'])) !== null) {
             return $this->generateBill($term, $source->id);
@@ -388,7 +467,7 @@ class Occupancy extends \yii\db\ActiveRecord
             return ($model->save()) ? 99 : false;
         }
     }
-    private function getBillAmount($term_id)
+    public function getBillAmount($term_id)
     {
         if(($propertyTerm = PropertyTerm::findOne(['fk_property_id' => $this->fk_property_id, 'fk_term_id'=>$term_id, '_status' => 1])) !== null) {
             if(($occupancyTerm = OccupancyTerm::findOne(['fk_occupancy_id' => $this->id, 'fk_property_term_id' => $propertyTerm->id])) !== null) {
