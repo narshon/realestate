@@ -525,4 +525,8 @@ class Occupancy extends \yii\db\ActiveRecord
         }
         return $queryString;
     }
+    
+    public function getTenantName(){
+        return $this->fkUsers->getNames();
+    }
 }
