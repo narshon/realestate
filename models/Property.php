@@ -23,10 +23,9 @@ use app\models\PropertyTerm;
  * @property string $date_created
  * @property integer $modified_by
  * @property string $date_modified
- *
  * @property Management[] $managements
  * @property Occupancy[] $occupancies
- * @property Management $owner
+ * @property Users $owner
  * @property Lookup $propertyType
  * @property Management $management
  * @property PropertyFeature[] $propertyFeatures
@@ -257,6 +256,15 @@ VIEW;
     public function getEstate(){
         if(isset($this->fkPropertyLocation->estate_name)){
             return $this->fkPropertyLocation->estate_name;
+        }
+        else{
+            return '';
+        }
+    }
+	
+	public function getOwnerName(){
+        if(isset($this->owner->id)){
+            return $this->owner->getNames();
         }
         else{
             return '';

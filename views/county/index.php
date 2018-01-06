@@ -19,6 +19,7 @@ use app\models\EstateSearch;
 use app\models\Management;
 use app\models\SysUsersSearch;
 use app\models\Users;
+use app\models\Feature;
 use app\models\TermSearch;
 use yii\helpers\Url;
 

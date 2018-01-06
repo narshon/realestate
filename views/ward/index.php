@@ -5,6 +5,7 @@ use yii\grid\GridView;
 use app\utilities\DataHelper;
 use yii\widgets\Pjax;
 use yii\helpers\Url;
+use app\models\Ward;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -16,11 +17,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php 
-		$dh = new DataHelper();
-		$url=Url::to(['ward/create']);
-                echo $dh->getModalButton(new \app\models\Ward, 'ward/create', 'Wards', 'btn btn-danger btn-create',"New Ward",$url,"Ward");
-               // echo $dh->getModalButton(new \app\models\Group, 'location/create', 'Locations', 'btn btn-danger btn-create',"New Location",$url,"Location");
-                      ?>
+					$dh = new DataHelper();
+					  $url=Url::to(['ward/create']);
+                       echo $dh->getModalButton(new Ward, 'ward/create', 'Ward', 'btn btn-danger btn-create',"New",$url,"Ward");
+                    ?>
     </p>
     <?php Pjax::begin(['id'=>'pjax-ward',]); ?> 
     <?= GridView::widget([

@@ -55,14 +55,15 @@ $this->params['breadcrumbs'][] = $this->title;
                      'buttons' => [
                                     'view' => function ($url, $model){
                                              $dh = new DataHelper();
-                                              $popup = $dh->getModalButton($model, "lookup-category/view", "Lookups", 'glyphicon glyphicon-eye-open','');
+                                             $url = Url::to(['lookup-category/view', 'id'=>$model->id]);
+                                              $popup = $dh->getModalButton($model, "lookup-category/view", "Lookups", 'glyphicon glyphicon-eye-open','',$url);
                                               return $popup;
-                                             
                                     }, 
-                                    'update' => function ($url, $model) {
+                                    'update' => function ($url, $model, $keyword) {
                                             $dh = new DataHelper();
-                                           return $dh->getModalButton($model, "lookup-category/update", "Lookups", 'glyphicon glyphicon-edit','');
-                                    },
+                                            $url = Url::to(['lookup-category/update', 'id'=>$model->id]);
+                                           return $dh->getModalButton($model, "lookup-category/update", "Lookups", 'glyphicon glyphicon-edit','',$url);
+                                     },
                             ], 
                     ],
         ],

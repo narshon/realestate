@@ -21,7 +21,7 @@ class SysUsersSearch extends Users
     {
         return [
             [['id', 'fk_group_id', 'age'], 'integer'],
-            [['username', 'pass', 'name1', 'name2', 'name3', 'email', 'phone', 'address', 'date_added', 'gender', 'color_code', 'icon_id', 'fkGroup','fkManagement'], 'safe'],
+            [['username', 'pass', 'name1', 'name2', 'name3', 'email', 'phone', 'occupation','employer','address', 'date_added', 'gender', 'color_code', 'icon_id', 'fkGroup','fkManagement'], 'safe'],
         ];
     }
 
@@ -89,6 +89,8 @@ class SysUsersSearch extends Users
             ->andFilterWhere(['like', 'email', $this->email])
             ->andFilterWhere(['like', 'phone', $this->phone])
             ->andFilterWhere(['like', 'address', $this->address])
+			->andFilterWhere(['like', 'occupation', $this->address])
+			->andFilterWhere(['like', 'employer', $this->address])
             ->andFilterWhere(['like', 'gender', $this->gender])
             ->andFilterWhere(['like', 'color_code', $this->color_code])
             ->andFilterWhere(['like', 'icon_id', $this->icon_id]);
