@@ -33,6 +33,7 @@ class OccupancyController extends Controller
         ];
     }
     
+    
     public function actionTenant($property_id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -69,6 +70,23 @@ class OccupancyController extends Controller
         ]);
     }
     
+    public function actionDisburse(){
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        //Run billing script for all occupancies based on their terms.
+        if($data = Occupancy::calculateDisbursements()){
+            
+            return array(
+                'div'=>$data,
+                
+            );
+        }
+        else{
+            return array(
+                'div'=>"Failed!",
+                
+            );
+        }
+    }
     public function actionCalculate(){
         Yii::$app->response->format = Response::FORMAT_JSON;
         //Run billing script for all occupancies based on their terms.
@@ -85,7 +103,6 @@ class OccupancyController extends Controller
                 
             );
         }
-        
     }
 
     /**
