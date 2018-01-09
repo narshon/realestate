@@ -45,7 +45,7 @@ $(function(){
         }
     });
     $(".modal-app").on("hidden.bs.modal", function(){
-        document.getElementById('modalContent').innerHTML = document.getElementById('gif').innerHTML;
+        //document.getElementById('modalContent').innerHTML = document.getElementById('gif').innerHTML;
     });
     
 });

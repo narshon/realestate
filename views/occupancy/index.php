@@ -97,6 +97,17 @@ $this->params['breadcrumbs'][] = $this->title;
                               return $dh->getModalButton($data, "occupancy-term/create", "Occupancy", 'btn btn-default','Add Term',$url);
                         },
                     ],
+                    [
+                        'header' => "Match Bills",
+                        'format' => 'raw',
+                        'value' => function ($data) {
+                             return Html::button('<i class="glyphicon glyphicon-ban-circle">  Match</i>', [
+                            'type'=>'button', 
+                            'title'=>'Map Payments To Bills', 
+                            'class'=>'btn bg-purple btn-flat showModalButton specmargin', 
+                            'value' => yii\helpers\Url::to(['occupancy-payments/map-payments', 'id'=>$data->id])]);
+                        }
+                    ],
                     
                     
 
