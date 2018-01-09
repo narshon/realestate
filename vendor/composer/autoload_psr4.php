@@ -22,6 +22,7 @@ return array(
     'kartik\\tabs\\' => array($vendorDir . '/kartik-v/yii2-tabs-x'),
     'kartik\\switchinput\\' => array($vendorDir . '/kartik-v/yii2-widget-switchinput'),
     'kartik\\spinner\\' => array($vendorDir . '/kartik-v/yii2-widget-spinner'),
+    'kartik\\sortinput\\' => array($vendorDir . '/kartik-v/yii2-sortable-input'),
     'kartik\\sortable\\' => array($vendorDir . '/kartik-v/yii2-sortable'),
     'kartik\\sidenav\\' => array($vendorDir . '/kartik-v/yii2-widget-sidenav'),
     'kartik\\select2\\' => array($vendorDir . '/kartik-v/yii2-widget-select2'),

@@ -317,4 +317,18 @@ class OccupancyRent extends \yii\db\ActiveRecord
             return $account->accountType->account_name;
         }
     }
+    
+    public static function getUnsettledBillList($id)
+    {
+        $list = [];
+        $bills = OccupancyRent::findAll(['_status' => 0, 'fk_occupancy_id'=>$id]);
+        if(is_array($bills)) {
+            foreach($bills as $bill) {
+                $list[$bill->id] = [
+                    'content' => $bill->fkTerm->term_name . ' - ' . $bill->amount . ' ('. $bill->year . '/' . $bill->month .')'
+                ];
+            }
+        }
+        return $list;
+    }
 }

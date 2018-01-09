@@ -327,4 +327,13 @@ return array (
       '@kartik/tabs' => $vendorDir . '/kartik-v/yii2-tabs-x',
     ),
   ),
+  'kartik-v/yii2-sortable-input' => 
+  array (
+    'name' => 'kartik-v/yii2-sortable-input',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@kartik/sortinput' => $vendorDir . '/kartik-v/yii2-sortable-input',
+    ),
+  ),
 );
