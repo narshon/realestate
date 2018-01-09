@@ -2,6 +2,10 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use app\utilities\DataHelper;
+use yii\helpers\Url;
+use app\models\AccountType;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AccountTypeSearch */
@@ -16,8 +20,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Account Type', ['create'], ['class' => 'btn btn-success']) ?>
+	<?php
+        $dh = new DataHelper();
+						 $url=Url::to(['account-type/create']);
+                       echo $dh->getModalButton(new AccountType, 'account-type/create', 'AccountType', 'btn btn-danger btn-create btn-new pull-right' , "New",$url);
+               ?>
     </p>
+	<?php Pjax::begin(['id'=>'pjax-account-type',]); ?> 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -32,7 +41,24 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'created_on',
             // 'modified_on',
 
-            ['class' => 'yii\grid\ActionColumn'],
+                                ['class' => 'yii\grid\ActionColumn',
+                     'template' => '{view} {update}',
+                     'buttons' => [
+									'view' => function ($url, $model){
+                                             $dh = new DataHelper();
+                                             $url = Url::to(['account-type/view', 'id'=>$model->id]);
+                                              $popup = $dh->getModalButton($model, "account-type/view", "AccountType", 'glyphicon glyphicon-eye-open','',$url);
+                                              return $popup;
+									},
+											  
+                                    'update' => function ($url, $model) {
+                                            $dh = new DataHelper();
+                                            $url = Url::to(['account-type/update','id'=>$model->id]);
+                                           return $dh->getModalButton($model, "account-type/update", "AccountType", 'glyphicon glyphicon-edit','',$url);
+                                            },
+                            ], 
+                    ],
         ],
     ]); ?>
+<?php Pjax::end(); ?>
 </div>

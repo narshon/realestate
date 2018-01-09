@@ -58,7 +58,7 @@ $this->registerCss("
 			   $propertylink = Url::to(['property/index']);
 			   $managementlink = Url::to(['sys-users/landlord']);
 			   $tenantlink = Url::to(['sys-users/tenant']);
-			   $journallink = Url::to(['journal/index']);
+			   $journallink = Url::to(['account-entries/index']);
 			   
 			?>
 		<div class="tab-content">

@@ -41,7 +41,7 @@ $this->registerCss("
 
 
 
-<div class="journal-index panel panel-danger admin-content">
+<div class="account-entries-index panel panel-danger admin-content">
 <div class="panel-heading">
         <h1>Financial Records</h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); 
@@ -73,23 +73,17 @@ $this->registerCss("
 
          </ul>
 
-    <div class=" tab-content">
-        <div id="entries" class="tab-pane fade in active">
+    <div class="tab-content">
+        <div id="accountentries" class="tab-pane fade in active">
 	 <div class="account-entries-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-	<?php 
-		  $dh = new DataHelper();
-		  $url = Url::to(['account-entries/create']);  //'site/update-data'
-		   echo $dh->getModalButton(new AccountEntries, 'account-entries/create', 'Account-entries', 'btn btn-danger btn-create btn-new pull-right','New ',$url);
-		   
-         ?>
-       
+	<?php  echo AccountEntries::actionButtons();  ?>
     </p>
-	<?php Pjax::begin(['id'=>'pjax-journal',]); ?>
+	<?php Pjax::begin(['id'=>'pjax-account-entries',]); ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -104,12 +98,27 @@ $this->registerCss("
             // 'created_on',
             // 'created_by',
 
-            ['class' => 'yii\grid\ActionColumn'],
+             ['class' => 'yii\grid\ActionColumn',
+                     'template' => '{view} {update}',
+                     'buttons' => [
+									'view' => function ($url, $model){
+                                             $dh = new DataHelper();
+                                             $url = Url::to(['account-entries/view', 'id'=>$model->id]);
+                                              $popup = $dh->getModalButton($model, "account-entries/view", "AccountEntries", 'glyphicon glyphicon-eye-open','',$url);
+                                              return $popup;
+									},
+											  
+                                    'update' => function ($url, $model) {
+                                            $dh = new DataHelper();
+                                            $url = Url::to(['account-entries/update','id'=>$model->id]);
+                                           return $dh->getModalButton($model, "account-entries/update", "AccountEntries", 'glyphicon glyphicon-edit','',$url);
+                                            },
+                            ], 
+                    ],
         ],
     ]); ?>
-</div>
-    
 	<?php Pjax::end(); ?>
+</div>	
 </div>
 
 		<div id="source" class="tab-pane fade">
@@ -124,7 +133,7 @@ $this->registerCss("
             ]);
           ?>
         </div>
-		<div id="accounts" class="tab-pane fade">
+		<div id="accountchart" class="tab-pane fade">
           <?php
           $osearch = new app\models\AccountChartSearch;
           $omodel = new app\models\AccountChart;
@@ -138,7 +147,7 @@ $this->registerCss("
         </div>
 		
 		
-		<div id="account-map" class="tab-pane fade">
+		<div id="accountmap" class="tab-pane fade">
           <?php
           $osearch = new app\models\AccountMapSearch;
           $omodel = new app\models\AccountMap;
@@ -151,7 +160,7 @@ $this->registerCss("
           ?>
         </div>
 		
-		<div id="account-type" class="tab-pane fade">
+		<div id="accounttype" class="tab-pane fade">
           <?php
           $osearch = new app\models\AccountTypeSearch;
           $omodel = new app\models\AccountType;
@@ -163,8 +172,7 @@ $this->registerCss("
             ]);
           ?>
         </div>
-		
-    
+	
     </div>
 	</div>
 	<div class="tab-pane" id="report" role="tabpanel">1</div>

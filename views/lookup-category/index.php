@@ -24,12 +24,12 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="panel-body">
         <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#home"><?= $this->title; ?> Categories</a></li>
+            <li class="active"><a data-toggle="tab" href="#category"><?= $this->title; ?> Categories</a></li>
             <li><a data-toggle="tab" href="#lookups">Lookups </a></li>
         </ul>
         <div class="tab-content">
 
-      <div id="home" class="tab-pane fade in active">
+      <div id="category" class="tab-pane fade in active">
         <div class="lookup-category-index">
 
             <p>

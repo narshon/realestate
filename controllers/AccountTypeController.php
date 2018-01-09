@@ -1,6 +1,7 @@
 <?php
 
-namespace app\models;
+
+namespace app\controllers;
 
 use Yii;
 use app\models\AccountType;
@@ -8,6 +9,8 @@ use app\models\AccountTypeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Response;
+use app\utilities\DataHelper;
 
 /**
  * AccountTypeController implements the CRUD actions for AccountType model.
@@ -44,16 +47,31 @@ class AccountTypeController extends Controller
         ]);
     }
 
+	 
+       
     /**
      * Displays a single AccountType model.
      * @param integer $id
      * @return mixed
      */
     public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+    { 
+	
+	$data = $this->renderAjax('view', [
+                'model' => $this->findModel($id),
+            ],false,false);
+        if(Yii::$app->request->isAjax){
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return array(
+                'div'=>$data,
+                
+            );
+        }
+        else{
+            return $this->render('view', [
+                'model' => $this->findModel($id),
+            ]);
+    }
     }
 
     /**
@@ -63,14 +81,30 @@ class AccountTypeController extends Controller
      */
     public function actionCreate()
     {
-        $model = new AccountType();
+       $model = new AccountType();
+        $dh = new DataHelper;
+        $keyword = 'account-type';
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            //return $this->redirect(['view', 'id' => $model->id]);
+            if (Yii::$app->request->isAjax)
+            {
+               return $dh->processResponse($this, $model, 'update', 'success', 'Successfully Saved!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);
+               exit;               
+            }
+            
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            if (Yii::$app->request->isAjax)
+            {
+                return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-0');
+               exit; 
+                     
+            }
+            else{
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
         }
     }
 
@@ -83,13 +117,25 @@ class AccountTypeController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $dh = new DataHelper;
+        $keyword = 'account-type';
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            //return $this->redirect(['view', 'id' => $model->id]);
+            if (Yii::$app->request->isAjax)
+            {   
+                return $dh->processResponse($this, $model, 'update', 'success', 'Successfully Saved!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);                
+            }
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            if (Yii::$app->request->isAjax)
+            {
+                return $dh->processResponse($this, $model, 'update', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);   
+            }
+            else{
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
         }
     }
 
