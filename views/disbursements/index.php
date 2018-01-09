@@ -22,11 +22,26 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'fk_occupancy_rent',
+            [
+              'label'=> "Tenant",
+              'attribute' => 'fk_occupancy_rent',
+              'format' => 'raw',
+              'value' => function ($data) {
+                  return $data->fkOccupancyRent->fkOccupancy->getTenantName();
+               },
+             ],
+             [
+              'label'=> "Period",
+              'attribute' => 'month',
+              'format' => 'raw',
+              'value' => function ($data) {
+                  return $data->month."/".$data->year;
+               },
+             ],
            // 'fk_landlord',
-            'batch_id',
+            //'batch_id',
             'amount',
-            // 'entry_date',
+             'entry_date',
             // 'created_on',
             // 'created_by',
              '_status',

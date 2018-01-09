@@ -37,7 +37,7 @@ class Disbursements extends \yii\db\ActiveRecord
     {
         return [
             [['fk_occupancy_rent', 'amount', 'entry_date'], 'required'],
-            [['fk_occupancy_rent', 'fk_landlord', 'batch_id', 'created_by', '_status'], 'integer'],
+            [['fk_occupancy_rent', 'fk_landlord', 'batch_id', 'created_by', '_status','month','year'], 'integer'],
             [['amount'], 'number'],
             [['entry_date', 'created_on'], 'safe'],
             [['fk_landlord'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['fk_landlord' => 'id']],
@@ -60,6 +60,8 @@ class Disbursements extends \yii\db\ActiveRecord
             'created_on' => 'Created On',
             'created_by' => 'Created By',
             '_status' => 'Status',
+            'month' => 'Month',
+            'year' => 'Year'
         ];
     }
 
@@ -77,5 +79,36 @@ class Disbursements extends \yii\db\ActiveRecord
     public function getFkOccupancyRent()
     {
         return $this->hasOne(OccupancyRent::className(), ['id' => 'fk_occupancy_rent']);
+    }
+    
+    public function afterSave($insert, $changedAttributes) {
+        //update the books of accounts, we're going to Debit disbursement account and credit accounts payable. Compare raising a bill in occupancy.
+        $this->updateAccounts();
+        return parent::afterSave($insert, $changedAttributes);
+    }
+    
+    public function updateAccounts()
+    {
+        $accountmap = AccountMap::findAll(['fk_term' => Term::getDisbursementTermID()]);
+        if(is_array($accountmap)) {
+            foreach($accountmap as $account) {
+                AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->entry_date,$this->id,$this->className());
+            }
+        }
+    }
+    
+    public static function raise($occupant, $rentbill,$month, $year){
+        $disburse = New Disbursements();
+        $disburse->fk_occupancy_rent = $rentbill->id;
+        $disburse->fk_landlord = $occupant->fkProperty->owner_id;
+        $disburse->amount = $occupant->getBillAmount(Term::getRentTermID());
+        $disburse->month = $month;
+        $disburse->year = $year;
+        $disburse->entry_date = date("Y-m-d");
+        $disburse->created_by = Yii::$app->user->identity->id;
+        $disburse->created_on = date("Y-m-d H:i:s");
+        $disburse->_status = 1;
+        
+        return $disburse->save();
     }
 }

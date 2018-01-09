@@ -28,7 +28,7 @@ $this->title = $model->id;
                'label'=>'Term',
                'value'=>$model->fkTerm->term_name,
             ],
-            'term_title',
+           // 'term_title',
             'term_narration:ntext',
             'action_handler',
            [                      // the owner name of the model

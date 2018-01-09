@@ -20,16 +20,17 @@ EOD;
         $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
 ?>
 
-    <?= $form->field($model, '_key')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, '_value')->textarea(['rows' => 6]) ?>
-
-    <?= $form->field($model, 'category')->dropdownList(
+    <?= $form->field($model, '_key')->hiddenInput()->label("") ?>
+	<?= $form->field($model, 'category')->dropdownList(
          app\models\LookupCategory::find()->select(['category_name', 'id'])->indexBy('id')->column(),
         ['prompt'=>'Select group']
     ); ?>
 
-    <?= $form->field($model, '_order')->textInput() ?>
+    <?= $form->field($model, '_value')->textarea(['rows' => 6]) ?>
+
+    
+
+    <?= $form->field($model, '_order')->hiddenInput()->label("") ?>
 
     <?php  // Usage with ActiveForm and model
         echo $form->field($model, '_status')->widget(Select2::classname(), [

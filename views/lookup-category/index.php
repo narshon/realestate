@@ -7,6 +7,7 @@ use app\models\Lookup;
 use app\utilities\DataHelper;
 use yii\widgets\Pjax;
 use app\models\LookupSearch;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -33,10 +34,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <p>
                 <?php 
-                      $dh = new DataHelper();
-                       echo $dh->getModalButton(new \app\models\LookupCategory, 'lookup-category/create', 'Lookups', 'btn btn-danger btn-create');
-                ?>
+                $dh = new DataHelper();
+			$url=Url::to(['lookup-category/create']);
+                       echo $dh->getModalButton(new \app\models\LookupCategory, 'lookup-category/create', 'Lookups', 'btn btn-danger btn-create',"New",$url,"Lookup");
+                      ?>
             </p>
+                       
             <?php Pjax::begin(['id'=>'pjax-lookup-category',]); ?> 
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
@@ -52,14 +55,15 @@ $this->params['breadcrumbs'][] = $this->title;
                      'buttons' => [
                                     'view' => function ($url, $model){
                                              $dh = new DataHelper();
-                                              $popup = $dh->getModalButton($model, "lookup-category/view", "Lookups", 'glyphicon glyphicon-eye-open','');
+                                             $url = Url::to(['lookup-category/view', 'id'=>$model->id]);
+                                              $popup = $dh->getModalButton($model, "lookup-category/view", "Lookups", 'glyphicon glyphicon-eye-open','',$url);
                                               return $popup;
-                                             
                                     }, 
-                                    'update' => function ($url, $model) {
+                                    'update' => function ($url, $model, $keyword) {
                                             $dh = new DataHelper();
-                                           return $dh->getModalButton($model, "lookup-category/update", "Lookups", 'glyphicon glyphicon-edit','');
-                                    },
+                                            $url = Url::to(['lookup-category/update', 'id'=>$model->id]);
+                                           return $dh->getModalButton($model, "lookup-category/update", "Lookups", 'glyphicon glyphicon-edit','',$url);
+                                     },
                             ], 
                     ],
         ],

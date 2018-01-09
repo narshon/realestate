@@ -21,6 +21,8 @@ use yii\helpers\Url;
  * @property integer $age
  * @property string $email
  * @property string $phone
+ * @property string $occupation
+ * @property string $employer
  * @property string $address
  * @property string $date_added
  * @property string $gender
@@ -67,7 +69,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             [['date_added','id_number','fk_sublet_id'], 'safe'],
             [['username'], 'string', 'max' => 50],
             [['pass'], 'string', 'max' => 100],
-            [['name1', 'name2', 'name3','residence'], 'string', 'max' => 200],
+            [['name1', 'name2', 'name3','residence','occupation','employer'], 'string', 'max' => 200],
             [['email'], 'string', 'max' => 500],
             [['phone', 'color_code'], 'string', 'max' => 100],
             [['gender'], 'string', 'max' => 10],
@@ -93,6 +95,8 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             'age' => 'Age',
             'email' => 'Email',
             'phone' => 'Phone',
+            'occupation'=>'Occupation',
+            'employer'=>'Employer',
             'address' => 'Address',
             'date_added' => 'Date Added',
             'gender' => 'Gender',

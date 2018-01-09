@@ -4,6 +4,9 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 use app\utilities\DataHelper;
 use yii\widgets\Pjax;
+use yii\helpers\Url;
+use app\models\Lookup;
+
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -16,10 +19,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-         <?php 
-                      $dh = new DataHelper();
-                       echo $dh->getModalButton(new \app\models\Lookup, 'lookup/create', 'Lookups', 'btn btn-danger btn-create');
-                ?>
+        <?php 
+			$dh = new DataHelper();
+			$url=Url::to(['lookup/create']);
+                       echo $dh->getModalButton(new Lookup, 'lookup/create', 'Lookups', 'btn btn-danger btn-create',"New",$url,"Lookup");
+                    ?>
+         
     </p>
      <?php Pjax::begin(['id'=>'pjax-lookup',]); ?> 
     <?= GridView::widget([
@@ -47,14 +52,15 @@ $this->params['breadcrumbs'][] = $this->title;
                      'buttons' => [
                                     'view' => function ($url, $model){
                                              $dh = new DataHelper();
-                                              $popup = $dh->getModalButton($model, "lookup/view", "Lookups", 'glyphicon glyphicon-eye-open','');
+                                             $url = Url::to(['lookup/view', 'id'=>$model->id]);
+                                              $popup = $dh->getModalButton($model, "lookup/view", "Lookups", 'glyphicon glyphicon-eye-open','',$url);
                                               return $popup;
-                                             
                                     }, 
-                                    'update' => function ($url, $model) {
+                                    'update' => function ($url, $model, $keyword) {
                                             $dh = new DataHelper();
-                                           return $dh->getModalButton($model, "lookup/update", "Lookups", 'glyphicon glyphicon-edit','');
-                                    },
+                                            $url = Url::to(['lookup/update', 'id'=>$model->id]);
+                                           return $dh->getModalButton($model, "lookup/update", "Lookups", 'glyphicon glyphicon-edit','',$url);
+                                     },
                             ], 
                     ],
         ],

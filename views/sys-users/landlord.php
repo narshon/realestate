@@ -48,11 +48,17 @@ $this->registerCss("
 
             <p>
                 <?php 
+                
+                    $url = Url::to(['occupancy/disburse']);
+                    echo kartik\helpers\Html::a("Disburse Funds","#",['class'=>"btn btn-danger",'id'=>"calculate-disbursement-dues",'onclick'=>"ajaxUniversalGetRequest('$url','calculate-disbursement-dues','', 1); return false;"]);
+                    
                       $dh = new DataHelper();
                       $url = Url::to('landlordform');
-                       echo $dh->getModalButton(new \app\models\Users, 'sys-users/landlordform', 'Users', 'btn btn-danger btn-create',"New",$url,"Users");
+                      echo  $dh->getModalButton(new \app\models\Users, 'sys-users/landlordform', 'Users', 'btn btn-danger btn-create pull-right',"New",$url,"Users");
+                       
                 ?>
             </p>
+            
              <?php Pjax::begin(['id'=>'pjax-sys-users',]); ?> 
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,

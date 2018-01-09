@@ -41,7 +41,7 @@ class AccountChart extends \yii\db\ActiveRecord
             [['code', 'fk_re_account_type', 'status', 'created_by', 'modified_by', 'created_on', 'modified_on'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 255],
-            [['fk_re_account_type'], 'exist', 'skipOnError' => true, 'targetClass' => AccountTypes::className(), 'targetAttribute' => ['fk_re_account_type' => 'id']],
+            [['fk_re_account_type'], 'exist', 'skipOnError' => true, 'targetClass' => AccountType::className(), 'targetAttribute' => ['fk_re_account_type' => 'id']],
         ];
     }
 
