@@ -15,6 +15,7 @@ use yii\data\ActiveDataProvider;
  */
 class OccupancyPaymentsController extends Controller
 {
+    public $settled_bills = [];
     /**
      * @inheritdoc
      */
@@ -182,5 +183,42 @@ class OccupancyPaymentsController extends Controller
                 'searchModel' => $searchModel,
                 'occupancy' => $model
             ]));
+    }
+    
+    public function actionMapPayments($id)
+    {
+        $model = \app\models\Occupancy::findOne($id);
+        $nsettled_bills = \app\models\OccupancyRent::getUnsettledBillList($model->id);
+        $model->getUnallocatedPayments();
+        if(Yii::$app->request->isPost && Yii::$app->request->post('cleared_bills') !== null) {
+            if(!empty($cleared_bills = Yii::$app->request->post('cleared_bills'))){
+                $status = \app\models\Lookup::findOne(['_value' => 'Matched', 'category'=>6]);
+                $model->clearBills(explode(',', $cleared_bills), $status? $status->_key:1);
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+        } elseif(\yii::$app->request->isAjax) {
+            return $this->renderAjax('allocation',[
+            'model' => $model,
+            'bills' => $nsettled_bills,
+        ]);
+        } else {
+            return $this->render('allocation',[
+            'model' => $model,
+            'bills' => $nsettled_bills,
+        ]);
+        }
+    }
+    
+    public function actionGetBillAmount()
+    {
+        if(Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            if(Yii::$app->request->post('ids') !== null) {
+                $ids = Yii::$app->request->post('ids');
+                $bills = \app\models\OccupancyRent::find()
+                    ->where(['in', 'id', $ids])->all();
+                return count($bills) > 0 ? \yii\helpers\ArrayHelper::map($bills, 'id', 'amount') : [];
+            }
+        }
     }
 }

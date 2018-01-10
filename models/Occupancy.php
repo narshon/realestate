@@ -30,6 +30,8 @@ use Yii;
  */
 class Occupancy extends \yii\db\ActiveRecord
 {
+    public $payments_pool;
+    public $sorted = [];
     public $phone;
     public $email;
     public $id_number;
@@ -465,7 +467,8 @@ class Occupancy extends \yii\db\ActiveRecord
             $model->year = date('Y');
             $model->fk_term = $term_id;
             $model->amount = $this->getBillAmount($term_id);
-            $model->_status = 1;
+            $status = \app\models\Lookup::findOne(['_value' => 'Matched', 'category'=>6]);
+            $model->_status = $status ? $status->_key : 0;
             return ($model->save()) ? 99 : false;
         }
     }
@@ -524,5 +527,33 @@ class Occupancy extends \yii\db\ActiveRecord
             $queryString = substr($queryString, 0, -4);
         }
         return $queryString;
+    }
+    public function getUnallocatedPayments()
+    {
+        $allocated = OccupancyRent::find()
+            ->select('amount')
+            ->where(['fk_occupancy_id' => $this->id])
+            ->andWhere(['_status' => 0])
+            ->sum('amount');
+        $payments = OccupancyPayments::find()
+            ->select('amount')
+            ->where(['fk_occupancy_id' => $this->id])
+            ->andWhere(['status' => 2])
+            ->sum('amount');
+        
+        $this->payments_pool = $payments - $allocated;
+    }
+    
+    public function clearBills($bills, $status)
+    {
+        foreach($bills as $bill) {
+            if(($model = OccupancyRent::findOne($bill)) !== null) {
+                $model->_status = $status;
+                $model->save(false);
+            }
+        }
+    }
+    public function getTenantName(){
+        return $this->fkUsers->getNames();
     }
 }
