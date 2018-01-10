@@ -6,7 +6,7 @@ use app\utilities\DataHelper;
 use yii\helpers\Url;
 use app\models\Source;
 use yii\widgets\Pjax;
-use app\models\Journal;
+use app\models\AccountEntries;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\sourceSearch */
@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="panel-body">
 	 <ul class=" nav nav-pills nav-stacked">
-             <?php  echo Journal::showButtons();  ?>
+             <?php  echo AccountEntries::showButtons();  ?>
          </ul>
         <h1><?= Html::encode($this->title) ?></h1>
     <p>

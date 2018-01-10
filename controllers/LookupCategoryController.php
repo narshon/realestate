@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\utilities\DataHelper;
 use app\models\LookupCategorySearch;
+use yii\web\Response;
 
 /**
  * LookupCategoryController implements the CRUD actions for LookupCategory model.
@@ -54,9 +55,22 @@ class LookupCategoryController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+       
+       $data = $this->renderAjax('view', [
+                'model' => $this->findModel($id),
+            ],false,false);
+        if(Yii::$app->request->isAjax){
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return array(
+                'div'=>$data,
+                
+            );
+        }
+        else{
+            return $this->render('view', [
+                'model' => $this->findModel($id),
+            ]);
+    }
     }
 
     /**

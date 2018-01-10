@@ -115,14 +115,7 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'modified_by',
 ];
              // Renders a export dropdown menu
-   echo ExportMenu::widget([
-        'dataProvider' => $dataProvider,
-        'columns' => $columns,
-        'exportConfig' => [
-        //ExportMenu::FORMAT_TEXT => false,
-        //ExportMenu::FORMAT_PDF => false
-    ]
-    ]) ;
+   
     ?>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

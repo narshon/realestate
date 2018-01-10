@@ -61,7 +61,7 @@ AppAsset::register($this);
 		   ['label' => 'Landlords', 'url' => ['/sys-users/landlord'],'visible'=>app\models\Users::isAgent()],
 		   ['label' => 'Properties', 'url' => ['/property/index'],'visible'=>app\models\Users::isAgent()],
 		   ['label' => 'Tenant', 'url' => ['/sys-users/tenant'],'visible'=>app\models\Users::isAgent()],
-		   ['label' => 'Finance', 'url' => ['/journal/index'],'visible'=>app\models\Users::isAgent()],
+		   ['label' => 'Finance', 'url' => ['/account-entries/index'],'visible'=>app\models\Users::isAgent()],
 		   ['label' => 'settings', 'url' => ['/county/index'],'visible'=>app\models\Users::isAgent()],
 			['label' => 'Reports', 'url' => ['/accounts-transaction/report'],'visible'=>app\models\Users::isAgent()],
 			

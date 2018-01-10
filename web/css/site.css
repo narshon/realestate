@@ -155,6 +155,9 @@ a.desc:after {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+.btn-margin {
+margin-right: 10px;
+}
 .list-view{
     display: block;
     clear: both;

@@ -8,6 +8,8 @@ use app\models\AccountEntriesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\utilities\DataHelper;
+use yii\web\Response;
 
 /**
  * AccountEntriesController implements the CRUD actions for AccountEntries model.
@@ -51,9 +53,22 @@ class AccountEntriesController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+       
+       $data = $this->renderAjax('view', [
+                'model' => $this->findModel($id),
+            ],false,false);
+        if(Yii::$app->request->isAjax){
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return array(
+                'div'=>$data,
+                
+            );
+        }
+        else{
+            return $this->render('view', [
+                'model' => $this->findModel($id),
+            ]);
+    }
     }
 
     /**
@@ -64,13 +79,29 @@ class AccountEntriesController extends Controller
     public function actionCreate()
     {
         $model = new AccountEntries();
+        $dh = new DataHelper;
+        $keyword = 'account-entries';
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            //return $this->redirect(['view', 'id' => $model->id]);
+            if (Yii::$app->request->isAjax)
+            {
+               return $dh->processResponse($this, $model, 'update', 'success', 'Successfully Saved!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);
+               exit;               
+            }
+            
         } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            if (Yii::$app->request->isAjax)
+            {
+                return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-0');
+               exit; 
+                     
+            }
+            else{
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
         }
     }
 
@@ -83,13 +114,25 @@ class AccountEntriesController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $dh = new DataHelper;
+        $keyword = 'account-entries';
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            //return $this->redirect(['view', 'id' => $model->id]);
+            if (Yii::$app->request->isAjax)
+            {   
+                return $dh->processResponse($this, $model, 'update', 'success', 'Successfully Saved!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);                
+            }
         } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+            if (Yii::$app->request->isAjax)
+            {
+                return $dh->processResponse($this, $model, 'update', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);   
+            }
+            else{
+                return $this->render('update', [
+                    'model' => $model,
+                ]);
+            }
         }
     }
 

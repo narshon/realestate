@@ -18,7 +18,7 @@ use yii\web\Response;
 class EstateController extends Controller
 {
     /**
-     * @inheritdoc
+     * @inheritdocsc
      */
     public function behaviors()
     {
