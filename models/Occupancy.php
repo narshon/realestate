@@ -533,7 +533,7 @@ class Occupancy extends \yii\db\ActiveRecord
         $allocated = OccupancyRent::find()
             ->select('amount')
             ->where(['fk_occupancy_id' => $this->id])
-            ->andWhere(['_status' => 0])
+            ->andWhere(['_status' => 1])
             ->sum('amount');
         $payments = OccupancyPayments::find()
             ->select('amount')

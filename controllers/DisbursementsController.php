@@ -121,4 +121,29 @@ class DisbursementsController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionPay($owner_id)
+    {
+        //get all the pending disbursements
+        $model = new Disbursements();
+        $nsettled_bills = \app\models\Disbursements::getUnsettledDisbursementList($owner_id);
+        
+        if(Yii::$app->request->isPost && Yii::$app->request->post('cleared_bills') !== null) {
+            if(!empty($cleared_bills = Yii::$app->request->post('cleared_bills'))){
+                $status = \app\models\Lookup::findOne(['_value' => 'Paid', 'category'=> \app\models\LookupCategory::getLookupCategoryID("Disbursement Status")]);
+                Disbursements::clearBills(explode(',', $cleared_bills), $status? $status->_key:1);
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+        } elseif(\yii::$app->request->isAjax) {
+            return $this->renderAjax('disburse',[
+            'model' => $model,
+            'bills' => $nsettled_bills,
+        ]);
+        } else {
+            return $this->render('disburse',[
+            'model' => $model,
+            'bills' => $nsettled_bills,
+        ]);
+        }
+    }
 }

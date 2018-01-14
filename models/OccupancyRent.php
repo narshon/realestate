@@ -290,24 +290,10 @@ class OccupancyRent extends \yii\db\ActiveRecord
     public function getStatus(){
         //get status
         $status = $this->_status;
-        $options = [1=>'PENDING',2=>'PAID LESS',3=>'PAID MORE', 4=>'PAID'];
-        $dh = new \app\utilities\DataHelper();
-        $url = \yii\helpers\Url::to(['occupancy-rent/printreceipt','id'=>$this->id]);
-        
-        if($status == 1){
-          return  Html::a("PENDING", ['#'], ['class' => 'btn btn-danger btn-sm' ,'onclick'=>"return false;"]);
-          
-        }
-        elseif($status == 2){
-            
-          //  return  Html::a("PAID LESS", ['#'], ['class' => 'btn btn-danger btn-sm','onclick'=>"return false;"]).$receipt;
-            return $dh->getModalButton(new \app\models\OccupancyRent, 'occupancy-rent/printreceipt', 'Receipt', 'btn btn-danger btn-sm','PAID LESS',$url);
-        }
-        elseif($status == 3){
-            return $dh->getModalButton(new \app\models\OccupancyRent, 'occupancy-rent/printreceipt', 'Receipt', 'btn btn-success btn-sm','PAID MORE',$url);
-        }
-         elseif($status == 4){
-            return $dh->getModalButton(new \app\models\OccupancyRent, 'occupancy-rent/printreceipt', 'Receipt', 'btn btn-success btn-sm','PAID',$url);
+        //get the lookup label for this key.
+        $lookup = Lookup::find()->where(['_key'=>$status, 'category'=> LookupCategory::find()->where(['category_name'=>"Match Bills"])->one()->id])->one();
+        if($lookup){
+            return $lookup->_value;
         }
     }
     
@@ -325,10 +311,59 @@ class OccupancyRent extends \yii\db\ActiveRecord
         if(is_array($bills)) {
             foreach($bills as $bill) {
                 $list[$bill->id] = [
-                    'content' => $bill->fkTerm->term_name . ' - ' . $bill->amount . ' ('. $bill->year . '/' . $bill->month .')'
+                    'content' =>  $bill->fkSource->source_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')'
                 ];
             }
         }
         return $list;
+    }
+    
+    public function getPeriod(){
+        $month = "";
+        
+        switch($this->month):
+          case 1:
+                $month = "January";
+             break;
+          case 2:
+                $month = "February";
+             break;
+         case 3:
+                $month = "March";
+             break;
+         case 4:
+                $month = "April";
+             break;
+         case 5:
+                $month = "May";
+             break;
+         case 6:
+                $month = "June";
+             break;
+         case 7:
+                $month = "July";
+             break;
+         case 8:
+                $month = "August";
+             break;
+         case 9:
+                $month = "September";
+             break;
+         case 10:
+                $month = "October";
+             break;
+         case 11:
+                $month = "November";
+             break;
+         case 12:
+                $month = "December";
+             break;
+          Default:
+              $month = '';
+              break;
+        endswitch;
+        
+        return $month."/".$this->year;
+        
     }
 }
