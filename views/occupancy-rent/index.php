@@ -30,15 +30,22 @@ $this->params['breadcrumbs'][] = $this->title;
                     return isset($data->fkSource)?$data->fkSource->source_name:'';
                 }
             ],
-            'month',
-            'year',
-            'amount',
-           /* [
-                'attribute'=>'pay_rent_due',
+            [
+                'attribute'=>'month',
+                'label' => "Period",
                 'value'=>function($data){
-                    return $data->getPayDue();
+                    return $data->getPeriod();
                 }
-            ],  */
+            ],
+            //'month',
+            //'year',
+            'amount',
+            [
+                'attribute'=>'_status',
+                'value'=>function($data){
+                    return app\models\Lookup::getLookupCategoryValue(app\models\LookupCategory::getLookupCategoryID("Match Bills"), $data->_status);
+                }
+            ],  
             'date_created',
              
             // 'created_by',

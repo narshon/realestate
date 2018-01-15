@@ -15,7 +15,6 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="landlord-imprest-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
@@ -41,7 +40,7 @@ $this->params['breadcrumbs'][] = $this->title;
             // 'created_by',
              '_status',
 
-            ['class' => 'yii\grid\ActionColumn'],
+           // ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 <?php Pjax::end(); ?></div>
