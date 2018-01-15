@@ -80,31 +80,18 @@ class WardController extends Controller
      */
     public function actionCreate()
     {
-         $model = new Ward();
-        $dh = new DataHelper;
-        $keyword = 'ward';
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            //return $this->redirect(['view', 'id' => $model->id]);
-            if (Yii::$app->request->isAjax)
-            {
-               return $dh->processResponse($this, $model, 'update', 'success', 'Successfully Saved!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);
-               exit;               
-            }
-            
-        } else {
-            if (Yii::$app->request->isAjax)
-            {
-                return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-0');
-               exit; 
-                     
-            }
-            else{
-                return $this->render('create', [
-                    'model' => $model,
-                ]);
-            }
-        }
+		$model = new Ward();
+		if ($model->load(Yii::$app->request->post()) && $model->save()) {
+			return $this->redirect(Yii::$app->request->referrer);
+		}elseif(Yii::$app->request->isAjax){
+			return $this->renderAjax('create', [
+				'model' => $model,
+			]);
+		} else {
+			return $this->render('create', [
+				'model' => $model,
+			]);
+		}
     }
 
     /**

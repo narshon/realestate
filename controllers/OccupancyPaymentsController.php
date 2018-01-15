@@ -153,17 +153,14 @@ class OccupancyPaymentsController extends Controller
     public function actionPrintReceipt($id)
     {
         $model = $this->findModel($id);
-        $query = OccupancyPayments::find()->where(['id'=>$model->id]);
-        $dataProvider = new ActiveDataProvider(['query' => $query]);
+        
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('receipt',[
                 'model' => $model,
-                'dataProvider' => $dataProvider,
             ]);
         } else {
             return $this->render('receipt', [
                 'model' => $model,
-                'dataProvider' => $dataProvider,
             ]);
         }
     }

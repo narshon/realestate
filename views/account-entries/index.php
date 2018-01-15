@@ -67,6 +67,7 @@ $this->registerCss("
 		
 	<div class="rightbar col-md-10">
 	<div class="tab-content">
+	
 	<div class="tab-pane active" id="entries" role="tabpanel">
 	 <ul class=" nav nav-pills nav-stacked">
              <?php  echo AccountEntries::showButtons();  ?>
@@ -74,7 +75,7 @@ $this->registerCss("
          </ul>
 
     <div class="tab-content">
-        <div id="accountentries" class="tab-pane fade in active">
+        <div id="account-entries" class="tab-pane fade in active">
 	 <div class="account-entries-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -121,7 +122,7 @@ $this->registerCss("
 </div>	
 </div>
 
-		<div id="source" class="tab-pane fade">
+		<div id="source" class="tab-pane fade ">
           <?php
           $osearch = new app\models\SourceSearch;
           $omodel = new app\models\Source;
@@ -133,7 +134,8 @@ $this->registerCss("
             ]);
           ?>
         </div>
-		<div id="accountchart" class="tab-pane fade">
+		
+		<div id="account-chart" class="tab-pane fade">
           <?php
           $osearch = new app\models\AccountChartSearch;
           $omodel = new app\models\AccountChart;
@@ -147,7 +149,7 @@ $this->registerCss("
         </div>
 		
 		
-		<div id="accountmap" class="tab-pane fade">
+		<div id="account-map" class="tab-pane fade">
           <?php
           $osearch = new app\models\AccountMapSearch;
           $omodel = new app\models\AccountMap;
@@ -160,7 +162,7 @@ $this->registerCss("
           ?>
         </div>
 		
-		<div id="accounttype" class="tab-pane fade">
+		<div id="account-type" class="tab-pane fade">
           <?php
           $osearch = new app\models\AccountTypeSearch;
           $omodel = new app\models\AccountType;
@@ -175,6 +177,8 @@ $this->registerCss("
 	
     </div>
 	</div>
+
+	
 	<div class="tab-pane" id="report" role="tabpanel">1</div>
 	<div class="tab-pane" id="l-statement" role="tabpanel">2</div>
 	<div class="tab-pane" id="t_statement" role="tabpanel">1</div>
@@ -182,10 +186,11 @@ $this->registerCss("
 	<div class="tab-pane" id="c-commission" role="tabpanel">5</div>
 	<div class="tab-pane" id="d-report" role="tabpanel">6</div>
 	<div class="tab-pane" id="m-report" role="tabpanel">7</div>
+
 	</div>
 	</div>
 	</div>
 	
-</div>
+
 
 

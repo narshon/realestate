@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use app\models\LookupCategory;
+use app\models\Lookup;
 
 /**
  * This is the model class for table "re_occupancy_payments".
@@ -135,5 +137,21 @@ class OccupancyPayments extends \yii\db\ActiveRecord
        //$journal->details = $this->details;
         $journal->transacted_by = Yii::$app->user->identity->id;
         $journal->save(false);
+    }
+	
+	public function getPaymentMethod()
+    {
+      $method = LookupCategory::find()->where(['category_name'=>'Payment Method'])->one();
+       if($method){
+           //get this property type.
+           $methodtype = Lookup::find()->where(['_key'=>$this->payment_method, 'category'=>$method->id])->one();
+           if($methodtype){
+               if(isset($methodtype->_value)){  
+                 return ['Payment Method'=>$methodtype->_value];
+               }
+           }
+       }
+       
+       return [];
     }
 }
