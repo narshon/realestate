@@ -92,7 +92,17 @@ $this->registerCss("
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'fk_account_chart',
+           
+			[
+               'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                    'attribute' => 'fk_account_chart',
+                  
+                    'header'=>'Account Chart',
+                    'format' => 'raw',
+                    'value'=>function ($data) {
+                               return isset($data->fkAccountChart->name)?$data->fkAccountChart->name:"";
+                            },
+			],
             'trasaction_type',
             'amount',
             'entry_date',

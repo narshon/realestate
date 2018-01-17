@@ -141,17 +141,16 @@ class OccupancyPayments extends \yii\db\ActiveRecord
 	
 	public function getPaymentMethod()
     {
-      $method = LookupCategory::find()->where(['category_name'=>'Payment Method'])->one();
-       if($method){
-           //get this property type.
-           $methodtype = Lookup::find()->where(['_key'=>$this->payment_method, 'category'=>$method->id])->one();
-           if($methodtype){
-               if(isset($methodtype->_value)){  
-                 return ['Payment Method'=>$methodtype->_value];
-               }
-           }
-       }
-       
-       return [];
+		 $method = LookupCategory::find()->where(['category_name'=>'Payment Method'])->one();
+		
+        if($method){
+			$methodtype = Lookup::find()->where(['_key'=>$this->payment_method, 'category'=>$method->id])->one();
+           
+				if($methodtype){
+			return $methodtype->_value ;			
+        }
     }
+	}
+	
+     
 }

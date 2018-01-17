@@ -7,6 +7,7 @@ use yii\helpers\Url;
 use app\models\AccountChart;
 use yii\widgets\Pjax;
 use app\models\AccountEntries;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AccountChartSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -43,8 +44,27 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'code',
             'name',
-            'fk_re_account_type',
-            'status',
+           
+			[
+			 'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                    'attribute' => 'fk_re_account_type',
+                  
+                    'header'=>'Account Type',
+                    'format' => 'raw',
+                    'value'=>function ($data) {
+                               return isset($data->fkReAccountType->name)?$data->fkReAccountType->name:"";
+                            },
+			],
+            
+			[
+			'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                        'attribute' => 'status',
+                        'filter' => app\models\Lookup::getLookupValues('Status'),
+                        'value' => function ($data) {
+                            $category_id = \app\models\LookupCategory::getLookupCategoryID('Status');
+                            return app\models\Lookup::getLookupCategoryValue($category_id, $data->status);
+                        },
+			],
             // 'description:ntext',
             // 'created_by',
             // 'modified_by',

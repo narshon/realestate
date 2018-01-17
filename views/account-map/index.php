@@ -40,10 +40,39 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'fk_term',
-            'fk_account_chart',
+           
+			[
+               'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                    'attribute' => 'fk_term',
+                  
+                    'header'=>'Term',
+                    'format' => 'raw',
+                    'value'=>function ($data) {
+                               return isset($data->fkTerm->term_name)?$data->fkTerm->term_name:"";
+                            },
+			],
+            
+			[
+               'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                    'attribute' => 'fk_account_chart',
+                  
+                    'header'=>'Account Chart',
+                    'format' => 'raw',
+                    'value'=>function ($data) {
+                               return isset($data->fkAccountChart->name)?$data->fkAccountChart->name:"";
+                            },
+			],
             'transaction_type',
-            'status',
+            
+			[
+			'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                        'attribute' => 'status',
+                        'filter' => app\models\Lookup::getLookupValues('Status'),
+                        'value' => function ($data) {
+                            $category_id = \app\models\LookupCategory::getLookupCategoryID('Status');
+                            return app\models\Lookup::getLookupCategoryValue($category_id, $data->status);
+                        },
+			],
             // 'created_on',
             // 'created_by',
             // 'modified_on',

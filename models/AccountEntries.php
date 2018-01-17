@@ -63,6 +63,14 @@ class AccountEntries extends \yii\db\ActiveRecord
             'created_by' => 'Created By',
         ];
     }
+	 /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getfkAccountChart()
+    {
+        return $this->hasOne(AccountChart::className(), ['id' => 'fk_account_chart']);
+    }
+	
     public static function postTransaction($account_chart, $trasaction_type, $amount, $entry_date,$origin_id='', $origin_model='')
     {
         $model = new AccountEntries();
@@ -85,13 +93,13 @@ class AccountEntries extends \yii\db\ActiveRecord
             $dh = new DataHelper();
             $url = Url::to(['journal/transfer']);  //'site/update-data'
             $button = $dh->getModalButton(new journal, '', 'Transfer Funds', 'btn btn-danger btn-create btn-new pull-right','Transfer Funds',$url);
-            $return = '<ul class=" nav nav-pills nav-stacked">';
+            $return = '<ul class="nav nav-tabs" id="myTab" role="tablist">';
             $return .= $button;
-            $return .= Button::widget(["label" => "Account Type", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accounttype')"]]);
-			$return .= Button::widget(["label" => "Account Map", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accountmap')"]]);
-            $return .= Button::widget(["label" => "Accounts Chart", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accountchart')"]]);
-            $return .= Button::widget(["label" => "Source", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$source')"]]);
-            $return .= Button::widget(["label" => "Account Entries", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accountentries')"]]);
+            $return .= Button::widget(["label" => "Account Type", "options" => ["class" => "btn-danger grid-button pull-right btn-margin","data-toggle"=>"tab" ,"role"=>"tab","onclick"=>"redirectTo('$accounttype')"]]);
+			$return .= Button::widget(["label" => "Account Map", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "data-toggle"=>"tab" ,"role"=>"tab", "onclick"=>"redirectTo('$accountmap')"]]);
+            $return .= Button::widget(["label" => "Accounts Chart", "options" => ["class" => "btn-danger grid-button pull-right btn-margin","data-toggle"=>"tab" ,"role"=>"tab", "onclick"=>"redirectTo('$accountchart')"]]);
+            $return .= Button::widget(["label" => "Source", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "data-toggle"=>"tab" ,"role"=>"tab","onclick"=>"redirectTo('$source')"]]);
+            $return .= Button::widget(["label" => "Account Entries", "options" => ["class" => "btn-danger grid-button pull-right btn-margin","data-toggle"=>"tab" ,"role"=>"tab",  "onclick"=>"redirectTo('$accountentries')"]]);
             $return .= '</ul>';
       
              return $return;
@@ -107,9 +115,7 @@ class AccountEntries extends \yii\db\ActiveRecord
             $return = '<ul class=" nav nav-pills nav-stacked">';
             $return .= $button;
             $return .= Button::widget(["label" => "Register Expense", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$register')"]]);
-			$newentry = Url::to(['account-entries/create']);  //'site/update-data'
-		   echo $dh->getModalButton(new AccountEntries, 'account-entries/create', 'Account-entries', 'btn btn-danger btn-create btn-new pull-right','New ',$newentry);
-		
+			
 			$return .= '</ul>';
       
              return $return;

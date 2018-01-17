@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use app\models\AccountType;
+
 
 /**
  * This is the model class for table "re_account_chart".
@@ -69,7 +71,7 @@ class AccountChart extends \yii\db\ActiveRecord
      */
     public function getFkReAccountType()
     {
-        return $this->hasOne(AccountTypes::className(), ['id' => 'fk_re_account_type']);
+        return $this->hasOne(AccountType::className(), ['id' => 'fk_re_account_type']);
     }
 
     /**
@@ -79,4 +81,13 @@ class AccountChart extends \yii\db\ActiveRecord
     {
         return $this->hasMany(AccountMap::className(), ['fk_account_chart' => 'id']);
     }
+	
+	public function getStatus(){
+            if($this->_status == 1){
+                return "OFF";
+            }
+            if($this->_status == 2){
+                return "ON";
+            }
+        }
 }

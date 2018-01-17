@@ -1,6 +1,8 @@
 <?php
 use yii\helpers\Html;
 use kartik\grid\GridView;
+use app\models\Lookup;
+use app\models\LookupCategory;
 /* @var $this yii\web\View */
 /* @var $model app\models\OccupancyPayments */
 /* @var $form yii\widgets\ActiveForm */
@@ -39,7 +41,7 @@ use kartik\grid\GridView;
 	   <div class="row">
 	       <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">Being payment of:</div>
 		</div>
-		<div class="row"><label>Payment  Method: </label><?=$model->payment_method?></div>
+		<div class="row"><label>Payment  Method: </label><?=$model->getPaymentMethod();?></div>
 		<div class="row">
 			<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">REMARKS:</div>
 			<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">signature:</div>
