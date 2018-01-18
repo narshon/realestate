@@ -6,6 +6,7 @@ use app\models\OccupancyTerm;
 use app\utilities\DataHelper;
 use yii\widgets\Pjax;
 use yii\bootstrap\ButtonDropdown;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -17,9 +18,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php 
-                     // $dh = new DataHelper();
-                     //  echo $dh->getModalButton(new \app\models\LookupCategory, 'occupancy-term/create', 'Terms', 'btn btn-danger btn-create');
-                ?>
+		$dh = new DataHelper();
+			$url=Url::to(['occupancy-term/create']);
+            echo $dh->getModalButton(new \app\models\LookupCategory, 'occupancy-term/create', 'Terms', 'btn btn-danger btn-create',"New",$url,"Term");
+             ?>
+                                    
             </p>
             <?php Pjax::begin(['id'=>'pjax-occupancy-term',]); ?> 
     <?= GridView::widget([

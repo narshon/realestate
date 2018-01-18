@@ -93,13 +93,13 @@ class AccountEntries extends \yii\db\ActiveRecord
             $dh = new DataHelper();
             $url = Url::to(['journal/transfer']);  //'site/update-data'
             $button = $dh->getModalButton(new journal, '', 'Transfer Funds', 'btn btn-danger btn-create btn-new pull-right','Transfer Funds',$url);
-            $return = '<ul class="nav nav-tabs" id="myTab" role="tablist">';
+            $return = '<ul class=" nav nav-pills nav-stacked">';
             $return .= $button;
-            $return .= Button::widget(["label" => "Account Type", "options" => ["class" => "btn-danger grid-button pull-right btn-margin","data-toggle"=>"tab" ,"role"=>"tab","onclick"=>"redirectTo('$accounttype')"]]);
-			$return .= Button::widget(["label" => "Account Map", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "data-toggle"=>"tab" ,"role"=>"tab", "onclick"=>"redirectTo('$accountmap')"]]);
-            $return .= Button::widget(["label" => "Accounts Chart", "options" => ["class" => "btn-danger grid-button pull-right btn-margin","data-toggle"=>"tab" ,"role"=>"tab", "onclick"=>"redirectTo('$accountchart')"]]);
-            $return .= Button::widget(["label" => "Source", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "data-toggle"=>"tab" ,"role"=>"tab","onclick"=>"redirectTo('$source')"]]);
-            $return .= Button::widget(["label" => "Account Entries", "options" => ["class" => "btn-danger grid-button pull-right btn-margin","data-toggle"=>"tab" ,"role"=>"tab",  "onclick"=>"redirectTo('$accountentries')"]]);
+            $return .= Button::widget(["label" => "Account Type", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accounttype')"]]);
+			$return .= Button::widget(["label" => "Account Map", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accountmap')"]]);
+            $return .= Button::widget(["label" => "Accounts Chart", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accountchart')"]]);
+            $return .= Button::widget(["label" => "Source", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$source')"]]);
+            $return .= Button::widget(["label" => "Account Entries", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accountentries')"]]);
             $return .= '</ul>';
       
              return $return;
