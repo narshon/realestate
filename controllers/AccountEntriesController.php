@@ -45,6 +45,37 @@ class AccountEntriesController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+	
+	 public function actionTransfer(){
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $model = new AccountEntries();
+		
+
+        if ($model->load(Yii::$app->request->post()) && $model->transferValidations() ) {
+            
+           if($model->transfer()){
+               return array(
+                    'status'=>'success', 
+                    'message'=>'Successfully saved.',
+                    'div'=>"Successfully saved!",
+                    'gridid'=>'pjax-account-entries',
+                    'alert_div'=>'account-entries-form-alert'
+                    );
+           }
+           
+        } 
+	 $form = $this->renderAjax('transfer', ['model' => $model]);
+			
+	    return array(
+                    'status'=>'error', 
+                    'message'=>'Please fix below errors!.',
+                    'div'=>$form,
+                    'gridid'=>'pjax-account-entries',
+                    'alert_div'=>'account-entries-form-alert'
+                    );
+    }
+	
 
     /**
      * Displays a single AccountEntries model.

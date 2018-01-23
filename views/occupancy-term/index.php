@@ -41,7 +41,12 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'date_signed',
             'value',
-            '_status',
+            [
+                'attribute'=>'_status',
+                'value'=>function($data){
+                    return app\models\Lookup::getLookupCategoryValue(app\models\LookupCategory::getLookupCategoryID("status"), $data->_status);
+                }
+            ], 
             ['class' => 'yii\grid\ActionColumn',
                      'template' => '{view} {update}',
                      'buttons' => [
