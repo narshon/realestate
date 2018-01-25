@@ -84,7 +84,7 @@ use yii\jui\DatePicker;
     <div class="form-group">
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <?= Html::submitButton('Receive', ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton('Receive', ['class' => 'btn btn-danger']) ?>
         </div>
         <div class="col-md-4"></div>
         
