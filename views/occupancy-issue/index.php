@@ -5,6 +5,7 @@ use yii\grid\GridView;
 use app\utilities\DataHelper;
 use app\models\OccupancyIssue;
 use yii\widgets\Pjax;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -16,9 +17,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
          <?php 
-                      $dh = new DataHelper();
-                       echo $dh->getModalButton(new \app\models\OccupancyIssue, 'occupancy-issue/create', 'Management', 'btn btn-danger btn-create');
-                ?>
+					$dh = new DataHelper();
+					  $url=Url::to(['occupancy-issue/create']);
+                       echo $dh->getModalButton(new OccupancyIssue, 'occupancy-issue/create', 'OccupancyIssue', 'btn btn-danger btn-create',"New",$url,"OccupancyIssue");
+                    ?>
             </p>
             <?php Pjax::begin(['id'=>'pjax-occupancy-issue',]); ?> 
     <?= GridView::widget([

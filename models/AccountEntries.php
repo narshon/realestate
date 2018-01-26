@@ -92,7 +92,7 @@ class AccountEntries extends \yii\db\ActiveRecord
 			$accounttype = Url::to(['account-type/index']);
             $dh = new DataHelper();
             $url = Url::to(['journal/transfer']);  //'site/update-data'
-            $button = $dh->getModalButton(new journal, '', 'Transfer Funds', 'btn btn-danger btn-create btn-new pull-right','Transfer Funds',$url);
+            $button = $dh->getModalButton(new journal, '', '', '','',$url);
             $return = '<ul class=" nav nav-pills nav-stacked">';
             $return .= $button;
             $return .= Button::widget(["label" => "Account Type", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accounttype')"]]);

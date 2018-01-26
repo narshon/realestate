@@ -17,11 +17,11 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="occupancy-term-index">
 
     <p>
-        <?php 
-		$dh = new DataHelper();
-			$url=Url::to(['occupancy-term/create']);
-            echo $dh->getModalButton(new \app\models\LookupCategory, 'occupancy-term/create', 'Terms', 'btn btn-danger btn-create',"New",$url,"Term");
-             ?>
+       <?php 
+					$dh = new DataHelper();
+					  $url=Url::to(['occupancy-term/create']);
+                       echo $dh->getModalButton(new OccupancyTerm, 'occupancy-term/create', 'OccupancyTerm', 'btn btn-danger btn-create',"New",$url,"OccupancyTerm");
+                    ?>
                                     
             </p>
             <?php Pjax::begin(['id'=>'pjax-occupancy-term',]); ?> 
