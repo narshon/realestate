@@ -63,6 +63,14 @@ class AccountEntries extends \yii\db\ActiveRecord
             'created_by' => 'Created By',
         ];
     }
+	 /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getfkAccountChart()
+    {
+        return $this->hasOne(AccountChart::className(), ['id' => 'fk_account_chart']);
+    }
+	
     public static function postTransaction($account_chart, $trasaction_type, $amount, $entry_date,$origin_id='', $origin_model='')
     {
         $model = new AccountEntries();
@@ -84,8 +92,7 @@ class AccountEntries extends \yii\db\ActiveRecord
 			$accounttype = Url::to(['account-type/index']);
             $dh = new DataHelper();
             $url = Url::to(['journal/transfer']);  //'site/update-data'
-            $button = $dh->getModalButton(new journal, '', 'Transfer Funds', 'btn btn-danger btn-create btn-new pull-right','Transfer Funds',$url);
-            
+            $button = $dh->getModalButton(new journal, '', '', '','',$url);
             $return = '<ul class=" nav nav-pills nav-stacked">';
             $return .= $button;
             $return .= Button::widget(["label" => "Account Type", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accounttype')"]]);
@@ -102,15 +109,13 @@ class AccountEntries extends \yii\db\ActiveRecord
             $transfer = Url::to(['account-entries/transfer']);
             $register = Url::to(['account-entries/register']);
 			$dh = new DataHelper();
-			$url = Url::to(['journal/transfer']);
+			$url = Url::to(['account-entries/transfer']);
 			$button = $dh->getModalButton(new journal, '', 'Transfer Funds', 'btn btn-danger btn-create btn-new pull-right','Transfer Funds',$url);
              
             $return = '<ul class=" nav nav-pills nav-stacked">';
             $return .= $button;
             $return .= Button::widget(["label" => "Register Expense", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$register')"]]);
-			$newentry = Url::to(['account-entries/create']);  //'site/update-data'
-		   echo $dh->getModalButton(new AccountEntries, 'account-entries/create', 'Account-entries', 'btn btn-danger btn-create btn-new pull-right','New ',$newentry);
-		
+			
 			$return .= '</ul>';
       
              return $return;

@@ -22,6 +22,7 @@ use Yii;
  */
 class Disbursements extends \yii\db\ActiveRecord
 {
+    public $payments_pool;
     /**
      * @inheritdoc
      */
@@ -39,7 +40,7 @@ class Disbursements extends \yii\db\ActiveRecord
             [['fk_occupancy_rent', 'amount', 'entry_date'], 'required'],
             [['fk_occupancy_rent', 'fk_landlord', 'batch_id', 'created_by', '_status','month','year'], 'integer'],
             [['amount'], 'number'],
-            [['entry_date', 'created_on'], 'safe'],
+            [['entry_date', 'created_on','payments_pool'], 'safe'],
             [['fk_landlord'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['fk_landlord' => 'id']],
             [['fk_occupancy_rent'], 'exist', 'skipOnError' => true, 'targetClass' => OccupancyRent::className(), 'targetAttribute' => ['fk_occupancy_rent' => 'id']],
         ];
@@ -111,4 +112,20 @@ class Disbursements extends \yii\db\ActiveRecord
         
         return $disburse->save();
     }
+    
+    public static function getUnsettledDisbursementList($id)
+    {
+        $list = [];
+        $bills = Self::findAll(['_status' => 1, 'fk_landlord'=>$id]);
+        if(is_array($bills)) {
+            foreach($bills as $bill) {
+                $list[$bill->id] = [
+                    'content' =>  $bill->fkOccupancyRent->fkSource->source_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')'
+                ];
+            }
+        }
+        return $list;
+    }
+    
+    
 }

@@ -12,9 +12,9 @@ MySQL - 10.1.21-MariaDB : Database - real_estate2
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`real_estate2` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`rentkeny_realestate` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
-USE `real_estate2`;
+USE `rentkeny_realestate`;
 
 /*Table structure for table `re_account_chart` */
 

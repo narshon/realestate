@@ -52,10 +52,22 @@ class OccupancyPaymentsController extends Controller
      * @return mixed
      */
     public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+    { 
+	$data = $this->renderAjax('view', [
+                'model' => $this->findModel($id),
+            ],false,false);
+        if(Yii::$app->request->isAjax){
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return array(
+                'div'=>$data,
+                
+            );
+        }
+        else{
+            return $this->render('view', [
+                'model' => $this->findModel($id),
+            ]);
+    }
     }
 
     /**
@@ -153,17 +165,14 @@ class OccupancyPaymentsController extends Controller
     public function actionPrintReceipt($id)
     {
         $model = $this->findModel($id);
-        $query = OccupancyPayments::find()->where(['id'=>$model->id]);
-        $dataProvider = new ActiveDataProvider(['query' => $query]);
+        
         if(Yii::$app->request->isAjax){
             return $this->renderAjax('receipt',[
                 'model' => $model,
-                'dataProvider' => $dataProvider,
             ]);
         } else {
             return $this->render('receipt', [
                 'model' => $model,
-                'dataProvider' => $dataProvider,
             ]);
         }
     }

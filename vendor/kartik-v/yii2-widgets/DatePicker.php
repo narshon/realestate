@@ -8,6 +8,8 @@
 
 namespace kartik\widgets;
 
+
+
 /**
  * DatePicker widget is a Yii2 wrapper for the Bootstrap DatePicker plugin. The
  * plugin is a fork of Stefan Petre's DatePicker (of eyecon.ro), with improvements
@@ -19,4 +21,5 @@ namespace kartik\widgets;
  */
 class DatePicker extends \kartik\date\DatePicker
 {
+	
 }

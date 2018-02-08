@@ -17,10 +17,24 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'fk_term',
-            'fk_account_chart',
+         
+			[
+                            'label' => 'Term',
+                             'format'=>'raw',
+                             'value' =>$model->fkTerm->term_name,
+              ],
+            
+			[
+                            'label' => 'Account Chart',
+                             'format'=>'raw',
+                             'value' =>$model->fkAccountChart->name,
+              ],
             'transaction_type',
-            'status',
+            
+			[                      // the owner name of the model
+             'label' => 'Status',
+             'value' => app\models\Lookup::getLookupCategoryValue(\app\models\LookupCategory::getLookupCategoryID('Status'), $model->status),
+            ],
             //'created_on',
             //'created_by',
             //'modified_on',

@@ -6,6 +6,7 @@ use app\utilities\DataHelper;
 use yii\helpers\Url;
 use app\models\AccountMap;
 use yii\widgets\Pjax;
+use app\models\AccountEntries;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AccountMapSearch */
@@ -13,12 +14,17 @@ use yii\widgets\Pjax;
 
 $this->title = 'Account Maps';
 $this->params['breadcrumbs'][] = $this->title;
-?>
-<div class="account-map-index">
+?><div class="account-map-index panel panel-danger admin-content">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
+     <div class="panel-heading">
+        <h1>Financial Records</h1>
+    </div>
+	
+    <div class="panel-body">
+	 <ul class=" nav nav-pills nav-stacked">
+             <?php  echo AccountEntries::showButtons();?>
+         </ul>
+        <h1><?= Html::encode($this->title) ?></h1>
     <p>
 	<?php
         $dh = New DataHelper();
@@ -34,10 +40,39 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'fk_term',
-            'fk_account_chart',
+           
+			[
+               'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                    'attribute' => 'fk_term',
+                  
+                    'header'=>'Term',
+                    'format' => 'raw',
+                    'value'=>function ($data) {
+                               return isset($data->fkTerm->term_name)?$data->fkTerm->term_name:"";
+                            },
+			],
+            
+			[
+               'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                    'attribute' => 'fk_account_chart',
+                  
+                    'header'=>'Account Chart',
+                    'format' => 'raw',
+                    'value'=>function ($data) {
+                               return isset($data->fkAccountChart->name)?$data->fkAccountChart->name:"";
+                            },
+			],
             'transaction_type',
-            'status',
+            
+			[
+			'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                        'attribute' => 'status',
+                        'filter' => app\models\Lookup::getLookupValues('Status'),
+                        'value' => function ($data) {
+                            $category_id = \app\models\LookupCategory::getLookupCategoryID('Status');
+                            return app\models\Lookup::getLookupCategoryValue($category_id, $data->status);
+                        },
+			],
             // 'created_on',
             // 'created_by',
             // 'modified_on',
@@ -63,4 +98,5 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 	<?php Pjax::end(); ?>
+</div>
 </div>

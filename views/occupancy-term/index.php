@@ -6,6 +6,7 @@ use app\models\OccupancyTerm;
 use app\utilities\DataHelper;
 use yii\widgets\Pjax;
 use yii\bootstrap\ButtonDropdown;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -16,10 +17,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="occupancy-term-index">
 
     <p>
-        <?php 
-                     // $dh = new DataHelper();
-                     //  echo $dh->getModalButton(new \app\models\LookupCategory, 'occupancy-term/create', 'Terms', 'btn btn-danger btn-create');
-                ?>
+       <?php 
+					$dh = new DataHelper();
+					  $url=Url::to(['occupancy-term/create']);
+                       echo $dh->getModalButton(new OccupancyTerm, 'occupancy-term/create', 'OccupancyTerm', 'btn btn-danger btn-create',"New",$url,"OccupancyTerm");
+                    ?>
+                                    
             </p>
             <?php Pjax::begin(['id'=>'pjax-occupancy-term',]); ?> 
     <?= GridView::widget([
@@ -38,7 +41,12 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'date_signed',
             'value',
-            '_status',
+            [
+                'attribute'=>'_status',
+                'value'=>function($data){
+                    return app\models\Lookup::getLookupCategoryValue(app\models\LookupCategory::getLookupCategoryID("status"), $data->_status);
+                }
+            ], 
             ['class' => 'yii\grid\ActionColumn',
                      'template' => '{view} {update}',
                      'buttons' => [

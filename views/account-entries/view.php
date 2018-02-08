@@ -16,7 +16,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'fk_account_chart',
+           
+			[
+                            'label' => 'Account Chart',
+                             'format'=>'raw',
+                             'value' =>$model->fkAccountChart->name,
+                         ],
             'trasaction_type',
             'amount',
             'entry_date',
