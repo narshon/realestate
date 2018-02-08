@@ -8,8 +8,9 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use \app\utilities\DataHelper;
+use app\utilities\DataHelper;
 use yii\web\Response;
+use app\models\OccupancyTermSearch;
 
 /**
  * OccupancyTermController implements the CRUD actions for OccupancyTerm model.
@@ -36,13 +37,15 @@ class OccupancyTermController extends Controller
      * @return mixed
      */
     public function actionIndex()
-    {
-        $dataProvider = new ActiveDataProvider([
-            'query' => OccupancyTerm::find(),
-        ]);
+	
+    { 
+	$searchModel = new OccupancyTermSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->get());
+        
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
     

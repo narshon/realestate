@@ -20,8 +20,16 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'code',
             'name',
-            'fk_re_account_type',
-            'status',
+            
+			 [
+                'label'=>'Account Type',
+                'value'=>$model->fkReAccountType->term_name,
+            ],
+            
+			[                      // the owner name of the model
+             'label' => 'Status',
+             'value' => app\models\Lookup::getLookupCategoryValue(\app\models\LookupCategory::getLookupCategoryID('Status'), $model->status),
+            ],
             'description:ntext',
             //'created_by',
            // 'modified_by',

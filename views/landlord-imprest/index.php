@@ -3,6 +3,9 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use app\utilities\DataHelper;
+use yii\helpers\Url;
+use app\models\LandlordImprest;
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\LandlordImprestSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -15,7 +18,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Landlord Imprest', ['create'], ['class' => 'btn btn-success']) ?>
+        
+	<?php
+        $dh = new DataHelper();
+						 $url=Url::to(['landlord-imprest/create']);
+                       echo $dh->getModalButton(new LandlordImprest, 'landlord-imprest/create', 'LandlordImprest', 'btn btn-danger btn-create btn-new pull-right' , "Create landlord Imprest",$url);
+               ?>
+  
     </p>
 <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,

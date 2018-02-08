@@ -31,7 +31,7 @@ class Ward extends \yii\db\ActiveRecord
         return [
 			[['fk_subcounty','ward_name',''], 'required'],
             [['fk_subcounty'], 'integer'],
-            [['ward_desc'], 'string'],
+            [['ward_desc'], 'safe'],
             [['ward_name'], 'string', 'max' => 200],
             [['fk_subcounty'], 'exist', 'skipOnError' => true, 'targetClass' => Subcounty::className(), 'targetAttribute' => ['fk_subcounty' => 'id']],
         ];

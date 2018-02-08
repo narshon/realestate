@@ -95,7 +95,7 @@ class OccupancyTerm extends \yii\db\ActiveRecord
         $terms = OccupancyTerm::find()->where(['_status'=>1])->all();
         if($terms){
             foreach($terms as $term){
-                $array[$term->id] = $term->fkTerm->term_name;
+                $array[$term->id] = $term->fkPropertyTerm->term_title;
             }
         }
         

@@ -6,6 +6,7 @@ use app\utilities\DataHelper;
 use yii\helpers\Url;
 use app\models\AccountType;
 use yii\widgets\Pjax;
+use app\models\AccountEntries;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AccountTypeSearch */
@@ -14,11 +15,17 @@ use yii\widgets\Pjax;
 $this->title = 'Account Types';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="account-type-index">
+<div class="account-type-index panel panel-danger admin-content">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
+     <div class="panel-heading">
+        <h1>Financial Records</h1>
+    </div>
+	
+    <div class="panel-body">
+	 <ul class=" nav nav-pills nav-stacked">
+             <?php  echo AccountEntries::showButtons();?>
+         </ul>
+        <h1><?= Html::encode($this->title) ?></h1>
     <p>
 	<?php
         $dh = new DataHelper();
@@ -36,8 +43,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'Description',
-            'created_by',
-            'modified_by',
+            //'created_by',
+            //'modified_by',
             // 'created_on',
             // 'modified_on',
 
@@ -61,4 +68,5 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 <?php Pjax::end(); ?>
+</div>
 </div>

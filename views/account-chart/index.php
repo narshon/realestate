@@ -6,6 +6,8 @@ use app\utilities\DataHelper;
 use yii\helpers\Url;
 use app\models\AccountChart;
 use yii\widgets\Pjax;
+use app\models\AccountEntries;
+
 /* @var $this yii\web\View */
 /* @var $searchModel app\models\AccountChartSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -13,11 +15,17 @@ use yii\widgets\Pjax;
 $this->title = 'Account Charts';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="account-chart-index">
+<div class="account-chart-index panel panel-danger admin-content">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
+     <div class="panel-heading">
+        <h1>Financial Records</h1>
+    </div>
+	
+    <div class="panel-body">
+	 <ul class=" nav nav-pills nav-stacked">
+             <?php  echo AccountEntries::showButtons();?>
+         </ul>
+        <h1><?= Html::encode($this->title) ?></h1>
     <p>
          <?php 
 		  $dh = new DataHelper();
@@ -36,8 +44,27 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'code',
             'name',
-            'fk_re_account_type',
-            'status',
+           
+			[
+			 'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                    'attribute' => 'fk_re_account_type',
+                  
+                    'header'=>'Account Type',
+                    'format' => 'raw',
+                    'value'=>function ($data) {
+                               return isset($data->fkReAccountType->name)?$data->fkReAccountType->name:"";
+                            },
+			],
+            
+			[
+			'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+                        'attribute' => 'status',
+                        'filter' => app\models\Lookup::getLookupValues('Status'),
+                        'value' => function ($data) {
+                            $category_id = \app\models\LookupCategory::getLookupCategoryID('Status');
+                            return app\models\Lookup::getLookupCategoryValue($category_id, $data->status);
+                        },
+			],
             // 'description:ntext',
             // 'created_by',
             // 'modified_by',
@@ -64,4 +91,5 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 	<?php Pjax::end(); ?>
+</div>
 </div>
