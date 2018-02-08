@@ -124,26 +124,54 @@ class DisbursementsController extends Controller
     
     public function actionPay($owner_id)
     {
+        
         //get all the pending disbursements
         $model = new Disbursements();
         $nsettled_bills = \app\models\Disbursements::getUnsettledDisbursementList($owner_id);
-        
+        //advances and advance ids
+        $model->getPaymentAdvances($owner_id);
         if(Yii::$app->request->isPost && Yii::$app->request->post('cleared_bills') !== null) {
             if(!empty($cleared_bills = Yii::$app->request->post('cleared_bills'))){
+                Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+              /* //process payments....
                 $status = \app\models\Lookup::findOne(['_value' => 'Paid', 'category'=> \app\models\LookupCategory::getLookupCategoryID("Disbursement Status")]);
                 Disbursements::clearBills(explode(',', $cleared_bills), $status? $status->_key:1);
-                return $this->redirect(Yii::$app->request->referrer);
+                return $this->redirect(Yii::$app->request->referrer); 
+               * 
+               */
+             //present draft statement for confirmation.
+              echo $this->renderAjax('confirmpay',[
+                    'model' => $model,
+                    'bills' => $nsettled_bills,
+                     'cleared_bills' => $cleared_bills,
+                    'owner_id' => $owner_id
+              ]);
             }
         } elseif(\yii::$app->request->isAjax) {
             return $this->renderAjax('disburse',[
             'model' => $model,
             'bills' => $nsettled_bills,
+            'owner_id' => $owner_id
         ]);
         } else {
             return $this->render('disburse',[
             'model' => $model,
             'bills' => $nsettled_bills,
+            'owner_id' => $owner_id
         ]);
+        }
+    }
+    
+    public function actionGetBillAmount()
+    {
+        if(Yii::$app->request->isAjax && Yii::$app->request->isPost) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+            if(Yii::$app->request->post('ids') !== null) {
+                $ids = Yii::$app->request->post('ids');
+                $bill = \app\models\Disbursements::findone($ids);
+                   
+                return count($bill) > 0 ? $bill->amount : [];
+            }
         }
     }
 }

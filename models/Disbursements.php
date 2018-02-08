@@ -23,6 +23,8 @@ use Yii;
 class Disbursements extends \yii\db\ActiveRecord
 {
     public $payments_pool;
+    public $payments_advance;
+    public $payments_advance_ids;
     /**
      * @inheritdoc
      */
@@ -39,8 +41,8 @@ class Disbursements extends \yii\db\ActiveRecord
         return [
             [['fk_occupancy_rent', 'amount', 'entry_date'], 'required'],
             [['fk_occupancy_rent', 'fk_landlord', 'batch_id', 'created_by', '_status','month','year'], 'integer'],
-            [['amount'], 'number'],
-            [['entry_date', 'created_on','payments_pool'], 'safe'],
+            [['amount','payments_advance'], 'number'],
+            [['entry_date', 'created_on','payments_pool','payments_advance_ids'], 'safe'],
             [['fk_landlord'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['fk_landlord' => 'id']],
             [['fk_occupancy_rent'], 'exist', 'skipOnError' => true, 'targetClass' => OccupancyRent::className(), 'targetAttribute' => ['fk_occupancy_rent' => 'id']],
         ];
@@ -119,12 +121,38 @@ class Disbursements extends \yii\db\ActiveRecord
         $bills = Self::findAll(['_status' => 1, 'fk_landlord'=>$id]);
         if(is_array($bills)) {
             foreach($bills as $bill) {
-                $list[$bill->id] = [
-                    'content' =>  $bill->fkOccupancyRent->fkSource->source_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')'
+                $key = $bill->id.'_'.$bill->amount;
+                $list[$key] = [
+                    'content' =>  $bill->fkLandlord->getNames().' - '.$bill->fkOccupancyRent->fkSource->source_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')',
                 ];
             }
         }
         return $list;
+    }
+    
+    public static function clearBills($bills, $status)
+    {
+        foreach($bills as $bill) {
+            if(($model = Disbursements::findOne($bill)) !== null) {
+                $model->_status = $status;
+                $model->save(false);
+            }
+        }
+    }
+    
+    public function getPaymentAdvances($owner_id){
+        $advance_ids = '';
+        $advance_amount = 0;
+        $advances = LandlordImprest::find()->where(['fk_landlord'=>$owner_id,'imprest_type'=>'advance','_status'=>0])->all();
+        if($advances){
+            foreach($advances as $advance){
+                $advance_ids .= $advance->id.',';
+                $advance_amount += $advance->amount;
+            }
+        }
+        
+        $this->payments_advance = $advance_amount;
+        $this->payments_advance_ids = $advance_ids;
     }
     
     
