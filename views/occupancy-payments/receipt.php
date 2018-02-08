@@ -46,47 +46,6 @@ use kartik\grid\GridView;
 			<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4">signature:</div>
 		</div>
 		
-	   
-       <!-- <div class="row">
-            <?=  GridView::widget([
-                'dataProvider' => $dataProvider,
-                'layout' => '{items}{pager}',
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-                        'id',
-                        //'fk_occupancy_id',
-                       'amount',
-                        'payment_date',
-
-                        [
-                            'attribute' => 'payment_method',
-                            'value' => function($data) {
-                            $list = \app\models\Lookup::getLookupValues('Payment Method');
-                                return array_key_exists($data->payment_method, $list) ? $list[$data->payment_method] : $data->payment_method;
-                            }
-                        ],
-                        [
-                            'attribute' => 'status',
-                            'value' => function($data) {
-                            $list = \app\models\Lookup::getLookupValues('Payment Status');
-                                return array_key_exists($data->status, $list) ? $list[$data->status] : $data->status;
-                            }
-                        ],
-                        'ref_no',
-                        [
-                            'attribute' => 'created_by',
-                            'value' => function($data) {
-
-                                return implode(' - ', \app\models\Users::getDetail(['id','username'],$data->created_by ));
-                            }
-                        ],
-                        'created_on',
-                        // 'modified_by',
-                        // 'modified_on',
-                       
-                ]
-            ]); ?> 
-       </div> -->
        <div class="row">
            <small>Printed on: <?=date('Y-m-d h:s')?> Thank you for making payments with us.</small>  
        </div>
