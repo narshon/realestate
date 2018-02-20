@@ -95,7 +95,7 @@ function ajaxFormSubmit(uri,div,form,show_wait, disable_pjax){
                   wait="Please wait"; 
               }
               else{
-                  wait="<img src='images/ajax-loader.gif' alt='Please Wait...'>";
+                  wait="<img src='/images/ajax-loader.gif' alt='Please Wait...'>";
               }
              
               $('#'+div).html(wait);

@@ -83,13 +83,13 @@ use yii\helpers\Url;
         <div class="col-md-4"></div>
         <div class="col-md-4">
             <?php  // Usage with ActiveForm and model
-            echo $form->field($model, '_status')->widget(Select2::classname(), [
-                'data' => \app\models\Lookup::getLookupValues('Status'),
+          /*  echo $form->field($model, '_status')->widget(Select2::classname(), [
+                'data' => \app\models\Lookup::getLookupValues('Bill Status'),
                 'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_status'],
                 'pluginOptions' => [
                     'allowClear' => true
                 ],
-            ]);  ?>
+            ]); */ ?>
         </div>
         <div class="col-md-4"></div>
     </div>

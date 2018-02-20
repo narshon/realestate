@@ -22,7 +22,8 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'js/ajax-modal-popup.js',
-        'js/mapper.js'
+        'js/mapper.js',
+        'js/disburse-mapper.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',

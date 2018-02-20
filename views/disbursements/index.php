@@ -34,15 +34,15 @@ $this->params['breadcrumbs'][] = $this->title;
             <p> <br/>
                 <?php 
                       $dh = new DataHelper();
-                      $url = Url::to(['disbursements/pay','owner_id'=>$landlordModel->id]);
-                       echo $dh->getModalButton(new \app\models\Disbursements(), "disbursements/pay", 'Payments', 'btn btn-danger btn-create pull-right', 'Make Payments',$url);
+                     // $url = Url::to(['disbursements/pay','owner_id'=>$landlordModel->id]);
+                    //   echo $dh->getModalButton(new \app\models\Disbursements(), "disbursements/pay", 'Payments', 'btn btn-danger btn-create pull-right', 'Make Payments',$url);
                       echo  Html::button('<i class="glyphicon glyphicon-ban-circle">  Pay </i>', [
                             'type'=>'button', 
                             'title'=>'Adding Imprest Items', 
-                            'class'=>'btn bg-purple btn-flat showModalButton specmargin', 
+                            'class'=>'btn bg-purple btn-flat showModalButton specmargin pull-right', 
                             'value' => yii\helpers\Url::to(['disbursements/pay', 'owner_id'=>$landlordModel->id])]);
                 ?>
-            </p>
+            </p> <br/>
 
 <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
