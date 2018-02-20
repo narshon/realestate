@@ -120,5 +120,90 @@ class AccountEntries extends \yii\db\ActiveRecord
       
              return $return;
         }
+        
+    public static function getDailyReportItem($type, $today = true)
+    {
+        $date = date('Y-m-d');
+        switch($type)
+        {
+            case 'cash':
+                if(($account_type = AccountChart::findone(['code'=> 1101])) !== null) {
+                    $debit = AccountEntries::find()
+                        ->where(['fk_account_chart' => $account_type->id])
+                        ->andWhere(['entry_date' => $date, 'trasaction_type' => 'debit'])
+                        ->sum('amount');
+                    $credit = AccountEntries::find()
+                        ->where(['fk_account_chart' => $account_type->id])
+                        ->andWhere(['entry_date' => $date, 'trasaction_type' => 'credit'])
+                        ->sum('amount');
+                    $debit = ($debit == null)? 0 : $debit;
+                    $credit = ($credit == null) ? 0 : $credit;
+                    return $debit-$credit;
+                        
+                }
+            case 'rent':
+                 if(($account_type = AccountChart::findone(['code'=> 1105])) !== null) {
+                     $rent = AccountEntries::find()
+                        ->where(['fk_account_chart' => $account_type->id])
+                        ->andWhere(['entry_date' => $date, 'trasaction_type' => 'debit'])
+                        ->sum('amount');
+                 }
+                 return ($rent == null) ? 0 : $rent;
+                
+                
+            case 'disbursements':
+                if(($account_type = AccountChart::findone(['code'=> 1107])) !== null) {
+                     $disbursements = AccountEntries::find()
+                        ->where(['fk_account_chart' => $account_type->id])
+                        ->andWhere(['entry_date' => $date, 'trasaction_type' => 'debit'])
+                        ->sum('amount');
+                 }
+                 return ($disbursements == null) ? 0 : $disbursements;
+            case 'penalties_income':
+                if(($account_type = AccountChart::findone(['code'=> 1106])) !== null) {
+                     $penalties = AccountEntries::find()
+                        ->where(['fk_account_chart' => $account_type->id])
+                        ->andWhere(['entry_date' => $date, 'trasaction_type' => 'debit'])
+                        ->sum('amount');
+                 }
+                 return ($penalties == null) ? 0 : $penalties;
+            case 'revenue':
+                return '';
+                
+        }
+    }
+    
+    private static function getDateRange($today)
+    {
+        if( $today === true)
+        {
+            
+        }
+    }
+    
+    public static function getEntrieQuery($date, $code, $type)
+    {
+        if(($account_type = AccountChart::findone(['code'=> $code])) !== null) {
+            if($type === true) {
+                $query = AccountEntries::find()
+                ->where(['fk_account_chart' => $account_type->id])
+                ->andWhere(['entry_date' => $date]);
+            } else {
+                $query = AccountEntries::find()
+                    ->where(['fk_account_chart' => $account_type->id])
+                    ->andWhere(['entry_date' => $date, 'trasaction_type' => $type]);
+            }
+            return $query;
+        }
+    }
+    
+    public static function getTotal($provider, $columnName)
+    {
+        $total = 0;
+        foreach ($provider as $item) {
+          $total += $item[$columnName];
+      }
+      return $total;  
+    }
 
 }
