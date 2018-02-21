@@ -378,6 +378,10 @@ $('body').on('change', '#users-selected_property', function(){
     }
 });
 
+$('body').on('change', '#daily-summary', function(){
+    getFinanceDailySummary($(this));
+});
+
 function generatestatement(id)
 {
     $.ajax({
@@ -406,6 +410,27 @@ function printSection(elem)
     printSection.innerHTML = '';
     printSection.appendChild(domClone);
     alert('mimi')
+    
+}
+
+function getFinanceDailySummary(elem)
+{
+    var item = elem.find(':selected');
+    $.ajax({
+        url: 'daily-summary',
+        type: 'post',
+        data: {id:item.val()},
+        beforeSend: function(){
+            $('.summary-loader').addClass('container-loader');
+            $('.summary-content').html('');
+        },
+        complete: function(){
+            $('.summary-loader').removeClass('container-loader');
+        },
+        success:function(data){
+            $('.summary-content').html(data);
+        }
+    });
     
 }
 

@@ -195,4 +195,56 @@ class AccountEntriesController extends Controller
             throw new NotFoundHttpException('The requested page does not exist.');
         }
     }
+    
+    public function actionDailySummary()
+    {
+        if(\yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        }
+        if(($type = Yii::$app->request->post('id')) !== null) {
+            switch($type)
+            {
+                case 1: 
+                    $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1101, true);
+                    $payments = $query->all();
+                    $dataProvider = new \yii\data\ActiveDataProvider([
+                        'query' => \app\models\OccupancyPayments::find()->where(['in', 'id', array_column($payments, 'origin_id')]),
+                    ]);
+                    
+                    return $this->render('partials/cash_summary', [
+                        'dataProvider' => $dataProvider,
+                    ]);
+                    
+                case 2:
+                    $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1105, true);
+                    $bills = $query->all();
+                    $dataProvider = new \yii\data\ActiveDataProvider([
+                        'query' => \app\models\OccupancyRent::find()->where(['in', 'id', array_column($bills, 'origin_id')]),
+                    ]);
+                    return $this->render('partials/rent_summary', [
+                        'dataProvider' => $dataProvider,
+                    ]);
+                    
+                case 3:
+                    $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1106, true);
+                    $penalities = $query->all();
+                    $dataProvider = new \yii\data\ActiveDataProvider([
+                        'query' => \app\models\OccupancyRent::find()->where(['in', 'id', array_column($penalities, 'origin_id')]),
+                    ]);
+                    return $this->render('partials/penalties_summary', [
+                        'dataProvider' => $dataProvider,
+                    ]);
+                    
+                case 4:
+                    $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1107, true);
+                    $disbursements = $query->all();
+                    $dataProvider = new \yii\data\ActiveDataProvider([
+                        'query' => \app\models\Disbursements::find()->where(['in', 'id', array_column($disbursements, 'origin_id')]),
+                    ]);
+                    return $this->render('partials/disbursement_summary', [
+                        'dataProvider' => $dataProvider,
+                    ]);
+            }
+        }
+    }
 }

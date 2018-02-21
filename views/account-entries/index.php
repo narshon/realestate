@@ -194,7 +194,15 @@ $this->registerCss("
 	<div class="tab-pane" id="t_statement" role="tabpanel">1</div>
 	<div class="tab-pane" id="A-statement" role="tabpanel">4</div>
 	<div class="tab-pane" id="c-commission" role="tabpanel">5</div>
-	<div class="tab-pane" id="d-report" role="tabpanel">6</div>
+    <div class="tab-pane" id="d-report" role="tabpanel">
+        <?=$this->render('partials/d_rep_stats')?>
+        <div class ="summary">
+            <div class="summary-loader"></div>
+            <div class="summary-content">
+                
+            </div>
+        </div>
+    </div>
 	<div class="tab-pane" id="m-report" role="tabpanel">7</div>
 
 	</div>

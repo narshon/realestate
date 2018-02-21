@@ -152,5 +152,15 @@ class OccupancyPayments extends \yii\db\ActiveRecord
     }
 	}
 	
+    public function afterSave($insert, $changedAttributes) 
+    {
+        $accountmap = AccountMap::find()->where(['fk_term' => 19 , 'status'=> 1])->all();
+        if(is_array($accountmap)) {
+            foreach($accountmap as $account) {
+                AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->payment_date, $this->id,$this->className());
+            }
+        }
+        return parent::afterSave($insert, $changedAttributes);
+    }
      
 }

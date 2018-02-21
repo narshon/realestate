@@ -78,4 +78,9 @@ class AccountMap extends \yii\db\ActiveRecord
     {
         return $this->hasOne(AccountChart::className(), ['id' => 'fk_account_chart']);
     }
+    
+    public function getFkAccountEntries()
+    {
+        return $this->hasMany(AccountEntries::className(), ['fk_account_chart' => 'id']);
+    }
 }
