@@ -132,6 +132,7 @@ class DisbursementsController extends Controller
         $model->getPaymentAdvances($owner_id);
         if(Yii::$app->request->isPost && Yii::$app->request->post('cleared_bills') !== null) {
             if(!empty($cleared_bills = Yii::$app->request->post('cleared_bills'))){
+                $nsettled_bills = Yii::$app->request->post('bills_pool');
                 Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
               /* //process payments....
                 $status = \app\models\Lookup::findOne(['_value' => 'Paid', 'category'=> \app\models\LookupCategory::getLookupCategoryID("Disbursement Status")]);
@@ -140,12 +141,13 @@ class DisbursementsController extends Controller
                * 
                */
              //present draft statement for confirmation.
-              echo $this->renderAjax('confirmpay',[
+              $form = $this->renderAjax('confirmpay',[
                     'model' => $model,
                     'bills' => $nsettled_bills,
                      'cleared_bills' => $cleared_bills,
                     'owner_id' => $owner_id
               ]);
+              return array('div'=>$form);
             }
         } elseif(\yii::$app->request->isAjax) {
             return $this->renderAjax('disburse',[

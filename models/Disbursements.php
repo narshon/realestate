@@ -123,7 +123,7 @@ class Disbursements extends \yii\db\ActiveRecord
             foreach($bills as $bill) {
                 $key = $bill->id.'_'.$bill->amount;
                 $list[$key] = [
-                    'content' =>  $bill->fkLandlord->getNames().' - '.$bill->fkOccupancyRent->fkSource->source_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')',
+                    'content' =>  $bill->fkOccupancyRent->fkOccupancy->fkTenant->getNames().' - '.$bill->fkOccupancyRent->fkSource->source_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')',
                 ];
             }
         }
@@ -149,10 +149,11 @@ class Disbursements extends \yii\db\ActiveRecord
                 $advance_ids .= $advance->id.',';
                 $advance_amount += $advance->amount;
             }
+           $advance_ids = substr($advance_ids, 0, -1);
         }
         
         $this->payments_advance = $advance_amount;
-        $this->payments_advance_ids = $advance_ids;
+        $this->payments_advance_ids = $advance_ids;  //removes trailing commas.
     }
     
     
