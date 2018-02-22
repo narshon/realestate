@@ -19,7 +19,7 @@
 </div><br/><div class="clear"></div>
 <div>
     <?php
-      $names =  \app\models\Users::find(["id=$owner_id"])->one();
+      $names =  \app\models\Users::find()->where(["id"=>$owner_id])->one();
       if($names){
           $names = $names->getNames();
       }
@@ -36,5 +36,21 @@ echo "Cleared Bills = ".print_r($cleared_bills,true)."<br/>";
 echo "Advance_ids = ".$model->payments_advance_ids."<br/>";
 echo "Owner ID = ".$owner_id."<br/>";
 */
-
 ?>
+<table id="t01">
+  <tr>
+    <th>Tenant's Name</th>
+    <th>Period</th> 
+    <th>Paid By Tenant</th>
+    <th>Paid By Agent</th>
+    <th>Total</th>
+  </tr>
+  <tr>
+    <td>Jill Smith</td>
+    <td>Feb/2018</td>
+    <td>2000</td>
+    <td>500</td>
+    <td>2500</td>
+  </tr>
+  
+</table>
