@@ -162,5 +162,37 @@ class OccupancyPayments extends \yii\db\ActiveRecord
         }
         return parent::afterSave($insert, $changedAttributes);
     }
+    
+    public function matchRecords($bills)
+    {
+        foreach($bills as $bill) {
+            $model = new OccupancyPaymentsMapping();
+            $model->fk_occupancy_payment = $this->id;
+            $model->fk_occupancy_rent = $bill;
+            $model->type = 'complete';
+            $model->amount = self::getBillAmount($bill);
+            $model->save();
+        }
+    }
+    
+    private static function getBillAmount($id)
+    {
+        if(($model = OccupancyRent::findOne($id)) !== null) {
+            return $model->amount;
+        }
+    }
+    
+    public function getMatchedBillItems()
+    {
+        $ret = [];
+        $matched = OccupancyPaymentsMapping::find()
+            ->where(['fk_occupancy_payment' => $this->id]);
+        if(count($matched->count()) > 0) {
+            foreach($matched->all() as $item) {
+                $ret[] = $item->fkOccupancyRent->getBillDetails();
+            }
+        }
+        return count($ret) > 0 ? implode(', ', $ret) : 'N/A';
+    }
      
 }

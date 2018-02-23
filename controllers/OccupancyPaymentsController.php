@@ -230,4 +230,31 @@ class OccupancyPaymentsController extends Controller
             }
         }
     }
+    
+    public function actionMap($id)
+    {
+        $payment = $this->findModel($id);
+        $model = $payment->fkOccupancy;
+        $model->payments_pool = $payment->amount;
+        $nsettled_bills = \app\models\OccupancyRent::getUnsettledBillList($model->id);
+        if(Yii::$app->request->isPost && Yii::$app->request->post('cleared_bills') !== null) {
+            if(!empty($cleared_bills = Yii::$app->request->post('cleared_bills'))){
+                $status = \app\models\Lookup::findOne(['_value' => 'Matched', 'category'=>6]);
+                $model->clearBills(explode(',', $cleared_bills), $status? $status->_key:1);
+                $payment->matchRecords(explode(',', $cleared_bills));
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+        } elseif(\yii::$app->request->isAjax) {
+            return $this->renderAjax('allocation',[
+            'model' => $model,
+            'bills' => $nsettled_bills,
+        ]);
+        } else {
+            return $this->render('allocation',[
+            'model' => $model,
+            'bills' => $nsettled_bills,
+        ]);
+        }
+        
+    }
 }

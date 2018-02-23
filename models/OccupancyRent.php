@@ -366,4 +366,9 @@ class OccupancyRent extends \yii\db\ActiveRecord
         return $month."/".$this->year;
         
     }
+    
+    public function getBillDetails()
+    {
+        return $this->fkTerm->term_name . ' (' . $this->month . ' / ' . $this->year . ')';
+    }
 }

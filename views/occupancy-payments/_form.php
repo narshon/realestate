@@ -6,11 +6,12 @@ use yii\jui\DatePicker;
 /* @var $this yii\web\View */
 /* @var $model app\models\OccupancyPayments */
 /* @var $form yii\widgets\ActiveForm */
+
 ?>
 
 <div class="occupancy-payments-form" style="text-align: center">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['id' => 'occupancy-payments']); ?>
     <div class="row header" style="border-bottom: 1px #505039 solid; padding-bottom: 30px;">
         <div class="col-md-4">
             <label>Tenant:</label>
@@ -84,7 +85,7 @@ use yii\jui\DatePicker;
     <div class="form-group">
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <?= Html::submitButton('Receive', ['class' => 'btn btn-danger']) ?>
+            <?= Html::submitButton('Receive', ['class' => 'btn btn-danger showModalButton']) ?>
         </div>
         <div class="col-md-4"></div>
         

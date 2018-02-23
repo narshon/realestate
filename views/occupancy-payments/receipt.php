@@ -39,7 +39,7 @@ use app\models\LookupCategory;
 	   <div class="row"><label>RECEIVED from:</label><?=$model->fkOccupancy->fkUsers->getNames()?></div>
 	   <div class="row"><label>The sum of shillings:</label><?=$model->amount?></div>
 	   <div class="row">
-	       <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">Being payment of:</div>
+           <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">Being payment of: <span> <?=$model->getMatchedBillItems()?></span></div>
 		</div>
 		<div class="row"><label>Payment  Method: </label><?=$model->getPaymentMethod();?></div>
 		<div class="row">

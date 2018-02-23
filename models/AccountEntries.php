@@ -202,8 +202,8 @@ class AccountEntries extends \yii\db\ActiveRecord
         $total = 0;
         foreach ($provider as $item) {
           $total += $item[$columnName];
-      }
-      return $total;  
+        }
+        return $total;  
     }
 
 }

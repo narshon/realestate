@@ -53,7 +53,7 @@ function processBalance(direction, item)
     var bill_amounts = getBillAmount([item.attr('data-key')]);
     var current_bal = parseInt($('#occupancy-payments_pool').val());
     if(direction === 1) {
-        current_bal = current_bal - (bill_amounts[item.attr('data-key')]);
+        current_bal = current_bal - (bill_amounts[item.attr('data-key')]) / 2;
     }
     if(direction === 0) {
         current_bal = current_bal + (bill_amounts[item.attr('data-key')]);
