@@ -59,7 +59,8 @@ $this->params['breadcrumbs'][] = $this->title;
                      'buttons' => [
                                     'view' => function ($url, $model){
                                              $dh = new DataHelper();
-                                              $popup = $dh->getModalButton($model, "sys-users/view", "SysUsers", 'glyphicon glyphicon-eye-open','');
+                                             $url=Url::to(['sys-users/view','id'=>$model->id]);
+                                              $popup = $dh->getModalButton($model, "sys-users/view", "SysUsers", 'glyphicon glyphicon-eye-open','',$url);
                                               return $popup;
                                              
                                     }, 

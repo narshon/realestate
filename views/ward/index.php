@@ -17,9 +17,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php 
-					$dh = new DataHelper();
-					  $url=Url::to(['ward/create']);
-                       echo $dh->getModalButton(new \app\models\ward, 'ward/create', 'Ward', 'btn btn-danger btn-create',"New",$url,"Ward");
+		$dh = new DataHelper();
+		$url=Url::to(['ward/create']);
+                echo $dh->getModalButton(new \app\models\ward1, 'ward/create', 'Ward', 'btn btn-danger btn-create',"New",$url,"Ward");
                     ?>
     </p>
     <?php Pjax::begin(['id'=>'pjax-ward',]); ?> 

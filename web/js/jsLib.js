@@ -126,12 +126,12 @@ function ajaxFormSubmit(uri,div,form,show_wait, disable_pjax){
 
 
 function showBSdialog(model_name,model_id,view_file, title, uri){
-    
+      
       $.ajax({
         url: uri,  // "/cars/web/index.php?r=site/update-data",
         data: {model_name:model_name, model_id:model_id, view_file:view_file}
       }).success(function(data) {
-         // console.log('Tuko hapa');
+          console.log('Tuko hapa');
         $( this ).addClass( "done" );
         $('#modal_title_div').html(title);
         $('#modal_body_div').html(data.div);

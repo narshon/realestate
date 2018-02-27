@@ -74,7 +74,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             [['phone', 'color_code'], 'string', 'max' => 100],
             [['gender'], 'string', 'max' => 10],
             [['icon_id'], 'string', 'max' => 11],
-            [['phone'], 'unique'],
+            [['phone','id_number','email'], 'unique'],
             [['fk_group_id'], 'exist', 'skipOnError' => true, 'targetClass' => Group::className(), 'targetAttribute' => ['fk_group_id' => 'id']],
         ];
     }
@@ -108,6 +108,10 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     
     public function beforeSave($insert) {
         parent::beforeSave($insert);
+        
+        if($this->isNewRecord){
+            $this->date_added = date("Y-m-d H:i:s");
+        }
         
           //hash the password
         if($this->confirmpass != ''){
@@ -453,6 +457,10 @@ public static function getUsersOptions(){
             }
         }
         return $data;
+    }
+    
+    public function getTenantName1Link(){
+        return Html::a($this->name1,['tenantview','id'=>$this->id]);
     }
 }
 

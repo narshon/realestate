@@ -18,7 +18,7 @@ class DataHelper {
         if($model_name == ""){
             $model_name = $this->getModelNameFromViewFile($viewfile);
         }
-        $data = Html::a($label, ['#'], ['class' => $button_class,  'onclick'=>"alert('here'); showBSdialog('$model_name','$model->id','$viewfile','$title','$url'); return false;"]);
+        $data = Html::a($label, ['#'], ['class' => $button_class,  'onclick'=>"showBSdialog('$model_name','$model->id','$viewfile','$title','$url'); return false;"]);
        
         
         return $data;

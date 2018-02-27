@@ -47,6 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Occupancy Bills',
                 'active' => true,
+              //  'content' =>$this->render('occupancy-rent/occupancy-bills', ['id'=>$model->id]),
                 'linkOptions' => ['id'=>'bills'.rand(1, 1984),'data-url'=>Url::to(['occupancy-rent/occupancy-bills', 'id'=>$model->id])],
                 'data-loading-class' => 'loading-content'
             ],

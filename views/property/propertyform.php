@@ -39,7 +39,7 @@ $this->registerCssFile(\Yii::$app->request->BaseUrl."/css/select2.min.css", [
 
     <?php  // Usage with ActiveForm and model
         echo $form->field($model, '_status')->widget(Select2::classname(), [
-            'data' => \app\models\Lookup::getLookupValues('Status'),
+            'data' => \app\models\Lookup::getLookupValues('Property Status'),
             'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_status'],
             'pluginOptions' => [
                 'allowClear' => true

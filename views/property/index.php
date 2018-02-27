@@ -104,7 +104,7 @@ $this->title = 'Properties';
                         'attribute' => '_status',
                         'filter' => app\models\Lookup::getLookupValues('Status'),
                         'value' => function ($data) {
-                            $category_id = \app\models\LookupCategory::getLookupCategoryID('Status');
+                            $category_id = \app\models\LookupCategory::getLookupCategoryID('Property Status');
                             return app\models\Lookup::getLookupCategoryValue($category_id, $data->_status);
                         },
                      ],

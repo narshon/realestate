@@ -285,7 +285,7 @@ class Occupancy extends \yii\db\ActiveRecord
                             //check if we can proceed.
                             if($termvalue <= $date){
                                 //get the rent bill to be disbursed.
-                                 $rentbill = OccupancyRent::find()->where(['fk_occupancy_id'=>$occupant->id,'fk_term'=>Term::getRentTermID(),'month'=>$month,'year'=>$year,'_status'=>1])->one();
+                                 $rentbill = OccupancyRent::find()->where(['fk_occupancy_id'=>$occupant->id,'fk_term'=>Term::getRentTermID(),'month'=>$month,'year'=>$year])->one();
                                 if($rentbill){
                                     //check if we haven't already disbursed for this bill.
                                     $check = Disbursements::find()->where(['fk_occupancy_rent'=>$rentbill->id,'month'=>$month, 'year'=>$year])->one();

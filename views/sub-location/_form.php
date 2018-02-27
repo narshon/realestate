@@ -28,7 +28,7 @@ EOD;
                 'allowClear' => true
             ],
         ]);  ?>
-
+    <pre> <?php  print_r($model); ?> </pre>
     <?= $form->field($model, 'sub_loc_name')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'sub_loc_desc')->textarea(['rows' => 6]) ?>

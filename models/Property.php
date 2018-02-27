@@ -264,7 +264,7 @@ VIEW;
 	
 	public function getOwnerName(){
         if(isset($this->owner->id)){
-            return $this->owner->getNames();
+           return Html::a(Html::encode($this->owner->getNames()), ['sys-users/landlordview', 'id' => $this->owner->id]); 
         }
         else{
             return '';

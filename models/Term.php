@@ -103,4 +103,12 @@ class Term extends \yii\db\ActiveRecord
         }
     }
     
+    public static function getPaymentTermID(){
+        $term = Self::find()->where(['term_name'=>'Payment'])->one();
+        
+        if($term){
+            return $term->id;
+        }
+    }
+    
 }

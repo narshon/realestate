@@ -35,7 +35,7 @@ class Location extends \yii\db\ActiveRecord
             [['fk_ward'], 'integer'],
             [['location_desc'], 'string'],
             [['location_name'], 'string', 'max' => 200],
-            [['fk_ward'], 'exist', 'skipOnError' => true, 'targetClass' => Ward::className(), 'targetAttribute' => ['fk_ward' => 'id']],
+            [['fk_ward'], 'exist', 'skipOnError' => true, 'targetClass' => Ward1::className(), 'targetAttribute' => ['fk_ward' => 'id']],
         ];
     }
 
@@ -57,7 +57,7 @@ class Location extends \yii\db\ActiveRecord
      */
     public function getFkWard()
     {
-        return $this->hasOne(Ward::className(), ['id' => 'fk_ward']);
+        return $this->hasOne(Ward1::className(), ['id' => 'fk_ward']);
     }
 
     /**

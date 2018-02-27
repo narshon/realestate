@@ -5,12 +5,12 @@ namespace app\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Ward;
+use app\models\Ward1;
 
 /**
  * WardSearch represents the model behind the search form about `app\models\Ward`.
  */
-class WardSearch extends Ward
+class WardSearch extends Ward1
 {
     public $fkSubcounty;
     /**
@@ -42,7 +42,7 @@ class WardSearch extends Ward
      */
     public function search($params)
     {
-        $query = Ward::find();
+        $query = Ward1::find();
 
         // add conditions that should always apply here
         $query->joinWith(['fkSubcounty']);

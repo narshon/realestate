@@ -26,7 +26,7 @@ use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Locations';
+$this->title = Yii::$app->user->identity->fkManagement->management_name;
 $this->params['breadcrumbs'][] = $this->title;
 
 $this->registerCss("
@@ -65,7 +65,7 @@ $this->registerCss("
 				<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#agency" role="tab">Agency profile</a></li>
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#roles" role="tab">Agent Users</a></li>
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#terms" role="tab">Terms</a></li>
-				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#home" role="tab">Location</a></li>
+				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#location" role="tab">Location</a></li>
                                 <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#lookup" role="tab">Lookup</a></li>
                                 <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#features" role="tab">Features</a></li>
 			
@@ -75,10 +75,10 @@ $this->registerCss("
 			</div>
 	<div class="rightbar col-md-10">
 	<div class="tab-content">
-	<div class="tab-pane active" id="home" role="tabpanel">
+	<div class="tab-pane" id="location" role="tabpanel">
     <div class="panel-body">
         <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#home">Counties</a></li>
+            <li class="active"><a data-toggle="tab" href="#county">Counties</a></li>
             <li><a data-toggle="tab" href="#subcounty">Subcounties </a></li>
             <li><a data-toggle="tab" href="#wards">Wards</a></li>
             <li><a data-toggle="tab" href="#location">Locations</a></li>
@@ -88,7 +88,7 @@ $this->registerCss("
 		
         <div class="tab-content">
 
-      <div id="home" class="tab-pane fade in active">
+      <div id="county" class="tab-pane fade in active">
         <div class="county-index">
             <p>
                 <?php 
@@ -179,7 +179,7 @@ $this->registerCss("
 	</div>
 	</div>
     
-	<div class="tab-pane" id="agency" role="tabpanel">
+	<div class="tab-pane active" id="agency" role="tabpanel">
 	<?php
 	 //get agent record
 	 
