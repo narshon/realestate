@@ -33,12 +33,18 @@ $this->params['breadcrumbs'][] = $this->title;
                     ['class' => 'yii\grid\SerialColumn'],
 
                     'id',
-                    'fk_group_id',
+                    [
+                        'attribute' => 'fk_group_id',
+                        'format' => 'raw',
+                        'value' => function ($data) {
+                              return $data->fkGroup->group_name;
+                        },
+                    ],
                     'username',
-                    'pass',
+                    //'pass',
                     'name1',
-                    // 'name2',
-                    // 'name3',
+                     'name2',
+                     'name3',
                     // 'age',
                     // 'email:email',
                     // 'phone',
@@ -59,7 +65,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                     }, 
                                     'update' => function ($url, $model, $keyword) {
                                             $dh = new DataHelper();
-                                           return $dh->getModalButton($model, "sys-users/update", "SysUsers", 'glyphicon glyphicon-edit','');
+                                            $url=Url::to(['sys-users/update','id'=>$model->id]);
+                                           return $dh->getModalButton($model, "sys-users/update", "SysUsers", 'glyphicon glyphicon-edit','',$url);
                                     },
                             ], 
                     ],

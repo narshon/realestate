@@ -68,7 +68,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             [['address'], 'string'],
             [['date_added','id_number','fk_sublet_id'], 'safe'],
             [['username'], 'string', 'max' => 50],
-            [['pass'], 'string', 'max' => 100],
+            [['pass','confirm_pass','confirmpass'], 'string', 'max' => 100],
             [['name1', 'name2', 'name3','residence','occupation','employer'], 'string', 'max' => 200],
             [['email'], 'string', 'max' => 500],
             [['phone', 'color_code'], 'string', 'max' => 100],
@@ -110,7 +110,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
         parent::beforeSave($insert);
         
           //hash the password
-        if($this->confirm_pass != ''){
+        if($this->confirmpass != ''){
             //check password
             $this->checkPasswords();
           $this->pass =  Yii::$app->getSecurity()->generatePasswordHash($this->pass); //md5($this->password);
@@ -126,7 +126,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     }
     
     public function checkPasswords(){
-        if($this->pass === $this->confirm_pass){
+        if($this->pass === $this->confirmpass){
             return true;
         }
         else{
