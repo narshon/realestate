@@ -69,4 +69,22 @@ class LandlordImprest extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Users::className(), ['id' => 'fk_landlord']);
     }
+    
+    public function afterSave($insert, $changedAttributes){
+        if($insert){
+            //update the books of accounts, we're going to Debit disbursement account and credit accounts payable. Compare raising a bill in occupancy.
+            $this->updateAccounts();
+            
+        }
+        return parent::afterSave($insert, $changedAttributes);
+    }
+    public function updateAccounts()
+    {
+        $accountmap = AccountMap::findAll(['fk_term' => Term::getImprestTermID()]);
+        if(is_array($accountmap)) {
+            foreach($accountmap as $account) {
+                AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->entry_date,$this->id,$this->className());
+            }
+        }
+    }
 }

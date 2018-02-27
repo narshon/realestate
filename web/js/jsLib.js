@@ -95,7 +95,7 @@ function ajaxFormSubmit(uri,div,form,show_wait, disable_pjax){
                   wait="Please wait"; 
               }
               else{
-                  wait="<img src='/images/ajax-loader.gif' alt='Please Wait...'>";
+                  wait="<img src='/web/images/ajax-loader.gif' alt='Please Wait...'>";
               }
              
               $('#'+div).html(wait);
@@ -251,7 +251,7 @@ function ajaxUniversalGetRequest(uri,div,string, showPleaseWait){
             dataType: "json",
             beforeSend: function(x) {  
                if(showPleaseWait==1){
-                    $('#'+div).html("<img src='web/images/ajax-loader.gif' alt='Please Wait...'>");
+                    $('#'+div).html("<img src='/web/images/ajax-loader.gif' alt='Please Wait...'>");
                }
             if(x && x.overrideMimeType) {
                     x.overrideMimeType("application/j-son;charset=UTF-8");

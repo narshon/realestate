@@ -95,4 +95,12 @@ class Term extends \yii\db\ActiveRecord
         }
     }
     
+    public static function getImprestTermID(){
+        $term = Self::find()->where(['term_name'=>'Imprest'])->one();
+        
+        if($term){
+            return $term->id;
+        }
+    }
+    
 }

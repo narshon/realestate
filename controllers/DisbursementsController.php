@@ -164,6 +164,17 @@ class DisbursementsController extends Controller
         }
     }
     
+    public function actionMakePayments($owner_id, $cleared_bills, $advance_ids, $total_advance){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        //get all the pending disbursements
+        $model = new Disbursements();
+        $feedback = $model->settleDisbursements($owner_id, $cleared_bills, $advance_ids, $total_advance);
+        if($feedback == "success"){
+           return array('div'=>"<div class='success'> <span> Successfully made disbursements. <span> </div> ");
+        }
+        
+    }
+    
     public function actionGetBillAmount()
     {
         if(Yii::$app->request->isAjax && Yii::$app->request->isPost) {

@@ -467,7 +467,7 @@ class Occupancy extends \yii\db\ActiveRecord
             $model->year = date('Y');
             $model->fk_term = $term_id;
             $model->amount = $this->getBillAmount($term_id);
-            $status = \app\models\Lookup::findOne(['_value' => 'Matched', 'category'=>6]);
+            $status = \app\models\Lookup::findOne(['_value' => 'Unmatched', 'category'=>6]);
             $model->_status = $status ? $status->_key : 0;
             return ($model->save()) ? 99 : false;
         }

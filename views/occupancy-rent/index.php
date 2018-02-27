@@ -43,7 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute'=>'_status',
                 'value'=>function($data){
-                    return app\models\Lookup::getLookupCategoryValue(app\models\LookupCategory::getLookupCategoryID("status"), $data->_status);
+                    return app\models\Lookup::getLookupCategoryValue(app\models\LookupCategory::getLookupCategoryID("Match Bills"), $data->_status);
                 }
             ],  
             'date_created',

@@ -85,9 +85,11 @@ class Disbursements extends \yii\db\ActiveRecord
     }
     
     public function afterSave($insert, $changedAttributes) {
-        //update the books of accounts, we're going to Debit disbursement account and credit accounts payable. Compare raising a bill in occupancy.
-        $this->updateAccounts();
-        return parent::afterSave($insert, $changedAttributes);
+        if($insert){
+            //update the books of accounts, we're going to Debit disbursement account and credit accounts payable. Compare raising a bill in occupancy.
+            $this->updateAccounts();
+            return parent::afterSave($insert, $changedAttributes);
+        }
     }
     
     public function updateAccounts()
@@ -154,6 +156,100 @@ class Disbursements extends \yii\db\ActiveRecord
         
         $this->payments_advance = $advance_amount;
         $this->payments_advance_ids = $advance_ids;  //removes trailing commas.
+    }
+    
+    public function getTenantName(){
+        if(isset($this->fkOccupancyRent)){
+            return $this->fkOccupancyRent->fkOccupancy->fkUsers->getNames();
+        }
+        else{
+            return "";
+        }
+    }
+    
+    public function getPaidByTenantAmount(){
+        if(isset($this->fkOccupancyRent)){
+            $billed_amount = $this->fkOccupancyRent->amount;
+            $check_paid = OccupancyPaymentsMapping::find()->where(['fk_occupancy_rent'=>$this->fk_occupancy_rent])->one();
+            if($check_paid){
+                return $check_paid->amount;
+            }
+        }
+        
+        return '';
+        
+    }
+    
+    public function getPaidByAgentAmount(){
+        if(isset($this->fkOccupancyRent)){
+            $billed_amount = $this->fkOccupancyRent->amount;
+            $check_paid = OccupancyPaymentsMapping::find()->where(['fk_occupancy_rent'=>$this->fk_occupancy_rent])->one();
+            if(!$check_paid){
+                return $billed_amount;
+            }
+        }
+        
+        return '';
+    }
+    
+    public function getTotalPaid(){
+        $by_tenant = (float)$this->getPaidByTenantAmount();
+        $by_agent = (float)$this->getPaidByAgentAmount();
+        
+        return $by_tenant + $by_agent;
+    }
+    
+    public function getTotalPayable($cleared_bills, $payments_advance){
+        //get total cleared bills.
+        $total_bills = 0;
+        $cleared_array = explode(",", $cleared_bills);
+        if(is_array($cleared_array)){
+         foreach($cleared_array as $bill){
+             $bill_array = explode('_',$bill);
+             $bill_id = $bill_array[0];
+             $disbursement = \app\models\Disbursements::find()->where(['id'=>$bill_id])->one();
+             if($disbursement){
+                 $total_bills += $disbursement->getTotalPaid();
+             }
+         }
+       }
+       
+       //total amount payable
+       return $total_bills - $payments_advance;
+    }
+    
+    public function settleDisbursements($owner_id, $cleared_bills, $advance_ids, $total_advance){
+        //get total payable
+        $total_amount = $this->getTotalPayable($cleared_bills, $total_advance);
+        //raise this imprest
+        $imprest = new LandlordImprest();
+        $imprest->fk_landlord = $owner_id;
+        $imprest->imprest_type = "disbursement";
+        $imprest->amount = $total_amount;
+        $imprest->entry_date = date("Y-m-d");
+        $imprest->created_on = date("Y-m-d H:i:s");
+        $imprest->created_by = Yii::$app->user->identity->id;
+        $imprest->_status = 1;
+        if($imprest->save(false)){
+            //update settled bills
+            $cleared_array = explode(",", $cleared_bills);
+            if(is_array($cleared_array)){
+                foreach($cleared_array as $bill){
+                    $bill_array = explode('_',$bill);
+                    $bill_id = $bill_array[0];
+                    $disbursement = Self::find()->where(['id'=>$bill_id])->one();
+                    if($disbursement){
+                        $disbursement->batch_id = $imprest->id;
+                        $disbursement->_status = 2; //paid
+                        $disbursement->save(false);
+                    }
+
+                }
+            }
+        }
+        
+        
+         return "success";
     }
     
     
