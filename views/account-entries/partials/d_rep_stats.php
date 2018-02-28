@@ -1,3 +1,9 @@
+<?php
+use app\models\AccountEntries;
+?>
+<p>
+	<?php  echo AccountEntries::actionButtons();  ?>
+    </p>
 <div id="sum_box" class="row mbl">
     <div class=" col-md-2">
         <div class="panel income db mbm">
@@ -72,6 +78,7 @@
             </div>
         </div>
     </div>
+    
     
 
 <div class="col-md-2">

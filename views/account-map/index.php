@@ -14,15 +14,10 @@ use app\models\AccountEntries;
 
 $this->title = 'Account Maps';
 $this->params['breadcrumbs'][] = $this->title;
-?><div class="account-map-index panel panel-danger admin-content">
+?><div class="account-map-index admin-content">
 
-     <div class="panel-heading">
-        <h1>Financial Records</h1>
-    </div>
-	
-    <div class="panel-body">
 	 <ul class=" nav nav-pills nav-stacked">
-             <?php  echo AccountEntries::showButtons();?>
+             <?php //  echo AccountEntries::showButtons();?>
          </ul>
         <h1><?= Html::encode($this->title) ?></h1>
     <p>
@@ -98,5 +93,4 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 	<?php Pjax::end(); ?>
-</div>
 </div>

@@ -207,9 +207,11 @@ class AccountEntriesController extends Controller
                 case 1: 
                     $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1101, true);
                     $payments = $query->all();
-                    $dataProvider = new \yii\data\ActiveDataProvider([
+                    $dataProvider = new \yii\data\ActiveDataProvider(['query'=>$query]);
+                            
+                            /* new \yii\data\ActiveDataProvider([
                         'query' => \app\models\OccupancyPayments::find()->where(['in', 'id', array_column($payments, 'origin_id')]),
-                    ]);
+                    ]);  */
                     
                     return $this->render('partials/cash_summary', [
                         'dataProvider' => $dataProvider,

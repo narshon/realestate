@@ -12,7 +12,7 @@ use app\utilities\DataHelper;
 use app\models\Estate;
 use yii\widgets\Pjax;
 use app\models\SubcountySearch;
-use app\models\WardSearch;
+use app\models\WardOneSearch;
 use app\models\LocationSearch;
 use app\models\SubLocationSearch;
 use app\models\EstateSearch;
@@ -142,9 +142,9 @@ $this->registerCss("
 
       <div id="wards" class="tab-pane fade">
         <?php
-             $searchModel = new WardSearch();
+             $searchModel = new WardOneSearch();
              $dataProvider = $searchModel->search(Yii::$app->request->get());
-            echo Yii::$app->controller->renderPartial("../ward/index", [
+            echo Yii::$app->controller->renderPartial("../ward-one/index", [
             'dataProvider' => $dataProvider, 'searchModel' => $searchModel,
         ]);  ?>
       </div>

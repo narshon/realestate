@@ -17,25 +17,28 @@ use yii\widgets\Pjax;
             //'fk_occupancy_id',
              [
                 'attribute' =>'amount',
-                'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
+                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
+                 'value' => function($data){
+                      return $data->amount;
+                 }
                ],
-            'payment_date',
+            'entry_date',
             
-            [
+            /* [
                 'attribute' => 'payment_method',
                 'value' => function($data) {
                 $list = \app\models\Lookup::getLookupValues('Payment Method');
                     return array_key_exists($data->payment_method, $list) ? $list[$data->payment_method] : $data->payment_method;
                 }
-            ],
+            ],  
             [
                 'attribute' => 'status',
                 'value' => function($data) {
                 $list = \app\models\Lookup::getLookupValues('Payment Status');
                     return array_key_exists($data->status, $list) ? $list[$data->status] : $data->status;
                 }
-            ],
-            'ref_no',
+            ], */
+           // 'ref_no',
             [
                 'attribute' => 'created_by',
                 'value' => function($data) {
