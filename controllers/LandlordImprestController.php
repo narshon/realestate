@@ -62,11 +62,14 @@ class LandlordImprestController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($fk_landlord_id = '')
     {
         $model = new LandlordImprest();
         $dh = new DataHelper;
         $keyword = 'landlord-imprest';
+        if($fk_landlord_id){
+            $model->fk_landlord = $fk_landlord_id;
+        }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             //return $this->redirect(['view', 'id' => $model->id]);

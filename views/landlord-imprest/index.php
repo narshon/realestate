@@ -21,12 +21,12 @@ $this->params['breadcrumbs'][] = $this->title;
         
 	<?php
         $dh = new DataHelper();
-						 $url=Url::to(['landlord-imprest/create']);
+		       $url=Url::to(['landlord-imprest/create','fk_landlord_id'=>$landlordModel->id]);
                        echo $dh->getModalButton(new LandlordImprest, 'landlord-imprest/create', 'New LandLord Imprest', 'btn btn-danger btn-create btn-new pull-right' , "Create landlord Imprest",$url);
                ?>
   
     </p>
-<?php Pjax::begin(); ?>    <?= GridView::widget([
+<?php Pjax::begin(['id'=>'pjax-landlord-imprest']); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [

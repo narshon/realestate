@@ -17,7 +17,8 @@ EOD;
         $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
 ?>
 
-    <?= $form->field($model, 'fk_landlord')->textInput() ?>
+  <?php  
+    echo   $form->field($model, 'fk_landlord')->hiddenInput()->label(false);  ?>
 
     <?= $form->field($model, 'amount')->textInput() ?>
 

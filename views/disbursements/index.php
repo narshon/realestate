@@ -93,7 +93,7 @@ $this->params['breadcrumbs'][] = $this->title;
            $searchModel = new \app\models\LandlordImprestSearch();
            $dataProvider = new ActiveDataProvider(['query' => \app\models\LandlordImprest::find()->where(['fk_landlord'=>$landlordModel->id])->orderBy("id DESC")]);
              echo Yii::$app->controller->renderPartial("../landlord-imprest/index", [
-                  'dataProvider' => $dataProvider, 'searchModel' => $searchModel
+                  'dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'landlordModel'=>$landlordModel
               ]); 
         ?>
       </div>     
