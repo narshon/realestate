@@ -40,19 +40,8 @@ $this->registerCss("
 <div class="panel panel-default">
     
     <div class="panel-body">
-         <div class="leftbar col-md-2">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-				<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#dashboard" role="tab">Dashboard</a></li>
-				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#issues" role="tab">Issues</a></li>
-				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#rent" role="tab">Pending Rent</a></li>
-				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#daily" role="tab">Daily Balance</a></li>
-				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#monthly" role="tab">Monthly Bal</a></li>
-				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#trial" role="tab">Trial Balance</a></li>
-				
-			</ul> 
-		</div>
         
-     <div class="rightbar col-md-10">
+     <div class="rightbar col-md-12">
             <!-- Renderpartial properties by default -->
 			<?php 
 			   $propertylink = Url::to(['property/index']);
@@ -100,7 +89,7 @@ $this->registerCss("
       </div>
     </div>
   <div class="panel-footer" id="footerpanel">
-      Panel Footer
+      
        <div class="modal fade" id="modal_id" role="dialog" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog">
 

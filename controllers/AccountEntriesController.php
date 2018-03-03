@@ -209,7 +209,7 @@ class AccountEntriesController extends Controller
                     $payments = $query->all();
                     $dataProvider = new \yii\data\ActiveDataProvider(['query'=>$query]);
                             
-                    
+                    $dataProvider->pagination->pageSize=100;
                     return $this->render('partials/cash_summary', [
                         'dataProvider' => $dataProvider,
                     ]);
@@ -220,6 +220,7 @@ class AccountEntriesController extends Controller
                     $dataProvider = new \yii\data\ActiveDataProvider([
                         'query' => \app\models\OccupancyRent::find()->where(['in', 'id', array_column($bills, 'origin_id')]),
                     ]);
+                    $dataProvider->pagination->pageSize=100;
                     return $this->render('partials/rent_summary', [
                         'dataProvider' => $dataProvider,
                     ]);

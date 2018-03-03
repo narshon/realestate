@@ -52,7 +52,7 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
+           // ['label' => 'Home', 'url' => ['/site/index']],
            // ['label' => 'Hostels', 'url' => ['/site/hostel']],
             //['label' => 'Bed Sitters', 'url' => ['/site/bedsitter']],
            // ['label' => 'Single Rooms', 'url' => ['/site/single']],
@@ -129,7 +129,7 @@ $this->registerJsFile($url, ['depends' => [\yii\web\JqueryAsset::className()]]);
      ?>
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; Etagservice Ltd <?= date('Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>

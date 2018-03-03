@@ -3,13 +3,20 @@ use yii\grid\GridView;
 use yii\widgets\Pjax;
 
 ?>
-
+<h3>Disbursement Summary for: <?= date('d-m-Y')  ?></h3>
 <?php Pjax::begin(); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+            [
+              'label'=> "Property",
+              'attribute' => 'property',
+              'format' => 'raw',
+              'value' => function ($data) {
+                  return $data->fkOccupancyRent->fkOccupancy->fkProperty->property_name;
+               },
+             ],
             [
               'label'=> "Tenant",
               'attribute' => 'fk_occupancy_rent',
@@ -26,10 +33,17 @@ use yii\widgets\Pjax;
                   return $data->month."/".$data->year;
                },
              ],
-           // 'fk_landlord',
+            [
+              'label'=> "Landlord",
+              'attribute' => 'landlord',
+              'format' => 'raw',
+              'value' => function ($data) {
+                  return $data->fkOccupancyRent->fkOccupancy->fkProperty->owner->getNames();
+               },
+             ],
             //'batch_id',
             'amount',
-             'entry_date',
+            // 'entry_date',
             // 'created_on',
             // 'created_by',
              [

@@ -171,7 +171,7 @@ class DisbursementsController extends Controller
         
         $feedback = $model->settleDisbursements($owner_id, $cleared_bills, $advance_ids, $total_advance);
         if($feedback == "success"){
-           return array('div'=>"<div class='success'> <span> Successfully made disbursements. ".print_r($advance_ids,true)." <span> </div> ");
+           return array('div'=>"<div class='success'> <span> Successfully made disbursements.  <span> </div> ");
         }
         
     }

@@ -2,14 +2,17 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+//use kartik\grid\GridView;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 ?>
+<h3>Daily Report for: <?= date('d-m-Y')  ?></h3>
 <?php Pjax::begin(); ?><?= GridView::widget([
         'dataProvider' => $dataProvider,
+        //'showPageSummary' => true,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -29,7 +32,22 @@ use yii\widgets\Pjax;
                           }
                           
                       }
-                      elseif($originModel == "app\models\OccupancyPayments"){
+                      elseif($originModel == "app\models\LandlordImprest"){
+                          //LandlordImprest
+                          $imprest = $originModel::findone(['id'=>$data->origin_id]);
+                          if($imprest){
+                              $prop_name = '';
+                              //get properties of this landlord
+                              $properties = \app\models\Property::find()->where(['owner_id'=>$imprest->fk_landlord])->all();
+                              if($properties){
+                                  foreach($properties as $property){
+                                      $prop_name .= $property->property_name.', ';
+                                  }
+                                  //remove trailing comma
+                                  $prop_name = substr($prop_name, 0, -2);
+                              }
+                              return $prop_name;
+                          }
                           
                       }
                  }
@@ -47,82 +65,78 @@ use yii\widgets\Pjax;
                           //occupancyRent
                           $occupancyPayment = $originModel::findone(['id'=>$data->origin_id]);
                           if($occupancyPayment){
-                              return $occupancyPayment->fkOccupancy->fkProperty->property_name;
+                              return $occupancyPayment->fkOccupancy->fkTenant->getNames();
+                          }
+                      }
+                      elseif($originModel == "app\models\LandlordImprest"){
+                          //LandlordImprest
+                          $imprest = $originModel::findone(['id'=>$data->origin_id]);
+                          if($imprest){
+                             return $imprest->fkLandlord->getNames();
                           }
                           
-                      }
+                        }
                  }
                ],
                [
-                'attribute' =>'property',
+                'attribute' =>'client_type',
                 // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
                  'value' => function($data){
-                   // return $data->origin_model;
+                    // return $data->origin_model;
                       //get origin of this transaction
                       $originModel = $data->origin_model;
                       if($originModel == "app\models\OccupancyPayments"){
-                          
-                          //occupancyRent
-                          $occupancyPayment = $originModel::findone(['id'=>$data->origin_id]);
-                          if($occupancyPayment){
-                              return $occupancyPayment->fkOccupancy->fkProperty->property_name;
-                          }
-                          
+                          return "Tenant";
                       }
+                      elseif($originModel == "app\models\LandlordImprest"){
+                          //LandlordImprest
+                          return "Landlord";
+                          
+                        }
                  }
                ],
                [
-                'attribute' =>'property',
+                'attribute' =>'item',
                 // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
                  'value' => function($data){
-                   // return $data->origin_model;
+                    // return $data->origin_model;
                       //get origin of this transaction
                       $originModel = $data->origin_model;
                       if($originModel == "app\models\OccupancyPayments"){
-                          
                           //occupancyRent
-                          $occupancyPayment = $originModel::findone(['id'=>$data->origin_id]);
-                          if($occupancyPayment){
-                              return $occupancyPayment->fkOccupancy->fkProperty->property_name;
-                          }
-                          
+                         return "Tenant Payments";
+                         
                       }
+                      elseif($originModel == "app\models\LandlordImprest"){
+                          //LandlordImprest
+                          return "Landlord Payments";
+                          
+                        }
                  }
                ],
              [
                 'attribute' =>'amount',
+                 'label'=>"Dr",
                 // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
                  'value' => function($data){
+                     if($data->trasaction_type == "debit"){
                       return $data->amount;
-                 }
+                     }
+                 },
+              //  'pageSummary' => true
                ],
-            'entry_date',
-            
-            /* [
-                'attribute' => 'payment_method',
-                'value' => function($data) {
-                $list = \app\models\Lookup::getLookupValues('Payment Method');
-                    return array_key_exists($data->payment_method, $list) ? $list[$data->payment_method] : $data->payment_method;
-                }
-            ],  
-            [
-                'attribute' => 'status',
-                'value' => function($data) {
-                $list = \app\models\Lookup::getLookupValues('Payment Status');
-                    return array_key_exists($data->status, $list) ? $list[$data->status] : $data->status;
-                }
-            ], */
-           // 'ref_no',
-            [
-                'attribute' => 'created_by',
-                'value' => function($data) {
-                
-                    return implode(' - ', \app\models\Users::getDetail(['id','username'],$data->created_by ));
-                }
-            ],
-            'created_on',
-            // 'modified_by',
-            // 'modified_on',
+              [
+                'attribute' =>'amount',
+                'label'=>"Cr",
+                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
+                 'value' => function($data){
+                      if($data->trasaction_type == "credit"){
+                      return $data->amount;
+                     }
+                 },
+              //  'pageSummary' => true
+               ],
+              
             
         ],
     ]); ?>

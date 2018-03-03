@@ -178,7 +178,14 @@ class SiteController extends Controller
     }
     public function actionIndex()
     {
-        return $this->render('index');
+        if(Yii::$app->user->isGuest){
+            $url = Url::to(['login']);
+            return $this->redirect($url);
+        }
+        else{
+            return $this->render('index');
+        }
+        
     }
 	
 	                               

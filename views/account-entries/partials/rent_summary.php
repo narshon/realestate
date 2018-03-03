@@ -1,3 +1,5 @@
+
+<h3>Rent Income for: <?= date('d-m-Y')  ?></h3>
 <?= yii\grid\GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -5,9 +7,27 @@
                 'class' => 'yii\grid\SerialColumn'
             ],
             [
-                'attribute'=>'fk_source',
+                'attribute'=>'property',
                 'value'=>function($data){
-                    return isset($data->fkSource)?$data->fkSource->source_name:'';
+                    return isset($data->fkOccupancy)?$data->fkOccupancy->fkProperty->property_name:'';
+                }
+            ],
+            [
+                'attribute'=>'sublet',
+                'value'=>function($data){
+                    return isset($data->fkOccupancy)?$data->fkOccupancy->fkSublet->sublet_name:'';
+                }
+            ],
+            [
+                'attribute'=>'client',
+                'value'=>function($data){
+                    return isset($data->fkTenant)?$data->fkTenant->getNames():'';
+                }
+            ],
+            [
+                'attribute'=>'term',
+                'value'=>function($data){
+                    return isset($data->fkTerm)?$data->fkTerm->term_name:'';
                 }
             ],
             [
@@ -23,29 +43,15 @@
             [
                 'attribute'=>'_status',
                 'value'=>function($data){
-                    return app\models\Lookup::getLookupCategoryValue(app\models\LookupCategory::getLookupCategoryID("status"), $data->_status);
+                    $status = app\models\Lookup::getLookupCategoryValue(app\models\LookupCategory::getLookupCategoryID("Match Bills"), $data->_status);
+                    if($status == "Matched"){
+                        return "Paid";
+                    }
+                    else{
+                        return "Not Paid";
+                    }
                 }
             ],  
-            'date_created',
-             
-            // 'created_by',
-            // 'date_modified',
-            // 'modified_by',
-
-           /* ['class' => 'yii\grid\ActionColumn',
-                     'template' => '{view} {update}',
-                     'buttons' => [
-                                    'view' => function ($url, $model){
-                                             $dh = new DataHelper();
-                                              $popup = $dh->getModalButton($model, "occupancy-rent/view", "Rent", 'glyphicon glyphicon-eye-open','');
-                                              return $popup;
-                                             
-                                    }, 
-                                    'update' => function ($url, $model) {
-                                            $dh = new DataHelper();
-                                           return $dh->getModalButton($model, "occupancy-rent/update", "Rent", 'glyphicon glyphicon-edit','');
-                                    },
-                            ], 
-                    ], */
+            
                 ],
             ]); ?>

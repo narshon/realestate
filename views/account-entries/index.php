@@ -67,6 +67,8 @@ $this->registerCss("
                                               '<li class="nav-item list-group-item"><a class="nav-link active" data-toggle="tab" href="#d-report" role="tab">Daily Reports</a></li>',
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#A-statement" role="tab">Account statement</a></li>',
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#c-commission" role="tab">Commission Statement</a></li>',
+                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#rent" role="tab">Pending Rent</a></li>',
+                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#trial" role="tab">Trial Balance</a></li>',
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#report" role="tab">I&E Report</a></li>',
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#m-report" role="tab">Monthly Report</a></li>'
                                           ],
@@ -222,6 +224,8 @@ $this->registerCss("
             </div>
         </div>
     </div>
+        <div class="tab-pane" id="rent" role="tabpanel">...e4</div>
+        <div class="tab-pane" id="trial" role="tabpanel">..444.</div>
 	<div class="tab-pane" id="m-report" role="tabpanel">7</div>
         
         <!-------  Settings Tabs ----------------->
