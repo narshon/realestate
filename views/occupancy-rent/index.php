@@ -25,9 +25,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'yii\grid\SerialColumn'
             ],
             [
-                'attribute'=>'fk_source',
+                'attribute'=>'fk_term',
                 'value'=>function($data){
-                    return isset($data->fkSource)?$data->fkSource->source_name:'';
+                    return isset($data->fkTerm)?$data->fkTerm->term_name:'';
                 }
             ],
             [

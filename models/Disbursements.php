@@ -246,6 +246,18 @@ class Disbursements extends \yii\db\ActiveRecord
 
                 }
             }
+            //update imprest advances
+            $advance_array = explode(",", $advance_ids);
+            if(is_array($advance_array)){
+                foreach($advance_array as $advance){
+                    $AdvanceImprest = Self::find()->where(['id'=>$advance])->one();
+                    if($AdvanceImprest){
+                        $AdvanceImprest->settlement_id = $imprest->id;
+                        $AdvanceImprest->_status = 1; //paid.
+                        $AdvanceImprest->save(false);
+                    }
+                }
+            }
         }
         
         

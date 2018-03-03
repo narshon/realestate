@@ -169,6 +169,7 @@ class DataHelper {
         if($model->isNewRecord){
             $model->date_created = date("Y-m-d H:i:s");
             $model->created_by = Yii::$app->user->identity->id;
+            
         }
         else{
             $model->date_modified = date("Y-m-d H:i:s");

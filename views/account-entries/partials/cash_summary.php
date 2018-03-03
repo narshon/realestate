@@ -13,8 +13,82 @@ use yii\widgets\Pjax;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            //'id',
-            //'fk_occupancy_id',
+            [
+                'attribute' =>'property',
+                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
+                 'value' => function($data){
+                   // return $data->origin_model;
+                      //get origin of this transaction
+                      $originModel = $data->origin_model;
+                      if($originModel == "app\models\OccupancyPayments"){
+                          
+                          //occupancyRent
+                          $occupancyPayment = $originModel::findone(['id'=>$data->origin_id]);
+                          if($occupancyPayment){
+                              return $occupancyPayment->fkOccupancy->fkProperty->property_name;
+                          }
+                          
+                      }
+                      elseif($originModel == "app\models\OccupancyPayments"){
+                          
+                      }
+                 }
+               ],
+                       
+              [
+                'attribute' =>'client',
+                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
+                 'value' => function($data){
+                   // return $data->origin_model;
+                      //get origin of this transaction
+                      $originModel = $data->origin_model;
+                      if($originModel == "app\models\OccupancyPayments"){
+                          
+                          //occupancyRent
+                          $occupancyPayment = $originModel::findone(['id'=>$data->origin_id]);
+                          if($occupancyPayment){
+                              return $occupancyPayment->fkOccupancy->fkProperty->property_name;
+                          }
+                          
+                      }
+                 }
+               ],
+               [
+                'attribute' =>'property',
+                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
+                 'value' => function($data){
+                   // return $data->origin_model;
+                      //get origin of this transaction
+                      $originModel = $data->origin_model;
+                      if($originModel == "app\models\OccupancyPayments"){
+                          
+                          //occupancyRent
+                          $occupancyPayment = $originModel::findone(['id'=>$data->origin_id]);
+                          if($occupancyPayment){
+                              return $occupancyPayment->fkOccupancy->fkProperty->property_name;
+                          }
+                          
+                      }
+                 }
+               ],
+               [
+                'attribute' =>'property',
+                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
+                 'value' => function($data){
+                   // return $data->origin_model;
+                      //get origin of this transaction
+                      $originModel = $data->origin_model;
+                      if($originModel == "app\models\OccupancyPayments"){
+                          
+                          //occupancyRent
+                          $occupancyPayment = $originModel::findone(['id'=>$data->origin_id]);
+                          if($occupancyPayment){
+                              return $occupancyPayment->fkOccupancy->fkProperty->property_name;
+                          }
+                          
+                      }
+                 }
+               ],
              [
                 'attribute' =>'amount',
                 // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),

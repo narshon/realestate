@@ -137,12 +137,16 @@ class OccupancyTerm extends \yii\db\ActiveRecord
     public static function getTermList($id)
     {
         $list = [];
-        $terms = OccupancyTerm::findAll(['fk_occupancy_id' => $id]);
-        if(is_array($terms)) {
-            foreach($terms as $term) {
-                $list[$term->fkPropertyTerm->fk_term_id] = $term->fkPropertyTerm->fkTerm->term_name;
+        $occupancy = Occupancy::findone(['id'=>$id]);
+        if($occupancy){
+            $terms = PropertyTerm::findAll(['fk_property_id' => $occupancy->fk_property_id]);
+            if(is_array($terms)) {
+                foreach($terms as $term) {
+                    $list[$term->fk_term_id] = $term->fkTerm->term_name;
+                }
             }
         }
+        
         return $list;
     }
 }

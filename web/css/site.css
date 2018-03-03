@@ -249,15 +249,15 @@ border-radius: 6px !important;
 
 @media print {
   body * {
-    visibility:hidden;
-	font-size:60pt !important;
+  /*  visibility:hidden;
+    font-size:60pt !important;  */
 	
   }
 .no-print{
 	   visibility:hidden !important;
   }
   .print-modal{
-	  visibility:hidden !important;
+	/*  visibility:hidden !important;  */
   }
 
 

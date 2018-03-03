@@ -72,7 +72,13 @@ $this->title = 'Properties';
                         },
                     ],
                     'property_desc:ntext',
-                    'fk_property_location:ntext',
+                    [
+                        'attribute' => 'fk_propoerty_location',
+                        'format' => 'raw',
+                        'value' => function ($data) {
+                              return $data->fkPropertyLocation->estate_name;
+                        },
+                    ],
                     [
                         'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
                         'attribute' => 'property_type',

@@ -54,29 +54,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'created_on',
                 [
                 'format'=> 'raw',
-                'value' => function ($data) {
-                    return Html::button('<i class="glyphicon glyphicon-print"> _match</i>', [
-                            'type'=>'button',
-                            'title'=>'Match This Payement to bills', 
-                            'class'=>'btn  showModalButton', 
-                            'value' => yii\helpers\Url::to(['occupancy-payments/map', 'id' => $data->id])]);
-                }
-            ],
-
-            // 'modified_by',
-            // 'modified_on',
-            [
                 'attribute' => 'fk_receipt_id',
-                'format'=> 'raw',
+                 'label' => "Action",
                 'value' => function ($data) {
-                    return Html::button('<i class="glyphicon glyphicon-print"> _print</i>', [
-                            'type'=>'button',
-                            'title'=>'Print Receipt', 
-                            'class'=>'btn  showModalButton', 
-                            'value' => yii\helpers\Url::to(['occupancy-payments/print-receipt', 'id' => $data->id])]);
+                
+                    return $data->matchBills();
+                    
                 }
             ],
-
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

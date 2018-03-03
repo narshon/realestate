@@ -20,26 +20,48 @@ use app\models\LookupCategory;
 			<h4 style="text-align: center; width:100%"> Tel:2224316,0722756723-Mombasa-Kenya. </h4>
        </div>
        <div class="row">
-           <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-               <label>NO .</label><?= $model->fkReceipt->receipt_no ?>
-           </div>
-		   
-           <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-		       <div class="row">
-			      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                  <label>House No:</label><?=$model->fkOccupancy->fk_property_id;?>
-                   </div>
-                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+           <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"><label>NO .</label><?= $model->fkReceipt->receipt_no ?>
+               <label>House:</label><?=$model->fkOccupancy->fk_property_id.' '.$model->fkOccupancy->fkProperty->property_name;?>
+                <label>Sublet:<?=$model->fkOccupancy->fkSublet->sublet_name ?></label>
                  <label>DATE:<?=$model->payment_date?></label>
-                  </div>
-		      </div>
-       
-	        </div>
+           </div>
+
 	   </div>
 	   <div class="row"><label>RECEIVED from:</label><?=$model->fkOccupancy->fkUsers->getNames()?></div>
 	   <div class="row"><label>The sum of shillings:</label><?=$model->amount?></div>
 	   <div class="row">
-           <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">Being payment of: <span> <?=$model->getMatchedBillItems()?></span></div>
+           <div class="col-xs-12 col-sm-12 col-md-8 col-lg-8">
+           <table id="t01">   
+              <tr>
+                <th>Item</th>
+                <th>Period</th> 
+                <th>Amount</th>
+                
+              </tr>
+              <?php
+              //start with cleared bills.
+                $bills = $model->getMatchedBillItems();
+                if($bills){
+                    foreach($bills as $bill){
+                      $term = isset($bill->fkOccupancyRent->fkTerm->term_name)?$bill->fkOccupancyRent->fkTerm->term_name:'';
+                        echo <<<EOF
+                        <tr>
+                            <td>$term</td>
+                            <td>{$bill->fkOccupancyRent->month}/{$bill->fkOccupancyRent->year}</td>
+                            <td>{$bill->fkOccupancyRent->amount}</td>
+                      </tr>
+
+EOF;
+                    }
+                }
+                      
+
+                   
+              ?>
+            </table>
+           
+           
+           </div>
 		</div>
 		<div class="row"><label>Payment  Method: </label><?=$model->getPaymentMethod();?></div>
 		<div class="row">
@@ -52,5 +74,5 @@ use app\models\LookupCategory;
     </div> 
 </div>
 <div class="no-print">
-    <button class ="print-modal">Print</button>
+    <button class ="print-modal1" onclick="window.print();">Print</button>
 </div>

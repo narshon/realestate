@@ -12,6 +12,15 @@ use yii\helpers\Url;
 
 <div class="occupanty-rent-form" style="text-align: center">
     <?php $form = ActiveForm::begin(); ?>
+    <?php  
+      if($model->hasErrors()){
+          echo "Errors";
+          foreach($model->getErrors() as $error){
+              echo print_r($error, true)."<br/>";
+          }
+          
+      }
+    ?>
     <div class="col-md-12">
         <div class="header" style="border-bottom: 1px #505039 solid; padding-bottom: 30px;">
             <div class="col-md-4">
@@ -50,16 +59,16 @@ use yii\helpers\Url;
         <div class="col-md-4"></div>
     </div>
 
-    <div class="col-md-12">
+  <!--  <div class="col-md-12">
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <?= $form->field($model, 'fk_source')->dropdownList(
+            <?php /* $form->field($model, 'fk_source')->dropdownList(
              app\models\Source::getTenantOptions(),
             ['prompt'=>'Please Select']
-        ); ?>
+        ); */ ?>
         </div>
         <div class="col-md-4"></div>
-    </div>
+    </div>  -->
     <div class="col-md-12">
         <div class="col-md-4"></div>
         <div class="col-md-4">

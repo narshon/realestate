@@ -367,7 +367,7 @@ function redirectTo(url){
 }
 
 $('body').on('click', '.print-modal', function(){
-    printSection($('#print_area'));
+   // printSection($('#print_area'));
     window.print();
 });
 

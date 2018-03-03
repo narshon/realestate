@@ -47,7 +47,7 @@ class OccupancyRent extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fk_occupancy_id', 'fk_source'], 'required'],
+            [['fk_occupancy_id', 'fk_term'], 'required'],
             [['fk_occupancy_id', 'fk_source', 'fk_term', 'month', 'year', '_status', 'created_by', 'modified_by'], 'integer'],
             [['amount'], 'number'],
             [['date_created', 'date_modified'], 'safe'],
@@ -137,7 +137,9 @@ class OccupancyRent extends \yii\db\ActiveRecord
     
     public function afterSave($insert, $changedAttributes) 
     {
-        $this->updateAccounts();
+       if($insert){
+          $this->updateAccounts(); 
+       }
         return parent::afterSave($insert, $changedAttributes);
     }
     

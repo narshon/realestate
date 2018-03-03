@@ -33,21 +33,6 @@ use app\models\AccountEntries;
             </div>
         </div>
     </div>
-
-    <div class="col-md-2">
-        <div class="panel task db mbm">
-            <div class="panel-body">
-                <p class="icon">
-                    <i class="icon fa fa-users"></i>
-                </p>
-                <h4 class="value">
-                    <span><?= \app\models\AccountEntries::getDailyReportItem('penalties_income', true)?></span><small></small></h4>
-                <p class="description">
-                    Penalties</p>
-
-            </div>
-        </div>
-    </div>
     
     <div class="col-md-2">
         <div class="panel task db mbm">
@@ -86,7 +71,7 @@ use app\models\AccountEntries;
         <?=kartik\widgets\Select2::widget([
             'name' => 'summary_item',
             'id' => 'daily-summary',
-            'data' => [1=>'Cash', 2 => 'Rent Income', 3 => 'Penalites', 4 => 'Disbursements', 5 => 'Bank'],
+            'data' => [1=>'Cash', 2 => 'Rent Income', 4 => 'Disbursements', 5 => 'Bank'],
             'options' => [
                 'placeholder' => 'Select Summary Item..',
                 'multiple' => false

@@ -209,9 +209,6 @@ class AccountEntriesController extends Controller
                     $payments = $query->all();
                     $dataProvider = new \yii\data\ActiveDataProvider(['query'=>$query]);
                             
-                            /* new \yii\data\ActiveDataProvider([
-                        'query' => \app\models\OccupancyPayments::find()->where(['in', 'id', array_column($payments, 'origin_id')]),
-                    ]);  */
                     
                     return $this->render('partials/cash_summary', [
                         'dataProvider' => $dataProvider,
@@ -227,7 +224,7 @@ class AccountEntriesController extends Controller
                         'dataProvider' => $dataProvider,
                     ]);
                     
-                case 3:
+              /*  case 3:
                     $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1106, true);
                     $penalities = $query->all();
                     $dataProvider = new \yii\data\ActiveDataProvider([
@@ -236,6 +233,8 @@ class AccountEntriesController extends Controller
                     return $this->render('partials/penalties_summary', [
                         'dataProvider' => $dataProvider,
                     ]);
+               * 
+               */
                     
                 case 4:
                     $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1107, true);

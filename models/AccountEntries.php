@@ -159,14 +159,14 @@ class AccountEntries extends \yii\db\ActiveRecord
                         ->sum('amount');
                  }
                  return ($disbursements == null) ? 0 : $disbursements;
-            case 'penalties_income':
+           /* case 'penalties_income':
                 if(($account_type = AccountChart::findone(['code'=> 1106])) !== null) {
                      $penalties = AccountEntries::find()
                         ->where(['fk_account_chart' => $account_type->id])
                         ->andWhere(['entry_date' => $date, 'trasaction_type' => 'debit'])
                         ->sum('amount');
                  }
-                 return ($penalties == null) ? 0 : $penalties;
+                 return ($penalties == null) ? 0 : $penalties;  */
             case 'revenue':
                 return '';
                 

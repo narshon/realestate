@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Url;
 
 /**
  * OccupancyPaymentsController implements the CRUD actions for OccupancyPayments model.
@@ -164,17 +165,22 @@ class OccupancyPaymentsController extends Controller
     }
     public function actionPrintReceipt($id)
     {
-        $model = $this->findModel($id);
+        
         
         if(Yii::$app->request->isAjax){
-            return $this->renderAjax('receipt',[
-                'model' => $model,
-            ]);
+          //  return $this->renderAjax('receipt',['model' => $model,]);
         } else {
-            return $this->render('receipt', [
+            return $this->redirect(Url::to(['print-r','id'=>$id]));
+        }
+    }
+    public function actionPrintR($id){
+        
+        $model = $this->findModel($id);
+        
+        return $this->render('receipt', [
                 'model' => $model,
             ]);
-        }
+        
     }
     
      public function actionOccupancyPayments($id)
