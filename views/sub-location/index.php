@@ -31,7 +31,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'fk_location',
+            [
+                'attribute' =>'fk_location',
+                'value' => 'fkLocation.location_name'
+             ],
+            //'fk_location',
             'sub_loc_name',
             'sub_loc_desc:ntext',
 

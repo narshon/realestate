@@ -30,7 +30,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'fk_subcounty',
+            [
+                'attribute' =>'fk_subcounty',
+                'value' => 'fkSubcounty.subcounty_name'
+             ],
+            //'fk_subcounty',
             'ward_name',
             'ward_desc:ntext',
 

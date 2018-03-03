@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\SubLocation */
 
-$this->title = $model->id;
+$this->title = $model->re_sub_location;
 $this->params['breadcrumbs'][] = ['label' => 'Sub Locations', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

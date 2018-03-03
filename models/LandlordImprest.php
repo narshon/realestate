@@ -50,7 +50,7 @@ class LandlordImprest extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'fk_landlord' => 'Fk Landlord',
+            'fk_landlord' => 'Landlord',
             'amount' => 'Amount',
             'entry_date' => 'Entry Date',
             'created_on' => 'Created On',

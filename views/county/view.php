@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\County */
 
-$this->title = $model->id;
+$this->title = $model->county_name;
 $this->params['breadcrumbs'][] = ['label' => 'Counties', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

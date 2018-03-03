@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php
         $dh = new DataHelper();
 						 $url=Url::to(['landlord-imprest/create']);
-                       echo $dh->getModalButton(new LandlordImprest, 'landlord-imprest/create', 'LandlordImprest', 'btn btn-danger btn-create btn-new pull-right' , "Create landlord Imprest",$url);
+                       echo $dh->getModalButton(new LandlordImprest, 'landlord-imprest/create', 'New LandLord Imprest', 'btn btn-danger btn-create btn-new pull-right' , "Create landlord Imprest",$url);
                ?>
   
     </p>
@@ -33,12 +33,25 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
 
             'id',
-            'fk_landlord',
+            [
+                'attribute'=>'fk_landlord',
+                'value'=>'fkLandlord.name1'                
+            ],
+            //'fk_landlord',
             'amount',
             'entry_date',
             // 'created_on',
             // 'created_by',
-             '_status',
+            [
+            'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+            'attribute' => '_status',
+            'filter' => app\models\Lookup::getLookupValues('Imprest Status'),
+            'value' => function ($data) {
+                $category_id = \app\models\LookupCategory::getLookupCategoryID('Imprest Status');
+                return app\models\Lookup::getLookupCategoryValue($category_id, $data->_status);
+            },
+         ],
+             //'_status',
 
            // ['class' => 'yii\grid\ActionColumn'],
         ],

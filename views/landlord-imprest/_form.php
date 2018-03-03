@@ -27,7 +27,9 @@ EOD;
 
     <?= $form->field($model, 'created_by')->textInput() ?>
 
-    <?= $form->field($model, '_status')->textInput() ?>
+    <?= $form->field($model, '_status')->dropDownList(
+            [1=>"Advance", 0=>"Pending"],['prompt'=>"Select Status"])
+        ?>
 
    <div class="form-group">
         <?php $url =  Url::to([$model->isNewRecord ? "$view_name/create" : "$view_name/update",'id'=>$model->id]);  ?>

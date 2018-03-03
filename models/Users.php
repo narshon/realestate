@@ -351,6 +351,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     
     public function getNames(){
         return $this->name1.' '.$this->name2.' '.$this->name3;
+        
     }
     public static function getStaticName($fk_user_id){
         $instance = Self::findone(['id'=>$fk_user_id]);
@@ -461,6 +462,9 @@ public static function getUsersOptions(){
     
     public function getTenantName1Link(){
         return Html::a($this->name1,['tenantview','id'=>$this->id]);
+    }
+    public function getLandlordName1(){
+        return Html::a($this->name1,['landlordview', 'id'=>$this->id]);
     }
 }
 

@@ -67,7 +67,15 @@ $this->registerCss("
                     ['class' => 'yii\grid\SerialColumn'],
 
                     'id',
-                    'name1',
+                    [
+                        'label'=>'Name1',
+                        'format'=>'raw',
+                        'attribute'=>'name1',
+                        'value'=> function ($data){
+                            return $data->getLandlordName1();
+                        }
+                        ],
+                    
                      'name2',
                      'name3',
                     'email:email',

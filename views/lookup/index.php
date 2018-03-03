@@ -37,7 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             '_key',
             '_value:ntext',
             [
-                        'attribute' => 'category0',
+                        'attribute' => 'category',
                         'value' => 'category0.category_name'
                     ],
             '_order',

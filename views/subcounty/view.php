@@ -20,6 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             [
                 'label'=>'County',
+                'format'=>'raw',
                 'value'=>$model->fkCounty->county_name,
             ],
             'subcounty_name',
