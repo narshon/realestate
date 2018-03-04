@@ -22,20 +22,21 @@ EOD;
     <?= $form->field($model, 'fk_group_id')->hiddenInput()->label("") ?>
     
 
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"><?= $form->field($model, 'name1')->textInput(['maxlength' => true]) ?></div>
 
-    <?= $form->field($model, 'name1')->textInput(['maxlength' => true]) ?>
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"><?= $form->field($model, 'name2')->textInput(['maxlength' => true]) ?></div>
 
-    <?= $form->field($model, 'name2')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'name3')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'gender')->dropdownList(['Female'=>'Female','Male'=>'Male'],['prompt'=>'Select Gender']); ?>
-
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?>
-    <?= $form->field($model, 'id_number')->textInput(['maxlength' => true]) ?>
-
+    <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"><?= $form->field($model, 'name3')->textInput(['maxlength' => true]) ?></div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'gender')->dropdownList(['Female'=>'Female','Male'=>'Male'],['prompt'=>'Select Gender']); ?></div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'id_number')->textInput(['maxlength' => true]) ?></div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'phone')->textInput(['maxlength' => true]) ?></div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?></div>
+</div>
     <?= $form->field($model, 'address')->textarea(['rows' => 6]) ?>
      <?= $form->field($model, 'residence')->textInput(); ?>
 

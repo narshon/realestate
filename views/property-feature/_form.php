@@ -19,15 +19,25 @@ use kartik\widgets\Select2;
 EOD;
         $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
 ?>
-
-    <?php  // Usage with ActiveForm and model
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?php  // Usage with ActiveForm and model
         echo $form->field($model, 'fk_feature')->widget(Select2::classname(), [
             'data' => app\models\Feature::find()->select(['feature_name', 'id'])->indexBy('id')->column(),
             'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_fk_feature'],
             'pluginOptions' => [
                 'allowClear' => true
             ],
-        ]);  ?>
+        ]);  ?></div>
+
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?php  // Usage with ActiveForm and model
+        echo $form->field($model, '_status')->widget(Select2::classname(), [
+            'data' => \app\models\Lookup::getLookupValues('Status'),
+            'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_status'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);  ?></div>
+</div>
 
     <?php  // Usage with ActiveForm and model
        /* echo $form->field($model, 'fk_sublet_id')->widget(Select2::classname(), [
@@ -42,14 +52,7 @@ EOD;
 
     <?php // echo $form->field($model, 'feature_video_url')->textarea(['rows' => 6]) ?>
 
-    <?php  // Usage with ActiveForm and model
-        echo $form->field($model, '_status')->widget(Select2::classname(), [
-            'data' => \app\models\Lookup::getLookupValues('Status'),
-            'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_status'],
-            'pluginOptions' => [
-                'allowClear' => true
-            ],
-        ]);  ?>
+   
       <?= $form->field($model, 'fk_property_id')->hiddenInput()->label("") ?>
 
     <div class="form-group">

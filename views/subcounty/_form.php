@@ -20,18 +20,19 @@ use kartik\widgets\Select2;
 EOD;
         $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
 ?>
-
-     <?php  // Usage with ActiveForm and model
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?php  // Usage with ActiveForm and model
         echo $form->field($model, 'fk_county')->widget(Select2::classname(), [
             'data' => app\models\County::find()->select(['county_name', 'id'])->indexBy('id')->column(),
             'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_fk_county'],
             'pluginOptions' => [
                 'allowClear' => true
             ],
-        ]);  ?>
+            ]);  ?>
+    </div>
 
-    <?= $form->field($model, 'subcounty_name')->textInput(['maxlength' => true]) ?>
-
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'subcounty_name')->textInput(['maxlength' => true]) ?></div>
+</div>
     <?= $form->field($model, 'subcounty_desc')->textarea(['rows' => 6]) ?>
 
     <div class="form-group">

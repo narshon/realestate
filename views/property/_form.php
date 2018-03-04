@@ -24,11 +24,10 @@ $this->registerCssFile(\Yii::$app->request->BaseUrl."/css/select2.min.css", [
      <div id="property-form-alert-<?= $id ?>">
       
     </div>
-
     <?= $form->field($model, 'property_name')->textInput(['maxlength' => true]) ?>
 
     <?php //echo $form->field($model, 'property_type')->textInput() ?>
-    <?php  // Usage with ActiveForm and model
+        <?php  // Usage with ActiveForm and model
         echo $form->field($model, 'property_type')->widget(Select2::classname(), [
             'data' => \app\models\Lookup::getLookupValues('Property Type'),
             'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_property_type'],
@@ -54,19 +53,22 @@ $this->registerCssFile(\Yii::$app->request->BaseUrl."/css/select2.min.css", [
                 'allowClear' => true
             ],
         ]);  ?>
-
-    <?php  // Usage with ActiveForm and model
-        echo $form->field($model, '_status')->widget(Select2::classname(), [
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'fk_property_location')->dropdownList(Estate::getEstateOptions(),['prompt'=>'Select Estate']); ?></div>
+            
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?php  // Usage with ActiveForm and model
+             echo $form->field($model, '_status')->widget(Select2::classname(), [
             'data' => \app\models\Lookup::getLookupValues('Property Status'),
             'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_status'],
             'pluginOptions' => [
                 'allowClear' => true
             ],
-        ]);  ?>
+            ]);  ?></div>
+        </div>
     
-    <?= $form->field($model, 'property_desc')->textarea(['rows' => 2]) ?>  
+    <?= $form->field($model, 'property_desc')->textarea(['rows' => 4]) ?>  
 
-    <?= $form->field($model, 'fk_property_location')->dropdownList(Estate::getEstateOptions(),['prompt'=>'Select Estate']); ?>
+    
 
     <?= $form->field($model, 'property_video_url')->textarea(['rows' => 2]) ?>
 

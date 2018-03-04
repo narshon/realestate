@@ -17,19 +17,20 @@ EOD;
         $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
 ?>
 
-  <?php  
-    echo   $form->field($model, 'fk_landlord')->hiddenInput()->label(false);  ?>
+  <?php echo   $form->field($model, 'fk_landlord')->hiddenInput()->label(false);  ?>
 
-    <?= $form->field($model, 'amount')->textInput() ?>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'amount')->textInput() ?></div>
 
-    <?= $form->field($model, 'entry_date')->textInput() ?>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'entry_date')->textInput() ?></div>
+</div>
 
     <?= $form->field($model, 'created_on')->textInput() ?>
 
     <?= $form->field($model, 'created_by')->textInput() ?>
 
     <?= $form->field($model, '_status')->dropDownList(
-            [1=>"Advance", 0=>"Pending"],['prompt'=>"Select Status"])
+            [1=>"Paid", 0=>"Pending"],['prompt'=>"Select Status"])
         ?>
 
    <div class="form-group">

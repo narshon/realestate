@@ -21,11 +21,16 @@ use kartik\depdrop\DepDrop;
 EOD;
         $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
 ?>
-    <?= $form->field($model, 'name1')->textInput() ?>
-    <?= $form->field($model, 'name2')->textInput() ?>
-    <?= $form->field($model, 'name3')->textInput() ?>
-    <?= $form->field($model, 'phone')->textInput() ?>
-    <?= $form->field($model, 'email')->textInput() ?>
+
+        <?= $form->field($model, 'name1')->textInput() ?>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'name2')->textInput() ?></div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'name3')->textInput() ?></div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'phone')->textInput() ?></div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'email')->textInput() ?></div>
+</div>
     <?= $form->field($model, 'id_number')->textInput() ?>
 
     <?= $form->field($model, 'fk_sublet_id')->hiddenInput()->label("") ?>

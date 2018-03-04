@@ -20,7 +20,7 @@ and open the template in the editor.
    visibility:hidden;
 	display:block; 
 	background-color:#000000;
-	font-size: 28px	
+	font-size: 28px;
   }
   .wrap * {
     visibility:hidden;
@@ -39,4 +39,7 @@ and open the template in the editor.
     width: 44mm;
     background: #FFF
   }
+    @page { size : portrait } 
+    @page rotated { size : landscape } 
+    table { page : rotated } 
 }

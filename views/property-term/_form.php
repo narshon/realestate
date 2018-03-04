@@ -32,17 +32,19 @@ EOD;
    
 
     <?= $form->field($model, 'term_narration')->textarea(['rows' => 6]) ?>
+<div class="row">
 
-    <?= $form->field($model, 'term_value')->textInput(['maxlength' => true]) ?>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-md-6"><?= $form->field($model, 'term_value')->textInput(['maxlength' => true]) ?></div>
 
-    <?php  // Usage with ActiveForm and model
+    <div class="col-xs-12 col-sm-12 col-md-6 col-md-6"><?php  // Usage with ActiveForm and model
         echo $form->field($model, '_status')->widget(Select2::classname(), [
             'data' => \app\models\Lookup::getLookupValues('Status'),
             'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_status'],
             'pluginOptions' => [
                 'allowClear' => true
             ],
-        ]);  ?>
+        ]);  ?></div>
+</div>
         <?= $form->field($model, 'fk_property_id')->hiddenInput()->label("") ?>
 
     <div class="form-group">
