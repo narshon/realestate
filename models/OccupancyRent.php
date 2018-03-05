@@ -313,7 +313,7 @@ class OccupancyRent extends \yii\db\ActiveRecord
         if(is_array($bills)) {
             foreach($bills as $bill) {
                 $list[$bill->id] = [
-                    'content' =>  $bill->fkSource->source_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')'
+                    'content' =>  $bill->fkTerm->term_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')'
                 ];
             }
         }

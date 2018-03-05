@@ -173,7 +173,11 @@ class OccupancyPayments extends \yii\db\ActiveRecord
             $model->fk_occupancy_rent = $bill;
             $model->type = 'complete';
             $model->amount = self::getBillAmount($bill);
-            $model->save();
+            if($model->save()){
+                //*************** check if this bill was a Rent bill and raise commission transaction ***********************
+                
+                
+            }
         }
     }
     
