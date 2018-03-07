@@ -175,7 +175,31 @@ class OccupancyPayments extends \yii\db\ActiveRecord
             $model->amount = self::getBillAmount($bill);
             if($model->save()){
                 //*************** check if this bill was a Rent bill and raise commission transaction ***********************
-                
+                if($model->fkOccupancyRent->fkTerm->id == 1){
+                    //yes this was rent. raise our commission.
+                    //amount
+                      //get property term for this commission
+                      $occupancyRent = OccupancyRent::findone($bill);
+                      if($occupancyRent){
+                           $propertyTerm = PropertyTerm::find()->where(['fk_term_id'=>Term::getCommissionTermID(),'fk_property_id'=>$occupancyRent->fkOccupancy->fk_property_id,'_status'=>1])->one();
+                           if($propertyTerm){
+                               $percentage = $propertyTerm->term_value;
+                               $amount = ($model->amount * $percentage / 100);
+                               
+                           }
+                           else{
+                               $percentage = 20; //defaults to 20%.
+                               $amount = ($model->amount * $percentage / 100);
+                           }
+                            $accountmap = AccountMap::find()->where(['fk_term' => Term::getCommissionTermID() , 'status'=> 1])->all();
+                            if(is_array($accountmap)) {
+                                foreach($accountmap as $account) {
+                                    AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $amount, $this->payment_date, $occupancyRent->id,$occupancyRent->className());
+                                }
+                            }
+                      }
+                     
+                }
                 
             }
         }

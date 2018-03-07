@@ -103,10 +103,21 @@ class Disbursements extends \yii\db\ActiveRecord
     }
     
     public static function raise($occupant, $rentbill,$month, $year){
+        //get amount to be disbursed
+        $propertyTerm = PropertyTerm::find()->where(['fk_term_id'=>Term::getCommissionTermID(),'fk_property_id'=>$occupant->fk_property_id,'_status'=>1])->one();
+        if($propertyTerm){
+            $percentage = $propertyTerm->term_value;
+            $amount = ($occupant->getBillAmount(Term::getRentTermID()) * (100-$percentage) / 100);
+
+        }
+        else{
+            $percentage = 80; //defaults to 20%.
+            $amount = ($occupant->getBillAmount(Term::getRentTermID()) * $percentage / 100);
+        }
         $disburse = New Disbursements();
         $disburse->fk_occupancy_rent = $rentbill->id;
         $disburse->fk_landlord = $occupant->fkProperty->owner_id;
-        $disburse->amount = $occupant->getBillAmount(Term::getRentTermID());
+        $disburse->amount = $amount;
         $disburse->month = $month;
         $disburse->year = $year;
         $disburse->entry_date = date("Y-m-d");

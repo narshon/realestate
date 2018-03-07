@@ -111,4 +111,12 @@ class Term extends \yii\db\ActiveRecord
         }
     }
     
+    public static function getCommissionTermID(){
+        $term = Self::find()->where(['term_name'=>'Agent Commission'])->one();
+        
+        if($term){
+            return $term->id;
+        }
+    }
+    
 }
