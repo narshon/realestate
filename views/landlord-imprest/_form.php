@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\widgets\Select2;
+use kartik\widgets\DatePicker;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\LandlordImprest */
@@ -22,16 +24,28 @@ EOD;
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'amount')->textInput() ?></div>
 
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'entry_date')->textInput() ?></div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+     <?php echo $form->field($model, 'entry_date')->widget(DatePicker::classname(), [
+        'options' => ['placeholder' => 'Enter entry date ...'],
+        'pluginOptions' => [
+            'autoclose'=>true,
+            'format' => 'dd-mm-yyyy'
+        ]
+    ]);   ?>
+    </div>
 </div>
 
-    <?= $form->field($model, 'created_on')->textInput() ?>
+     <?php  // Usage with ActiveForm and model
+       /* echo $form->field($model, 'imprest_type')->widget(Select2::classname(), [
+            'data' => \app\models\Lookup::getLookupValues('Imprest Type'),
+            'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_imprest_type'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]); */ ?>
+	<?php echo   $form->field($model, 'imprest_type')->hiddenInput()->label(false);  ?>
 
-    <?= $form->field($model, 'created_by')->textInput() ?>
-
-    <?= $form->field($model, '_status')->dropDownList(
-            [1=>"Paid", 0=>"Pending"],['prompt'=>"Select Status"])
-        ?>
+    <?php echo   $form->field($model, '_status')->hiddenInput()->label(false);  ?>
 
    <div class="form-group">
         <?php $url =  Url::to([$model->isNewRecord ? "$view_name/create" : "$view_name/update",'id'=>$model->id]);  ?>

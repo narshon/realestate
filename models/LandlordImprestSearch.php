@@ -20,7 +20,7 @@ class LandlordImprestSearch extends LandlordImprest
         return [
             [['id', 'fk_landlord', 'created_by', '_status'], 'integer'],
             [['amount'], 'number'],
-            [['entry_date', 'created_on'], 'safe'],
+            [['entry_date', 'created_on','imprest_type'], 'safe'],
         ];
     }
 
@@ -67,6 +67,7 @@ class LandlordImprestSearch extends LandlordImprest
             'created_on' => $this->created_on,
             'created_by' => $this->created_by,
             '_status' => $this->_status,
+            'imprest_type' => $this->imprest_type,
         ]);
 
         return $dataProvider;

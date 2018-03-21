@@ -547,13 +547,29 @@ class Occupancy extends \yii\db\ActiveRecord
     public function clearBills($bills, $status)
     {
         foreach($bills as $bill) {
-            if(($model = OccupancyRent::findOne($bill)) !== null) {
-                $model->_status = $status;
-                $model->save(false);
-            }
+			$key = explode("_", $bill);
+			if($key){
+				 if(($model = OccupancyRent::findOne($key[0])) !== null) {
+                  $model->_status = $status;
+                  $model->save(false);
+               }
+			}
+           
         }
     }
     public function getTenantName(){
         return $this->fkUsers->getNames();
     }
+	
+	public function getTotalBillsSorted($cleared_bills){
+		$amount = 0;
+		foreach($cleared_bills as $bill) {
+			$key = explode("_", $bill);
+			if($key){
+				$amount += $bill[1];
+			}
+		}
+		
+		return $amount;
+	}
 }

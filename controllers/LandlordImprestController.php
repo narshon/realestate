@@ -69,6 +69,8 @@ class LandlordImprestController extends Controller
         $keyword = 'landlord-imprest';
         if($fk_landlord_id){
             $model->fk_landlord = $fk_landlord_id;
+            $model->imprest_type = "Advance";
+            $model->_status = 0; //defaults to pending for advances. The moment you raise an imprest, you have given the landlord the money but this is in debt.
         }
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
@@ -112,7 +114,14 @@ class LandlordImprestController extends Controller
             ]);
         }
     }
-
+    public function actionReceipt($id)
+    {
+        $model = $this->findModel($id);
+        
+        return $this->render('receipt', [
+                'model' => $model,]);
+           
+    }
     /**
      * Deletes an existing LandlordImprest model.
      * If deletion is successful, the browser will be redirected to the 'index' page.

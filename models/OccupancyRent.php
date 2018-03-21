@@ -312,7 +312,8 @@ class OccupancyRent extends \yii\db\ActiveRecord
         $bills = OccupancyRent::findAll(['_status' => 0, 'fk_occupancy_id'=>$id]);
         if(is_array($bills)) {
             foreach($bills as $bill) {
-                $list[$bill->id] = [
+				$key = $bill->id.'_'.$bill->amount;
+                $list[$key] = [
                     'content' =>  $bill->fkTerm->term_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')'
                 ];
             }

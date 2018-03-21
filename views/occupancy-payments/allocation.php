@@ -3,7 +3,8 @@ use kartik\sortinput\SortableInput;
 use kartik\widgets\ActiveForm;
 use yii\helpers\Html;
 
-$this->registerJs('processStatus();')
+ $this->registerJs('processStatus();');
+// $this->registerJs("mapStatus();")
 ?>
 
 <div class="section">
@@ -74,7 +75,7 @@ $this->registerJs('processStatus();')
         <div class="col-md-4"></div>
         <div class="col-md-4" style="text-align: center">
             <?= Html::hiddenInput('url', \yii\helpers\Url::toRoute(['occupancy-payments/get-bill-amount']), ['id' =>'url_'])?>
-            <?= Html::submitButton('Map', ['class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton('Map', ['class' => 'btn btn-primary', "onclick"=>"return mapStatus(); // return false; "]) ?>
         </div>
         <div class="col-md-4"></div>
         

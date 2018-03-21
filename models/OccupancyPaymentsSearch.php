@@ -42,7 +42,7 @@ class OccupancyPaymentsSearch extends OccupancyPayments
      */
     public function search($params)
     {
-        $query = OccupancyPayments::find();
+        $query = OccupancyPayments::find()->orderBy("id desc");
 
         // add conditions that should always apply here
 

@@ -18,6 +18,7 @@ use yii\widgets\Pjax;
 
             [
                 'attribute' =>'property',
+				'label' => 'Property/Account',
                 // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
                  'value' => function($data){
                    // return $data->origin_model;
@@ -50,6 +51,13 @@ use yii\widgets\Pjax;
                           }
                           
                       }
+					  elseif($originModel == "app\models\Term"){
+						  $term = $originModel::findone(['id'=>$data->origin_id]);
+						  if($term)
+						  {
+							  return $term->term_name;
+						  }
+					  }
                  }
                ],
                        
@@ -76,6 +84,9 @@ use yii\widgets\Pjax;
                           }
                           
                         }
+					elseif($originModel == "app\models\Term"){
+						return "Official";
+					}
                  }
                ],
                [
@@ -93,6 +104,9 @@ use yii\widgets\Pjax;
                           return "Landlord";
                           
                         }
+					elseif($originModel == "app\models\Term"){
+						return "Staff";
+					}
                  }
                ],
                [
@@ -112,6 +126,9 @@ use yii\widgets\Pjax;
                           return "Landlord Payments";
                           
                         }
+					 elseif($originModel == "app\models\Term"){
+						return $data->particulars;
+					}
                  }
                ],
              [

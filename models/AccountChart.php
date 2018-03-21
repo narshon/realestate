@@ -90,4 +90,15 @@ class AccountChart extends \yii\db\ActiveRecord
                 return "ON";
             }
         }
+    public static function getExpensesOptions(){
+        $return = [];
+        $models = Self::find()->where(['fk_re_account_type'=>5])->all();
+        if($models){
+            foreach($models as $model){
+                $return[$model->id] = $model->name;
+            }
+        }
+        
+        return $return;
+    }
 }

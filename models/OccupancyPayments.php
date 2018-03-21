@@ -168,6 +168,10 @@ class OccupancyPayments extends \yii\db\ActiveRecord
     public function matchRecords($bills)
     {
         foreach($bills as $bill) {
+			$key = explode("_", $bill);
+			if($key){
+				$bill = $key[0];
+			}
             $model = new OccupancyPaymentsMapping();
             $model->fk_occupancy_payment = $this->id;
             $model->fk_occupancy_rent = $bill;
@@ -234,7 +238,7 @@ class OccupancyPayments extends \yii\db\ActiveRecord
                         ->sum('amount');
         $this->totalbilledamount = ($this->totalbilledamount == null)? 0 : $this->totalbilledamount;
         
-        if($this->totalbilledamount == $this->amount){
+        if($this->totalbilledamount >= $this->amount){
             //this bill was matched to completion. Present printing.
             $url = yii\helpers\Url::to(['occupancy-payments/print-receipt', 'id' => $this->id],true);
             return Html::a('<i class="glyphicon glyphicon-print"> _print</i>',$url, [

@@ -23,6 +23,7 @@ use app\models\AccountMap;
  * @property string $entry_date
  * @property string $created_on
  * @property integer $created_by
+ * @property string $particulars
  */
 class AccountEntries extends \yii\db\ActiveRecord
 {
@@ -40,9 +41,9 @@ class AccountEntries extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fk_account_chart', 'trasaction_type', 'amount', 'entry_date'], 'required'],
+            [['fk_account_chart', 'amount', 'entry_date'], 'required'],
             [['fk_account_chart', 'created_by', 'origin_id'], 'integer'],
-            [['trasaction_type','origin_model'], 'string'],
+            [['trasaction_type','origin_model','particulars'], 'string'],
             [['amount'], 'number'],
             [['entry_date', 'created_on'], 'safe'],
         ];
@@ -55,10 +56,10 @@ class AccountEntries extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'fk_account_chart' => 'Fk Account Chart',
+            'fk_account_chart' => 'Account',
             'trasaction_type' => 'Trasaction Type',
             'amount' => 'Amount',
-            'entry_date' => 'Entry Date',
+            'entry_date' => 'Date',
             'created_on' => 'Created On',
             'created_by' => 'Created By',
         ];
@@ -71,12 +72,13 @@ class AccountEntries extends \yii\db\ActiveRecord
         return $this->hasOne(AccountChart::className(), ['id' => 'fk_account_chart']);
     }
 	
-    public static function postTransaction($account_chart, $trasaction_type, $amount, $entry_date,$origin_id='', $origin_model='')
+    public static function postTransaction($account_chart, $trasaction_type, $amount, $entry_date,$origin_id='', $origin_model='', $particulars='')
     {
         $model = new AccountEntries();
         $model->fk_account_chart = $account_chart;
         $model->trasaction_type = $trasaction_type;
         $model->amount = $amount;
+        $model->particulars = $particulars;
         $model->entry_date = $entry_date;
         $model->created_by = Yii::$app->user->identity->id;
         $model->created_on = date('Y-m-d H:i:s');
@@ -105,16 +107,17 @@ class AccountEntries extends \yii\db\ActiveRecord
              return $return;
         }
 		
-		public static function actionButtons(){
+	public static function actionButtons(){
+            $dh = new DataHelper();
             $transfer = Url::to(['account-entries/transfer']);
-            $register = Url::to(['account-entries/register']);
-			$dh = new DataHelper();
-			$url = Url::to(['account-entries/transfer']);
-			$button = $dh->getModalButton(new journal, '', 'Transfer Funds', 'btn btn-danger btn-create btn-new pull-right','Transfer Funds',$url);
+            $register = Url::to(['account-entries/create']);
+			
+            $register_button = $dh->getModalButton(new journal, '', 'Register Expense', 'btn btn-danger btn-register pull-right','Register Expense',$register);
+            $transfer_button = $dh->getModalButton(new journal, '', 'Transfer Funds', 'btn btn-danger btn-transfer pull-right','Transfer Funds',$transfer);
              
             $return = '<ul class=" nav nav-pills nav-stacked">';
-            $return .= $button;
-            $return .= Button::widget(["label" => "Register Expense", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$register')"]]);
+            $return .= $transfer_button;
+            $return .= $register_button."&nbsp; ";
 			
 			$return .= '</ul>';
       
@@ -204,6 +207,24 @@ class AccountEntries extends \yii\db\ActiveRecord
           $total += $item[$columnName];
         }
         return $total;  
+    }
+    
+    public function updateExpenseAccounts()
+    {
+        $account = AccountMap::find()->where(['fk_account_chart'=>$this->fk_account_chart])->one();
+        if($account){
+            $term_id = $account->fk_term;
+            $entry_date = date("Y-m-d", strtotime($this->entry_date));
+            $accountmap = AccountMap::findAll(['fk_term' => $term_id]);
+            if(is_array($accountmap)) {
+                foreach($accountmap as $account) {
+                    AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $entry_date,$term_id,$account->fkTerm->className(),$this->particulars);
+                }
+            }
+        }
+        
+        
+        return true;
     }
 
 }

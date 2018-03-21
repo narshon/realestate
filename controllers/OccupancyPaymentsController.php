@@ -190,7 +190,7 @@ class OccupancyPaymentsController extends Controller
         $searchModel->fk_occupancy_id = $model->id;
         // $dataProvider = $searchModel->search(Yii::$app->request->get());
         
-        $query = OccupancyPayments::find()->where(['fk_occupancy_id'=>$model->id]);
+        $query = OccupancyPayments::find()->where(['fk_occupancy_id'=>$model->id])->orderBy("id desc");
         $dataProvider = new ActiveDataProvider(['query' => $query]);
         
         return \yii\helpers\Json::encode($this->renderAjax('index', [
@@ -245,10 +245,22 @@ class OccupancyPaymentsController extends Controller
         $nsettled_bills = \app\models\OccupancyRent::getUnsettledBillList($model->id);
         if(Yii::$app->request->isPost && Yii::$app->request->post('cleared_bills') !== null) {
             if(!empty($cleared_bills = Yii::$app->request->post('cleared_bills'))){
-                $status = \app\models\Lookup::findOne(['_value' => 'Matched', 'category'=>6]);
-                $model->clearBills(explode(',', $cleared_bills), $status? $status->_key:1);
-                $payment->matchRecords(explode(',', $cleared_bills));
-                return $this->redirect(Yii::$app->request->referrer);
+				//reactive fix - check if sum total of bills does not exceed payments_pool.
+				$total_amount_bills = $model->getTotalBillsSorted(explode(',', $cleared_bills));
+				if($total_amount_bills > $model->payments_pool){
+					//do nothing. User has overmatched.
+					return $this->renderAjax('allocation',[
+						'model' => $model,
+						'bills' => $nsettled_bills,
+					]);
+				}
+				else{
+					$status = \app\models\Lookup::findOne(['_value' => 'Matched', 'category'=>6]);
+					$model->clearBills(explode(',', $cleared_bills), $status? $status->_key:1);
+					$payment->matchRecords(explode(',', $cleared_bills));
+					return $this->redirect(Yii::$app->request->referrer);
+				}
+                
             }
         } elseif(\yii::$app->request->isAjax) {
             return $this->renderAjax('allocation',[

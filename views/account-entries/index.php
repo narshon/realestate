@@ -100,62 +100,7 @@ $this->registerCss("
          </ul>
 
     <div class="tab-content">
-        <div id="account-entries" class="tab-pane fade in">
-	 <div class="account-entries-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    
-	<?php Pjax::begin(['id'=>'pjax-account-entries',]); ?>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-           
-			[
-               'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
-                    'attribute' => 'fk_account_chart',
-                  
-                    'header'=>'Account Chart',
-                    'format' => 'raw',
-                    'value'=>function ($data) {
-                               return isset($data->fkAccountChart->name)?$data->fkAccountChart->name:"";
-                            },
-			],
-            'trasaction_type',
-            'amount',
-            'entry_date',
-            // 'created_on',
-            // 'created_by',
-
-             ['class' => 'yii\grid\ActionColumn',
-                     'template' => '{view} {update}',
-                     'buttons' => [
-					    'view' => function ($url, $model){
-                                             $dh = new DataHelper();
-                                             $url = Url::to(['account-entries/view', 'id'=>$model->id]);
-                                              $popup = $dh->getModalButton($model, "account-entries/view", "AccountEntries", 'glyphicon glyphicon-eye-open','',$url);
-                                              return $popup;
-									},
-											  
-                                    'update' => function ($url, $model) {
-                                            $dh = new DataHelper();
-                                            $url = Url::to(['account-entries/update','id'=>$model->id]);
-                                           return $dh->getModalButton($model, "account-entries/update", "AccountEntries", 'glyphicon glyphicon-edit','',$url);
-                                            },
-                            ], 
-                    ],
-        ],
-    ]); ?>
-	<?php Pjax::end(); ?>
-</div>	
-</div>
-
-		<div id="source" class="tab-pane fade ">
+	<div id="source" class="tab-pane fade ">
           <?php
           $osearch = new app\models\SourceSearch;
           $omodel = new app\models\Source;

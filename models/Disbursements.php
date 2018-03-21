@@ -100,6 +100,8 @@ class Disbursements extends \yii\db\ActiveRecord
                 AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->entry_date,$this->id,$this->className());
             }
         }
+        
+        return true;
     }
     
     public static function raise($occupant, $rentbill,$month, $year){
@@ -156,7 +158,7 @@ class Disbursements extends \yii\db\ActiveRecord
     public function getPaymentAdvances($owner_id){
         $advance_ids = '';
         $advance_amount = 0;
-        $advances = LandlordImprest::find()->where(['fk_landlord'=>$owner_id,'imprest_type'=>'advance','_status'=>0])->all();
+        $advances = LandlordImprest::find()->where(['fk_landlord'=>$owner_id,'imprest_type'=>'Advance','_status'=>0])->all();
         if($advances){
             foreach($advances as $advance){
                 $advance_ids .= $advance->id.',';
@@ -235,7 +237,7 @@ class Disbursements extends \yii\db\ActiveRecord
         //raise this imprest
         $imprest = new LandlordImprest();
         $imprest->fk_landlord = $owner_id;
-        $imprest->imprest_type = "disbursement";
+        $imprest->imprest_type = "Disbursement";
         $imprest->amount = $total_amount;
         $imprest->entry_date = date("Y-m-d");
         $imprest->created_on = date("Y-m-d H:i:s");

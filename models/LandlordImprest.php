@@ -70,6 +70,23 @@ class LandlordImprest extends \yii\db\ActiveRecord
         return $this->hasOne(Users::className(), ['id' => 'fk_landlord']);
     }
     
+    public function beforeSave($insert){
+       
+        if($this->isNewRecord){
+          $this->created_on = date("Y-m-d H:i:s");
+          $this->created_by = Yii::$app->user->identity->id;
+          $this->entry_date = date("Y-m-d", strtotime($this->entry_date));
+        }
+        
+        
+        if($this->hasErrors()){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    
     public function afterSave($insert, $changedAttributes){
         if($insert){
             //update the books of accounts, we're going to Debit disbursement account and credit accounts payable. Compare raising a bill in occupancy.
@@ -78,6 +95,7 @@ class LandlordImprest extends \yii\db\ActiveRecord
         }
         return parent::afterSave($insert, $changedAttributes);
     }
+    
     public function updateAccounts()
     {
         $accountmap = AccountMap::findAll(['fk_term' => Term::getImprestTermID()]);
@@ -86,5 +104,9 @@ class LandlordImprest extends \yii\db\ActiveRecord
                 AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->entry_date,$this->id,$this->className());
             }
         }
+    }
+    
+    public function afterFind(){
+        $this->entry_date = date("d-m-Y", strtotime($this->entry_date));
     }
 }

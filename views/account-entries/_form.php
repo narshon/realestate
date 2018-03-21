@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use kartik\widgets\DatePicker;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\AccountEntries */
@@ -9,7 +11,7 @@ use yii\widgets\ActiveForm;
 ?>
 
 <?php 
-        use yii\helpers\Url;
+        
         $view_name = 'account-entries';
         $id = isset($model->id)?$model->id:0;
         echo <<<EOD
@@ -18,26 +20,31 @@ use yii\widgets\ActiveForm;
 EOD;
         $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
 ?>
-
-    <?php $form = ActiveForm::begin(); ?>
-
-    <?= $form->field($model, 'fk_account_chart')->textInput() ?>
-
-    <?= $form->field($model, 'trasaction_type')->dropDownList([ 'credit' => 'Credit', 'debit' => 'Debit', ], ['prompt' => '']) ?>
+    <?= $form->field($model, 'fk_account_chart')->dropDownList(\app\models\AccountChart::getExpensesOptions(), ['prompt' => '']) ?>
 
     <?= $form->field($model, 'amount')->textInput() ?>
+    
+    <?= $form->field($model, 'particulars')->textInput() ?>
 
-    <?= $form->field($model, 'entry_date')->textInput() ?>
+   
+  <?php echo $form->field($model, 'entry_date')->widget(DatePicker::classname(), [
+        'options' => ['placeholder' => 'Enter date ...'],
+        'pluginOptions' => [
+            'autoclose'=>true,
+            'format' => 'dd-mm-yyyy'
+        ]
+    ]);   ?>
 
-    <?= $form->field($model, 'created_on')->textInput() ?>
-
-    <?= $form->field($model, 'created_by')->textInput() ?>
 
     <div class="form-group">
-        <?php $url =  Url::to([$model->isNewRecord ? "$view_name/create" : "$view_name/update",'id'=>$model->id]);  ?>
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' =>'btn btn-danger btn-create','onclick'=>"ajaxFormSubmit('$url','$view_name-form-div-$id','$view_name-form-$id',1); return false;"]) ?>
+        <?php $url =  Url::to(["$view_name/create"]);  ?>
+        <?= Html::submitButton('Add Expense', ['class' =>'btn btn-danger btn-create','onclick'=>"ajaxFormSubmit('$url','$view_name-form-div-$id','$view_name-form-$id',1); return false;"]) ?>
     </div><div style="clear:both"></div>
 
     <?php ActiveForm::end(); ?>
-
+    <p> &nbsp; </p>
+    <p> &nbsp; </p>
+    <p> &nbsp; </p>
+    <p> &nbsp; </p>
+    <p> &nbsp; </p>
 </div>

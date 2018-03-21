@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 	<?php
         $dh = new DataHelper();
 		       $url=Url::to(['landlord-imprest/create','fk_landlord_id'=>$landlordModel->id]);
-                       echo $dh->getModalButton(new LandlordImprest, 'landlord-imprest/create', 'New LandLord Imprest', 'btn btn-danger btn-create btn-new pull-right' , "Create landlord Imprest",$url);
+                       echo $dh->getModalButton(new LandlordImprest, 'landlord-imprest/create', 'Issue Advance', 'btn btn-danger btn-create btn-new pull-right' , "Register Advance",$url);
                ?>
   
     </p>
@@ -32,11 +32,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            [
+            'imprest_type',
+          /*  [
                 'attribute'=>'fk_landlord',
                 'value'=>'fkLandlord.name1'                
-            ],
+            ],  */
             //'fk_landlord',
             'amount',
             'entry_date',
@@ -49,6 +49,14 @@ $this->params['breadcrumbs'][] = $this->title;
             'value' => function ($data) {
                 $category_id = \app\models\LookupCategory::getLookupCategoryID('Imprest Status');
                 return app\models\Lookup::getLookupCategoryValue($category_id, $data->_status);
+            },
+         ],
+          [
+            'class' => 'yii\grid\DataColumn', // can be omitted, as it is the default
+            'attribute' => 'print',
+              'format'=>'raw',
+            'value' => function ($data) {
+               return Html::a("Print",['/landlord-imprest/receipt','id'=>$data->id]);
             },
          ],
              //'_status',

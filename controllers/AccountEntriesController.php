@@ -46,7 +46,7 @@ class AccountEntriesController extends Controller
         ]);
     }
 	
-	 public function actionTransfer(){
+    public function actionTransfer(){
         Yii::$app->response->format = Response::FORMAT_JSON;
 
         $model = new AccountEntries();
@@ -109,22 +109,36 @@ class AccountEntriesController extends Controller
      */
     public function actionCreate()
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $model = new AccountEntries();
         $dh = new DataHelper;
         $keyword = 'account-entries';
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        
+              
+        if ($model->load(Yii::$app->request->post())) {
             //return $this->redirect(['view', 'id' => $model->id]);
-            if (Yii::$app->request->isAjax)
-            {
-               return $dh->processResponse($this, $model, 'update', 'success', 'Successfully Saved!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);
-               exit;               
-            }
+           
+               
+               if($model->updateExpenseAccounts()){
+                return array(
+                     'status'=>'success', 
+                     'div'=>"Successfully posted entry",
+
+                   );
+ 
+              }
+              else{
+                  return array(
+                     'status'=>'error', 
+                     'div'=>"Oops! an error occured!",
+
+                   );
+              }
             
         } else {
             if (Yii::$app->request->isAjax)
             {
-                return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-0');
+                return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!'.print_r($model->getErrors(),true), 'pjax-'.$keyword, $keyword.'-form-alert-0');
                exit; 
                      
             }
@@ -217,8 +231,13 @@ class AccountEntriesController extends Controller
                 case 2:
                     $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1105, true);
                     $bills = $query->all();
+                    $in_string = '';
+                    foreach($bills as $object){
+                         $in_string .= $object->origin_id.',';
+                    }
+                    $in_string = substr($in_string, 0, -1); //remove trailing comma.
                     $dataProvider = new \yii\data\ActiveDataProvider([
-                        'query' => \app\models\OccupancyRent::find()->where(['in', 'id', array_column($bills, 'origin_id')]),
+                        'query' => \app\models\OccupancyRent::find()->where("id in($in_string)"),
                     ]);
                     $dataProvider->pagination->pageSize=100;
                     return $this->render('partials/rent_summary', [
@@ -239,10 +258,16 @@ class AccountEntriesController extends Controller
                     
                 case 4:
                     $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1107, true);
-                    $disbursements = $query->all();
+                    $disbursements = $query->all(); 
+                    $in_string = '';
+                    foreach($disbursements as $disb){
+                         $in_string .= $disb->origin_id.',';
+                    }
+                    $in_string = substr($in_string, 0, -1); //remove trailing comma.
                     $dataProvider = new \yii\data\ActiveDataProvider([
-                        'query' => \app\models\Disbursements::find()->where(['in', 'id', array_column($disbursements, 'origin_id')]),
+                        'query' => \app\models\Disbursements::find()->where("id in($in_string)"),
                     ]);
+                    $dataProvider->pagination->pageSize=100;
                     return $this->render('partials/disbursement_summary', [
                         'dataProvider' => $dataProvider,
                     ]);
