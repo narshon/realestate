@@ -281,9 +281,9 @@ class Occupancy extends \yii\db\ActiveRecord
                             }
                             $month = date('m');
                             $year = date('Y');
-                            $date = date('d');
+                            $date = date('d');  
                             //check if we can proceed.
-                            if($termvalue <= $date){
+                            if($termvalue <= $date){ 
                                 //get the rent bill to be disbursed.
                                  $rentbill = OccupancyRent::find()->where(['fk_occupancy_id'=>$occupant->id,'fk_term'=>Term::getRentTermID(),'month'=>$month,'year'=>$year])->one();
                                 if($rentbill){

@@ -208,8 +208,9 @@ class Disbursements extends \yii\db\ActiveRecord
     public function getTotalPaid(){
         $by_tenant = (float)$this->getPaidByTenantAmount();
         $by_agent = (float)$this->getPaidByAgentAmount();
+        $commission = (float)$this->getCommissionCharged();
         
-        return $by_tenant + $by_agent;
+        return $by_tenant + $by_agent - $commission;
     }
     
     public function getTotalPayable($cleared_bills, $payments_advance){
@@ -229,6 +230,31 @@ class Disbursements extends \yii\db\ActiveRecord
        
        //total amount payable
        return $total_bills - $payments_advance;
+    }
+    
+    public function getCommissionCharged(){
+        //*************** check if this bill was a Rent bill and return commission  ***********************
+                if($this->fkOccupancyRent->fkTerm->id == 1){
+                    //yes this was rent. raise our commission.
+                    //amount
+                      //get property term for this commission
+                      $occupancyRent = OccupancyRent::findone($this->fk_occupancy_rent);
+                      if($occupancyRent){
+                           $propertyTerm = PropertyTerm::find()->where(['fk_term_id'=>Term::getCommissionTermID(),'fk_property_id'=>$occupancyRent->fkOccupancy->fk_property_id,'_status'=>1])->one();
+                           if($propertyTerm){
+                               $percentage = $propertyTerm->term_value;
+                              return  $amount = ($occupancyRent->amount * $percentage / 100);
+                               
+                           }
+                           else{
+                               $percentage = 20; //defaults to 20%.
+                              return $amount = ($occupancyRent->amount * $percentage / 100);
+                           }
+                            
+                      }
+                     
+                }
+                
     }
     
     public function settleDisbursements($owner_id, $cleared_bills, $advance_ids, $total_advance){
@@ -263,7 +289,8 @@ class Disbursements extends \yii\db\ActiveRecord
             $advance_array = explode(",", $advance_ids);
             if(is_array($advance_array)){
                 foreach($advance_array as $advance){
-                    Yii::$app->db->createCommand()->update('re_landlord_imprest', ['settlement_id' => $imprest->id,'_status'=>1], "id = $advance")->execute();
+                    if($advance)
+                      Yii::$app->db->createCommand()->update('re_landlord_imprest', ['settlement_id' => $imprest->id,'_status'=>1], "id = $advance")->execute();
                     
                 }
             }

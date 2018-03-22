@@ -1,5 +1,6 @@
 
 <h3>Rent Income for: <?= date('d-m-Y')  ?></h3>
+<?php echo $in_string; ?>
 <?= yii\grid\GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [

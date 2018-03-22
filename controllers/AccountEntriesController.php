@@ -241,7 +241,7 @@ class AccountEntriesController extends Controller
                     ]);
                     $dataProvider->pagination->pageSize=100;
                     return $this->render('partials/rent_summary', [
-                        'dataProvider' => $dataProvider,
+                        'dataProvider' => $dataProvider, 'in_string'=>$in_string
                     ]);
                     
               /*  case 3:

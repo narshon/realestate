@@ -62,8 +62,8 @@ AppAsset::register($this);
 		   ['label' => 'Properties', 'url' => ['/property/index'],'visible'=>app\models\Users::isAgent()],
 		   ['label' => 'Tenant', 'url' => ['/sys-users/tenant'],'visible'=>app\models\Users::isAgent()],
 		   ['label' => 'Finance', 'url' => ['/account-entries/index'],'visible'=>app\models\Users::isAgent()],
-		   ['label' => 'settings', 'url' => ['/county/index'],'visible'=>app\models\Users::isAgent()],
-			['label' => 'Reports', 'url' => ['/accounts-transaction/report'],'visible'=>app\models\Users::isAgent()],
+		   ['label' => 'Settings', 'url' => ['/county/index'],'visible'=>app\models\Users::isAgent()],
+		//	['label' => 'Reports', 'url' => ['/accounts-transaction/report'],'visible'=>app\models\Users::isAgent()],
 			
             //['label' => 'Two BedRooms', 'url' => ['/site/twobr']],
             //['label' => 'Lodgings & Guest Houses', 'url' => ['/site/lodging']],

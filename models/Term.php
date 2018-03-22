@@ -88,7 +88,7 @@ class Term extends \yii\db\ActiveRecord
     }
     
     public static function  getDisbursementTermID(){
-        $term = Self::find()->where(['term_name'=>'Landlord Disbursment'])->one();
+        $term = Self::find()->where(['term_name'=>'Landlord Disbursment Date'])->one();
         
         if($term){
             return $term->id;

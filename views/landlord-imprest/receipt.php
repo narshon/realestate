@@ -1,6 +1,7 @@
 <?php
 use yii\bootstrap\Html;
 use yii\helpers\Url;
+use app\models\LandlordImprest;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,20 +9,23 @@ use yii\helpers\Url;
  */
 ?>
 <div id="confirm-pay">
+    <div class="no-print" align=" center">
+        <button class ="print-modal1" onclick="window.print();">Print</button>
+    </div>
 <div>
     <span style="float:left; width: 60%"><h3>LANDLORD PAYMENT ADVICE</h3></span> 
     <span style="float:right; width: 40%"><h3> <?php echo date("d-m-Y") ?> </h3></span> 
 </div><br/><div class="clear"></div>
 <div>
-    <span style="float:left; width: 60%">Month: ### </span> 
-    <span style="float:right; width: 40%">Our Ref: ### </span> 
+    <span style="float:left; width: 60%">Month: <?php echo date("M",strtotime($model->entry_date)); ?> </span> 
+    <span style="float:right; width: 40%">Our Ref: <?php echo $model->id; ?>  </span> 
 </div><br/><div class="clear"></div>
 <div>
-    <span >Account: 025</span> 
+    <span >Account: <?php echo $model->fk_landlord; ?></span> 
 </div><br/><div class="clear"></div>
 <div>
     <?php
-      $names =  \app\models\Users::find()->where(["id"=>$owner_id])->one();
+      $names =  \app\models\Users::find()->where(["id"=>$model->fk_landlord])->one();
       if($names){
           $names = $names->getNames();
       }
@@ -31,14 +35,7 @@ use yii\helpers\Url;
     ?>
     <span>Mr/Mrs: <?php echo $names ?></span> 
 </div><br/><div class="clear"></div>
-<?php
-/*
-echo "Uncleared Bills = ".print_r($bills,true)."<br/>";
-echo "Cleared Bills = ".$cleared_bills."<br/>";
-echo "Advance_ids = ".$model->payments_advance_ids."<br/>";
-echo "Owner ID = ".$owner_id."<br/>";
-*/
-?>
+<?php if($model->imprest_type == "Disbursement") { ?>
 <table id="t01">
     <tr>
         <td colspan="5" text-align="center"> <h3> Cleared Bills </h3> </td>
@@ -46,71 +43,37 @@ echo "Owner ID = ".$owner_id."<br/>";
   <tr>
     <th>Tenant's Name</th>
     <th>Period</th> 
+    <th>Amount</th> 
     <th>Paid By Tenant</th>
     <th>Paid By Agent</th>
-    <th>Total</th>
+    <th>Commission</th>
+    <th>Net Pay</th>
   </tr>
   <?php
   //start with cleared bills.
-  $cleared_array = explode(",", $cleared_bills);
-  if(is_array($cleared_array)){
-   foreach($cleared_array as $bill){
-       $bill_array = explode('_',$bill);
-       $bill_id = $bill_array[0];
-       $disbursement = \app\models\Disbursements::find()->where(['id'=>$bill_id])->one();
-       if($disbursement){
+  $disbursements = \app\models\Disbursements::find()->where(['batch_id'=>$model->id])->all();
+  $total_disb = 0;
+  if($disbursements){
+   foreach($disbursements as $disbursement){
+       
           echo <<<EOF
             <tr>
                 <td>{$disbursement->getTenantName()}</td>
                 <td>$disbursement->month/$disbursement->year</td>
+                <td>{$disbursement->fkOccupancyRent->amount}</td>
                 <td>{$disbursement->getPaidByTenantAmount()}</td>
                 <td>{$disbursement->getPaidByAgentAmount()}</td>
+                <td>{$disbursement->getCommissionCharged()}</td>
                 <td>{$disbursement->getTotalPaid()}</td>
           </tr>
            
 EOF;
-          
-       }
+      $total_disb += $disbursement->getTotalPaid();    
    } 
   }
   ?>
 </table>
-<table id="t02">
-    <tr>
-        <td colspan="5" text-align="center"> <h3> UnCleared Bills </h3> </td>
-    </tr>  
-  <tr>
-    <th>Tenant's Name</th>
-    <th>Period</th> 
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
-  <?php
-  //start with cleared bills.
-  $uncleared_array = explode(",", $bills);
-  if(is_array($uncleared_array)){
-   foreach($uncleared_array as $bill){
-       $bill_array = explode('_',$bill);
-       $bill_id = $bill_array[0];
-       $disbursement = \app\models\Disbursements::find()->where(['id'=>$bill_id])->one();
-       if($disbursement){
-          echo <<<EOF
-            <tr>
-                <td>{$disbursement->getTenantName()}</td>
-                <td>$disbursement->month/$disbursement->year</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-          </tr>
-           
-EOF;
-          
-       }
-   } 
-  }
-  ?>
-</table>
+
 <table id="t03">
     <tr>
         <td colspan="3" text-align="center"> <h3> Advances/Loans </h3> </td>
@@ -122,12 +85,11 @@ EOF;
   </tr>
   <?php
   //start with cleared bills.
-  $advances_array = explode(",", $model->payments_advance_ids);
-  if(is_array($advances_array)){
-   foreach($advances_array as $advance){
+  $imprests = LandlordImprest::find()->where(['settlement_id'=>$model->id])->all();
+  $total_advance = 0;
+  if($imprests){
+   foreach($imprests as $imprest){
        
-       $imprest = \app\models\LandlordImprest::find()->where(['id'=>$advance])->one();
-       if($imprest){
           echo <<<EOF
             <tr>
                 <td>$imprest->imprest_type</td>
@@ -138,14 +100,13 @@ EOF;
            
 EOF;
           
-       }
+    $total_advance +=  $imprest->amount; 
    } 
   }
   ?>
 </table>
-<h3> TOTAL AMOUNT PAYABLE = <?php echo $model->getTotalPayable($cleared_bills, $model->payments_advance); ?> 
-<?php $url =  Url::to(['disbursements/make-payments', 'owner_id'=>$owner_id,'cleared_bills'=>$cleared_bills,'advance_ids'=>$model->payments_advance_ids, 'total_advance'=>$model->payments_advance]);  ?>
-<?= Html::submitButton("Confirm Payment", ['class' =>'btn bg-purple btn-flat btn-success specmargin','onclick'=>"ajaxUniversalGetRequest('$url','confirm-pay','', 1); return false;"]) ?>
-</h3>
-
+<h3> TOTAL AMOUNT PAID = <?php echo $total_disb - $total_advance; ?> </h3>
+<?php } else{ ?>
+<!-- Advance receipt comes here -->
+<?php }  ?>
 </div>

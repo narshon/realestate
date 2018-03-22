@@ -119,7 +119,8 @@ class LandlordImprestController extends Controller
         $model = $this->findModel($id);
         
         return $this->render('receipt', [
-                'model' => $model,]);
+                'model' => $model,]
+                );
            
     }
     /**

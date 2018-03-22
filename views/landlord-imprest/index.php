@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'attribute' => 'print',
               'format'=>'raw',
             'value' => function ($data) {
-               return Html::a("Print",['/landlord-imprest/receipt','id'=>$data->id]);
+               return Html::a("Print",['/landlord-imprest/receipt','id'=>$data->id],['target'=>'_blank']);
             },
          ],
              //'_status',
