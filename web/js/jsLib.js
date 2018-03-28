@@ -83,6 +83,8 @@ function ajaxFormButton(uri,div,form){
 
 function ajaxFormSubmit(uri,div,form,show_wait, disable_pjax){
   
+    // alert($("#"+form).serialize());
+    // return false;
      
      $.ajax({
             type: "post",
@@ -114,9 +116,10 @@ function ajaxFormSubmit(uri,div,form,show_wait, disable_pjax){
                     }
             },
              error: function (response, status, message) {
-                //alert("Error! "+response.toString()+" "+status);
-              //  var err = JSON.parse(response.responseText);
+                alert("Error! "+response.toString()+" "+status);
+                var err = response.responseText;
                 console.log(message);
+                console.log(err);
               $('#'+div).html("An error occured.");
             }
 

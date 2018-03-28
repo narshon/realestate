@@ -7,8 +7,15 @@ use yii\helpers\Html;
 // $this->registerJs("mapStatus();")
 ?>
 
-<div class="section">
-    <?php $form = ActiveForm::begin(); ?>
+<?php 
+        use yii\helpers\Url;
+        $view_name = 'occupancy-payments';
+        echo <<<EOD
+        <div class="$view_name-form section" id="$view_name-form-div">
+              <div id="$view_name-form-alert"></div>
+EOD;
+        $form = ActiveForm::begin(['id'=>"$view_name-form"]);
+?>
     <div class="row">
         <div class="col-md-12">
             <div class="col-md-4">
@@ -75,7 +82,10 @@ use yii\helpers\Html;
         <div class="col-md-4"></div>
         <div class="col-md-4" style="text-align: center">
             <?= Html::hiddenInput('url', \yii\helpers\Url::toRoute(['occupancy-payments/get-bill-amount']), ['id' =>'url_'])?>
-            <?= Html::submitButton('Map', ['class' => 'btn btn-primary', "onclick"=>"return mapStatus(); // return false; "]) ?>
+            <?= Html::hiddenInput('allocate_bal', "", ['id' =>'allocate_bal'])?>
+            <?php $url =  Url::to(["occupancy-payments/map",'id'=>$payment_id]);  ?>
+            <?= Html::submitButton("Map", ["id"=>"map-btn",'class' =>'btn btn-danger','onclick'=>"ajaxFormSubmit('$url','occupancy-payments-form-div','occupancy-payments-form',1); return false;"]) ?>
+            <?php // echo Html::submitButton('Map', ['class' => 'btn btn-primary', "onclick"=>"return mapStatus(); // return false; "]) ?>
         </div>
         <div class="col-md-4"></div>
         

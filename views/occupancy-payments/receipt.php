@@ -52,7 +52,7 @@ use app\models\LookupCategory;
                         <tr>
                             <td>$term</td>
                             <td>{$bill->fkOccupancyRent->month}/{$bill->fkOccupancyRent->year}</td>
-                            <td>{$bill->fkOccupancyRent->amount}</td>
+                            <td>{$bill->amount}</td>
                       </tr>
 
 EOF;

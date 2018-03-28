@@ -309,12 +309,23 @@ class OccupancyRent extends \yii\db\ActiveRecord
     public static function getUnsettledBillList($id)
     {
         $list = [];
-        $bills = OccupancyRent::findAll(['_status' => 0, 'fk_occupancy_id'=>$id]);
+        $bills = OccupancyRent::find()->where("(_status = 0 OR _status = 2) AND fk_occupancy_id = $id")->all();
         if(is_array($bills)) {
             foreach($bills as $bill) {
-				$key = $bill->id.'_'.$bill->amount;
+                //check if something was paid for this bill.
+                $bal = $bill->checkBalance();
+                if($bal < $bill->amount){
+                    $key = $bill->id.'_'.$bal;
+                    $name = $bill->fkTerm->term_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')'."- Bal=".$bal;
+                }
+                else{
+                    $key = $bill->id.'_'.$bill->amount;
+                    $name = $bill->fkTerm->term_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')';
+                }
+		
+                
                 $list[$key] = [
-                    'content' =>  $bill->fkTerm->term_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')'
+                    'content' =>  $name
                 ];
             }
         }
@@ -373,5 +384,11 @@ class OccupancyRent extends \yii\db\ActiveRecord
     public function getBillDetails()
     {
         return $this->fkTerm->term_name . ' (' . $this->month . ' / ' . $this->year . ')';
+    }
+    
+    public function checkBalance(){
+        $total_paid = OccupancyPaymentsMapping::getBillTotalPayments($this->id);
+        
+        return $this->amount - $total_paid;
     }
 }

@@ -70,4 +70,21 @@ class OccupancyPaymentsMapping extends \yii\db\ActiveRecord
     {
         return $this->hasOne(OccupancyRent::className(), ['id' => 'fk_occupancy_rent']);
     }
+    
+    public static function getBillTotalPayments($fk_occupancy_rent){
+        $total = 0;
+        $payments = Self::find()->where(['fk_occupancy_rent'=>$fk_occupancy_rent])->all();
+        if($payments){ 
+            foreach($payments as $payment){
+                if($payment->type=="complete"){
+                    return $payment->amount;
+                }
+                else{
+                    $total += $payment->amount;
+                }
+            }
+        }
+        
+        return $total;
+    }
 }

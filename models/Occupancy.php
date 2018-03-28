@@ -544,16 +544,30 @@ class Occupancy extends \yii\db\ActiveRecord
         $this->payments_pool = $payments - $allocated;
     }
     
-    public function clearBills($bills, $status)
+    public function clearBills($bills, $status, $allocate_bal)
     {
+        $part_bal_key = 0;
+        $part_bal = explode("_", $allocate_bal);
+        
+        if(isset($part_bal[1])){
+            $part_bal_key =  $part_bal[0];
+            $part_bal_value =  $part_bal[1];
+        }
         foreach($bills as $bill) {
-			$key = explode("_", $bill);
-			if($key){
-				 if(($model = OccupancyRent::findOne($key[0])) !== null) {
-                  $model->_status = $status;
-                  $model->save(false);
+	   $key = explode("_", $bill);
+	    if($key){
+		if(($model = OccupancyRent::findOne($key[0])) !== null) {
+                   if($key[0] == $part_bal_key){
+                       $model->_status = 2;  //partly matched!
+                       $model->save(false);
+                   }
+                   else{
+                       $model->_status = $status;
+                       $model->save(false);
+                   }
+                  
                }
-			}
+	    }
            
         }
     }
@@ -561,12 +575,25 @@ class Occupancy extends \yii\db\ActiveRecord
         return $this->fkUsers->getNames();
     }
 	
-	public function getTotalBillsSorted($cleared_bills){
-		$amount = 0;
+	public function getTotalBillsSorted($cleared_bills, $allocate_bal){
+		$amount = 0; $part_bal_key = 0;
+                $part_bal = explode("_", $allocate_bal);
+                if(isset($part_bal[0])){
+                    $part_bal_key =  $part_bal[0];
+                }
+                if(isset($part_bal[1])){
+                    $part_bal_value =  $part_bal[1];
+                }
 		foreach($cleared_bills as $bill) {
 			$key = explode("_", $bill);
 			if($key){
-				$amount += $bill[1];
+                            if($bill[0] == $part_bal_key){
+                                $amount += $part_bal_value;
+                            }
+                            else{
+                                $amount += $bill[1];
+                            }
+				
 			}
 		}
 		

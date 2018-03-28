@@ -165,18 +165,35 @@ class OccupancyPayments extends \yii\db\ActiveRecord
         return parent::afterSave($insert, $changedAttributes);
     }
     
-    public function matchRecords($bills)
+    public function matchRecords($bills, $allocate_bal)
     {
+        $part_bal_key = 0;
+        $part_bal = explode("_", $allocate_bal);
+        if(isset($part_bal[0]) && $part_bal[0] > 0){
+            $part_bal_key =  $part_bal[0];
+        }
+        if(isset($part_bal[1])){
+            $part_bal_value =  $part_bal[1];
+        }
+        
         foreach($bills as $bill) {
-			$key = explode("_", $bill);
-			if($key){
-				$bill = $key[0];
-			}
+	   $key = explode("_", $bill);
+	    if($key){
+		$bill = $key[0];
+	    }
             $model = new OccupancyPaymentsMapping();
             $model->fk_occupancy_payment = $this->id;
             $model->fk_occupancy_rent = $bill;
-            $model->type = 'complete';
-            $model->amount = self::getBillAmount($bill);
+            if($bill == $part_bal_key){
+                $model->type = 'partial';
+                $model->amount = $part_bal_value;
+            }
+            else{
+                $model->type = 'complete';
+                $model->amount = self::getBillAmount($bill);
+            }
+            
+            
             if($model->save()){
                 //*************** check if this bill was a Rent bill and raise commission transaction ***********************
                 if($model->fkOccupancyRent->fkTerm->id == 1){
@@ -192,7 +209,7 @@ class OccupancyPayments extends \yii\db\ActiveRecord
                                
                            }
                            else{
-                               $percentage = 20; //defaults to 20%.
+                               $percentage = 10; //defaults to 10%.
                                $amount = ($model->amount * $percentage / 100);
                            }
                             $accountmap = AccountMap::find()->where(['fk_term' => Term::getCommissionTermID() , 'status'=> 1])->all();

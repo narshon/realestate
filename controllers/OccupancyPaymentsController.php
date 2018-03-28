@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
+use yii\web\Response;
 
 /**
  * OccupancyPaymentsController implements the CRUD actions for OccupancyPayments model.
@@ -239,26 +240,38 @@ class OccupancyPaymentsController extends Controller
     
     public function actionMap($id)
     {
+      
         $payment = $this->findModel($id);
         $model = $payment->fkOccupancy;
         $model->payments_pool = $payment->amount;
         $nsettled_bills = \app\models\OccupancyRent::getUnsettledBillList($model->id);
+        
         if(Yii::$app->request->isPost && Yii::$app->request->post('cleared_bills') !== null) {
             if(!empty($cleared_bills = Yii::$app->request->post('cleared_bills'))){
+                              $allocate_bal = Yii::$app->request->post('allocate_bal');
 				//reactive fix - check if sum total of bills does not exceed payments_pool.
-				$total_amount_bills = $model->getTotalBillsSorted(explode(',', $cleared_bills));
+				$total_amount_bills = $model->getTotalBillsSorted(explode(',', $cleared_bills),$allocate_bal);
 				if($total_amount_bills > $model->payments_pool){
 					//do nothing. User has overmatched.
 					return $this->renderAjax('allocation',[
 						'model' => $model,
 						'bills' => $nsettled_bills,
+                                                'payment_id' => $payment->id,
 					]);
 				}
 				else{
+                                       
 					$status = \app\models\Lookup::findOne(['_value' => 'Matched', 'category'=>6]);
-					$model->clearBills(explode(',', $cleared_bills), $status? $status->_key:1);
-					$payment->matchRecords(explode(',', $cleared_bills));
-					return $this->redirect(Yii::$app->request->referrer);
+					$model->clearBills(explode(',', $cleared_bills), $status? $status->_key:1,$allocate_bal);
+					$payment->matchRecords(explode(',', $cleared_bills), $allocate_bal);
+					// return $this->redirect(Yii::$app->request->referrer);
+                                        Yii::$app->response->format = Response::FORMAT_JSON;
+                                        $allocate_bal = Yii::$app->request->post('allocate_bal');
+                                        return array(
+                                                 'status'=>"success", 
+                                                 'div'=>"Successfully matched bills! ",
+                                         ); 
+                                    
 				}
                 
             }
@@ -266,11 +279,13 @@ class OccupancyPaymentsController extends Controller
             return $this->renderAjax('allocation',[
             'model' => $model,
             'bills' => $nsettled_bills,
+            'payment_id' => $payment->id,
         ]);
         } else {
             return $this->render('allocation',[
             'model' => $model,
             'bills' => $nsettled_bills,
+            'payment_id' => $payment->id,
         ]);
         }
         
