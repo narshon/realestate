@@ -34,7 +34,7 @@ EOD;
     ]);   ?>
     </div>
 </div>
-
+<?php echo   $form->field($model, 'narration')->textInput()->label("Narration");  ?>
      <?php  // Usage with ActiveForm and model
        /* echo $form->field($model, 'imprest_type')->widget(Select2::classname(), [
             'data' => \app\models\Lookup::getLookupValues('Imprest Type'),

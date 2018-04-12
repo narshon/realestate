@@ -243,7 +243,7 @@ class OccupancyPaymentsController extends Controller
       
         $payment = $this->findModel($id);
         $model = $payment->fkOccupancy;
-        $model->payments_pool = $payment->amount;
+        $model->payments_pool = $payment->getPaymentPool();
         $nsettled_bills = \app\models\OccupancyRent::getUnsettledBillList($model->id);
         
         if(Yii::$app->request->isPost && Yii::$app->request->post('cleared_bills') !== null) {

@@ -113,7 +113,7 @@ class Disbursements extends \yii\db\ActiveRecord
 
         }
         else{
-            $percentage = 80; //defaults to 20%.
+            $percentage = 90; //defaults to 10%.
             $amount = ($occupant->getBillAmount(Term::getRentTermID()) * $percentage / 100);
         }
         $disburse = New Disbursements();

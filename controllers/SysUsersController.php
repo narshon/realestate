@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use \app\utilities\DataHelper;
 use app\models\SysUsersSearch;
 use yii\web\Response;
+use app\models\Occupancy;
 
 /**
  * SysUsersController implements the CRUD actions for SysUsers model.
@@ -30,6 +31,26 @@ class SysUsersController extends Controller
                 ],
             ],
         ];
+    }
+    
+    public function actionSetOccupancy($string=''){
+        if(\yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        }
+        
+        
+        if($string){
+            
+            $view = $this->renderPartial('../occupancy/occupancydetails', [
+                'occupancy_id'=> $string
+            ]);
+            
+            return array(
+                     'status'=>'success', 
+                     'div'=>$view,
+
+                   );
+        }
     }
 
     /**

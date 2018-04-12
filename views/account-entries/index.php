@@ -66,7 +66,6 @@ $this->registerCss("
                                           "content"=>[
                                               '<li class="nav-item list-group-item"><a class="nav-link active" data-toggle="tab" href="#d-report" role="tab">Daily Reports</a></li>',
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#A-statement" role="tab">Account statement</a></li>',
-                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#c-commission" role="tab">Commission Statement</a></li>',
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#rent" role="tab">Pending Rent</a></li>',
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#trial" role="tab">Trial Balance</a></li>',
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#report" role="tab">I&E Report</a></li>',
@@ -158,8 +157,15 @@ $this->registerCss("
 
 	
 	<div class="tab-pane" id="report" role="tabpanel">1</div>
-	<div class="tab-pane" id="A-statement" role="tabpanel">4</div>
-	<div class="tab-pane" id="c-commission" role="tabpanel">5</div>
+        <div class="tab-pane" id="A-statement" role="tabpanel">
+            <?=$this->render('partials/account_statement')?>
+            <div class ="summary">
+                <div class="s-loader"></div>
+                <div id="ac-id" class="s-content">
+
+                </div>
+            </div>
+        </div>
     <div class="tab-pane fade in active" id="d-report" role="tabpanel">
         <?=$this->render('partials/d_rep_stats')?>
         <div class ="summary">

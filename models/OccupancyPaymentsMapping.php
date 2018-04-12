@@ -87,4 +87,17 @@ class OccupancyPaymentsMapping extends \yii\db\ActiveRecord
         
         return $total;
     }
+    
+    public function getAmountWithBal(){
+        if($this->type == "complete"){
+            return $this->amount;
+        }
+        else{
+            //get the bill amount to calculate balance
+            $bill_amount = $this->fkOccupancyRent->amount;
+            $bal = $bill_amount - $this->amount;
+            
+            return $this->amount." (bal = ".$bal.")";
+        }
+    }
 }

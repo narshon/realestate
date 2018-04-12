@@ -101,4 +101,16 @@ class AccountChart extends \yii\db\ActiveRecord
         
         return $return;
     }
+    
+    public static function getAccountsOptions(){
+        $return = [];
+        $models = Self::find()->all();
+        if($models){
+            foreach($models as $model){
+                $return[$model->id] = $model->name;
+            }
+        }
+        
+        return $return;
+    } 
 }

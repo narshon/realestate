@@ -31,7 +31,12 @@ use app\models\LookupCategory;
 
 	   </div>
 	   <div class="row"><label>RECEIVED from: </label><?=$model->fkOccupancy->fkUsers->getNames()?></div>
-           <div class="row"><label>The sum of shillings: </label><?=$model->amount?></div>
+           <div class="row"><label>The sum of shillings: </label><?php 
+            echo $model->amount.": "; 
+            $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+            echo $f->format($model->amount);
+            
+            ?></div>
 	   <div class="row">
                <div class = "col-xs-2 col-sm-2 col-md-1 col-lg-1"></div>
            <div class="col-xs-10 col-sm-10 col-md-8 col-lg-8">
@@ -44,6 +49,7 @@ use app\models\LookupCategory;
               </tr>
               <?php
               //start with cleared bills.
+              $total_allocations = 0;
                 $bills = $model->getMatchedBillItems();
                 if($bills){
                     foreach($bills as $bill){
@@ -52,14 +58,25 @@ use app\models\LookupCategory;
                         <tr>
                             <td>$term</td>
                             <td>{$bill->fkOccupancyRent->month}/{$bill->fkOccupancyRent->year}</td>
-                            <td>{$bill->amount}</td>
+                            <td>{$bill->getAmountWithBal()}</td>
                       </tr>
 
 EOF;
+                    $total_allocations += $bill->amount;
+                            
                     }
                 }
-                      
+                $balance = (double)$model->amount - $total_allocations;
+                if($balance > 0){
+                    echo <<<EOF
+                        <tr>
+                            <td>Unallocated Amount</td>
+                            <td>-</td>
+                            <td>{$balance}</td>
+                      </tr>
 
+EOF;
+                }
                    
               ?>
             </table>

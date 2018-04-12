@@ -274,4 +274,27 @@ class AccountEntriesController extends Controller
             }
         }
     }
+    public function actionAccountStatement($string){
+        
+        if(\yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        }
+        
+        
+        if($string){
+            $query = AccountEntries::find()->where(['fk_account_chart'=>$string]);
+            $dataProvider = new \yii\data\ActiveDataProvider(['query'=>$query]);
+
+            $dataProvider->pagination->pageSize=100;
+            $view = $this->render('partials/account_report', [
+                'dataProvider' => $dataProvider, 'account'=> \app\models\AccountChart::findOne(['id'=>$string])
+            ]);
+            
+            return array(
+                     'status'=>'success', 
+                     'div'=>$view,
+
+                   );
+        }
+    }
 }

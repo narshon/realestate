@@ -18,9 +18,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
        <?php 
-					$dh = new DataHelper();
-					  $url=Url::to(['occupancy-term/create']);
-                       echo $dh->getModalButton(new OccupancyTerm, 'occupancy-term/create', 'OccupancyTerm', 'btn btn-danger btn-create',"New",$url,"OccupancyTerm");
+				//	$dh = new DataHelper();
+				//	  $url=Url::to(['occupancy-term/create']);
+                     //  echo $dh->getModalButton(new OccupancyTerm, 'occupancy-term/create', 'OccupancyTerm', 'btn btn-danger btn-create',"New",$url,"OccupancyTerm");
                     ?>
                                     
             </p>
@@ -52,13 +52,15 @@ $this->params['breadcrumbs'][] = $this->title;
                      'buttons' => [
                                     'view' => function ($url, $model){
                                              $dh = new DataHelper();
-                                              $popup = $dh->getModalButton($model, "occupancy-term/view", "Terms", 'glyphicon glyphicon-eye-open','');
+                                              $url=Url::to(['occupancy-term/view','id'=>$model->id]);
+                                              $popup = $dh->getModalButton($model, "occupancy-term/view", "Terms", 'glyphicon glyphicon-eye-open','',$url,"OccupancyTerm");
                                               return $popup;
                                              
                                     }, 
                                     'update' => function ($url, $model) {
                                             $dh = new DataHelper();
-                                           return $dh->getModalButton($model, "occupancy-term/update", "Terms", 'glyphicon glyphicon-edit','');
+                                            $url=Url::to(['occupancy-term/update','id'=>$model->id]);
+                                           return $dh->getModalButton($model, "occupancy-term/update", "Terms", 'glyphicon glyphicon-edit','',$url,"OccupancyTerm");
                                     },
                             ], 
                     ],

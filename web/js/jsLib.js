@@ -385,6 +385,18 @@ $('body').on('change', '#daily-summary', function(){
     getFinanceDailySummary($(this));
 });
 
+$('body').on('change', '#account-statement', function(){
+    item = $(this).find(':selected');
+    id = item.val();
+    ajaxUniversalGetRequest("account-statement","ac-id",id, 1)
+});
+
+$('body').on('change', '#occupancy-id', function(){
+    item = $(this).find(':selected');
+    id = item.val();
+    ajaxUniversalGetRequest("set-occupancy","occupancy-div",id, 1)
+});
+
 function generatestatement(id)
 {
     $.ajax({
@@ -432,6 +444,29 @@ function getFinanceDailySummary(elem)
         },
         success:function(data){
             $('.summary-content').html(data);
+        }
+    });
+    
+}
+
+function getContent(url, elem)
+{
+    var item = elem.find(':selected');
+    alert(url+"="+item.val());
+    
+    $.ajax({
+        url: url,
+        type: 'post',
+        data: {id:item.val()},
+        beforeSend: function(){
+            $('.s-loader').addClass('c-loader');
+            $('.s-content').html('');
+        },
+        complete: function(){
+            $('.s-loader').removeClass('c-loader');
+        },
+        success:function(data){
+            $('.s-content').html(data);
         }
     });
     

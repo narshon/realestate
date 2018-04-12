@@ -16,6 +16,7 @@ use Yii;
  * @property integer $_status
   * @property string $imprest_type
   * @property integer $settlement_id
+ * @property string $narration
  *
  * @property SysUsers $fkLandlord
  */
@@ -38,7 +39,7 @@ class LandlordImprest extends \yii\db\ActiveRecord
             [['fk_landlord', 'created_by', '_status','settlement_id'], 'integer'],
             [['amount', 'entry_date'], 'required'],
             [['amount'], 'number'],
-            [['entry_date', 'created_on','imprest_type'], 'safe'],
+            [['entry_date', 'created_on','imprest_type','narration'], 'safe'],
             [['fk_landlord'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['fk_landlord' => 'id']],
         ];
     }
@@ -57,8 +58,8 @@ class LandlordImprest extends \yii\db\ActiveRecord
             'created_by' => 'Created By',
             '_status' => 'Status',
             'settlement_id'=>'Settlement ID',
-            'imprest_type'=>'Imprest Type'
-            
+            'imprest_type'=>'Imprest Type',
+            'narration'  => "Narration",           
         ];
     }
 

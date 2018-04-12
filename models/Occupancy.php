@@ -198,15 +198,6 @@ class Occupancy extends \yii\db\ActiveRecord
         return $array;
     }
     
-    public function getStatus(){
-            if($this->_status == 1){
-                return "OFF";
-            }
-            if($this->_status == 2){
-                return "ON";
-            }
-    }
-    
     public static function calculateBills(){
         
         //get occupants that are active
@@ -599,4 +590,39 @@ class Occupancy extends \yii\db\ActiveRecord
 		
 		return $amount;
 	}
+        
+     public static function getTenantOccupancies($fk_user_id){
+         $return = [];
+         $models = Self::find()->where(['fk_user_id'=>$fk_user_id, '_status'=>1])->all();
+         if($models){
+             foreach($models as $model){
+                 $return[$model->id] = $model->fkProperty->property_name.'_'.$model->fkSublet->sublet_name;
+             }
+         }
+         
+         return $return;
+     }
+     
+     public static function getDefaultOccupancy($fk_user_id){
+         $model = Self::find()->where(['fk_user_id'=>$fk_user_id,'_status'=>1])->one();
+         if($model){
+             return $model->id;
+         }
+     }
+     
+     public function getEndDate(){
+         if(isset($this->end_date)){
+             return $this->end_date;
+         }
+         else{
+             return "Present";
+         }
+     }
+     
+      public function getStatus(){
+         $lookup = Lookup::getLookupCategoryValue(LookupCategory::getLookupCategoryID('Status'), $this->_status);
+         
+         return $lookup;
+     }
+    
 }

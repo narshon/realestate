@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
+            'entry_date',
             'imprest_type',
           /*  [
                 'attribute'=>'fk_landlord',
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],  */
             //'fk_landlord',
             'amount',
-            'entry_date',
+            'narration',
             // 'created_on',
             // 'created_by',
             [

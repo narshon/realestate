@@ -1,22 +1,7 @@
 <?php
 
-use yii\helpers\Html;
-use yii\grid\GridView;
-use yii\data\ActiveDataProvider;
-use app\models\Occupancy;
-use app\models\OccupancyIssue;
-use app\models\OccupancyRent;
-use app\models\OccupancyTerm;
-use app\models\Tenant;
-use app\utilities\DataHelper;
-use yii\widgets\Pjax;
-use app\models\TenantSearch;
-use app\models\OccupancyIssueSearch;
-use app\models\OccupancyRentSearch;
-use app\models\OccupancyTermSearch;
-use app\models\OccupancySearch;
-use yii\helpers\Url;
-use app\models\PropertyTermSearch;
+
+
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
@@ -31,17 +16,29 @@ $this->params['breadcrumbs'][] = $this->title;
         <h2><?= $this->title; ?></h2>
         
     </div>
-    <div class="panel-body">
-        <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#home"><?= $this->title; ?></a></li>
-           
-        </ul>
-        <div class="tab-content">
-
-      <div id="home" class="tab-pane fade in active">
-        <div class="occupancy-index">
-            <?php Pjax::begin(['id'=>'pjax-occupancy',]); ?> 
-            <?= GridView::widget([
+    
+       <div class="col-md-2 pull-right">
+        <?= '<label class="control-label">Select Occupancy</label>'?>
+        <?= kartik\widgets\Select2::widget([
+            'name' => 'occupancy',
+            'id' => 'occupancy-id',
+            'data' => \app\models\Occupancy::getTenantOccupancies($tenant->id),
+            'options' => [
+                'placeholder' => 'Select Occupancy...',
+                'multiple' => false
+            ]
+        ]);?>
+            </div> 
+      <div  id="occupancy-div" class="panel-body occupancy-index">
+          <?php
+          //get default occupancy and render view.
+          $occupancy_id = \app\models\Occupancy::getDefaultOccupancy($tenant->id);
+          echo  $this->render('occupancydetails', [
+                'occupancy_id'=> $occupancy_id
+            ]);
+          ?>
+            <?php // Pjax::begin(['id'=>'pjax-occupancy',]); ?> 
+            <?php /* echo GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
                 'columns' => [
@@ -107,7 +104,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'class'=>'btn bg-purple btn-flat showModalButton specmargin', 
                             'value' => yii\helpers\Url::to(['occupancy-payments/map-payments', 'id'=>$data->id])]);
                         }
-                    ],  */
+                    ],  *
                     
                     
 
@@ -130,54 +127,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             ], 
                     ],
                 ],
-            ]); ?>
-             <?php Pjax::end(); ?>
+            ]); */ ?>
+             <?php // Pjax::end(); ?>
+
         </div>
-      </div>
 
-      <div id="rent" class="">
-        <?php
-           /*  
-             $searchModel = new OccupancyRentSearch();
-             $dataProvider =  $searchModel->search(Yii::$app->request->get());                               //new ActiveDataProvider(['query' => OccupancyRent::getSearchQuery($searchModel,$tenant->id)]);
-            echo Yii::$app->controller->renderPartial("../occupancy-rent/index", [
-            'dataProvider' => $dataProvider, 'searchModel' => $searchModel, 
-        ]);  */  ?>
-      </div>
-
-      <div id="issue" class="">
-        <?php
-          /*   
-             $searchModel = new OccupancyIssueSearch();
-             $dataProvider = $searchModel->search(Yii::$app->request->get());
-            echo Yii::$app->controller->renderPartial("../occupancy-issue/index", [
-            'dataProvider' => $dataProvider, 'searchModel' => $searchModel,
-        ]);  
-           * 
-           */ ?>
-      </div>
-
-      <div id="terms" class="">
-        <?php
-            /* 
-             $searchModel = new OccupancyTermSearch();
-             $dataProvider = $searchModel->search(Yii::$app->request->get());
-            echo Yii::$app->controller->renderPartial("../occupancy-term/index", [
-            'dataProvider' => $dataProvider, 'searchModel' => $searchModel,
-        ]);  */  ?>
-      </div>
-      <div id="propterms" class="">
-        <?php
-         /*    
-             $searchModel = new PropertyTermSearch();
-             $dataProvider = $searchModel->search(Yii::$app->request->get());
-            echo Yii::$app->controller->renderPartial("../property-term/index", [
-            'dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'property'=>''
-        ]); */ ?>
-      </div>
-
-    </div>
-        
-    </div>
 </div>
     

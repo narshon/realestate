@@ -180,6 +180,7 @@ class OccupancyPayments extends \yii\db\ActiveRecord
 	   $key = explode("_", $bill);
 	    if($key){
 		$bill = $key[0];
+                $amount = $key[1];
 	    }
             $model = new OccupancyPaymentsMapping();
             $model->fk_occupancy_payment = $this->id;
@@ -190,7 +191,7 @@ class OccupancyPayments extends \yii\db\ActiveRecord
             }
             else{
                 $model->type = 'complete';
-                $model->amount = self::getBillAmount($bill);
+                $model->amount =  $amount;  // self::getBillAmount($bill);
             }
             
             
@@ -248,17 +249,17 @@ class OccupancyPayments extends \yii\db\ActiveRecord
     }
     
     public function matchBills(){
-    
+        $print = ''; $match = '';
         //check if this payment has not been exhausted already
         $this->totalbilledamount = OccupancyPaymentsMapping::find()
                         ->where(['fk_occupancy_payment' => $this->id])
                         ->sum('amount');
         $this->totalbilledamount = ($this->totalbilledamount == null)? 0 : $this->totalbilledamount;
         
-        if($this->totalbilledamount >= $this->amount){
-            //this bill was matched to completion. Present printing.
+        if($this->totalbilledamount > 0){
+            //this payment has matched bills. Present printing.
             $url = yii\helpers\Url::to(['occupancy-payments/print-receipt', 'id' => $this->id],true);
-            return Html::a('<i class="glyphicon glyphicon-print"> _print</i>',$url, [
+            $print = Html::a('<i class="glyphicon glyphicon-print"> _print</i>',$url, [
                           //  'type'=>'button',
                           //  'title'=>'Print Receipt', 
                             'class'=>'btn', 
@@ -266,17 +267,29 @@ class OccupancyPayments extends \yii\db\ActiveRecord
                         //    'value' => yii\helpers\Url::to(['occupancy-payments/print-receipt', 'id' => $this->id])
                             ]);
         }
-        else{
-            //present matching link here.
-            return Html::button('<i class="glyphicon glyphicon-print"> _match</i>', [
+        if($this->totalbilledamount < $this->amount){
+            //present matching link here. Payment still has unallocated funds.
+            $match = Html::button('<i class="glyphicon glyphicon-print"> _match</i>', [
                             'type'=>'button',
                             'title'=>'Match This Payment to bills', 
                             'class'=>'btn  showModalButton', 
                             'value' => yii\helpers\Url::to(['occupancy-payments/map', 'id' => $this->id])]);
         }
         
-        
+        return $print.$match;
     
+    }
+    
+    public function getPaymentPool(){
+        //get total billed amount so far for this payment.
+        $this->totalbilledamount = OccupancyPaymentsMapping::find()
+                        ->where(['fk_occupancy_payment' => $this->id])
+                        ->sum('amount');
+        $this->totalbilledamount = ($this->totalbilledamount == null)? 0 : $this->totalbilledamount;
+        //calculate pool.
+        $pool = $this->amount - $this->totalbilledamount;
+        
+        return $pool;
     }
      
 }

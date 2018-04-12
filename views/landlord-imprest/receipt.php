@@ -107,6 +107,14 @@ EOF;
 </table>
 <h3> TOTAL AMOUNT PAID = <?php echo $total_disb - $total_advance; ?> </h3>
 <?php } else{ ?>
-<!-- Advance receipt comes here -->
+<p> 
+    Received, Kes <?php echo $model->amount; ?> <i>( <?php 
+    $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+     echo $f->format($model->amount);
+   ?>  )</i>
+</p>
+<p>
+    Being payment of <?php echo $model->narration; ?> 
+</p>
 <?php }  ?>
 </div>

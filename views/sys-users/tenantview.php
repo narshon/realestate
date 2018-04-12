@@ -44,7 +44,7 @@ $this->registerCss("
 	  <div class="leftbar col-md-2">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
 				<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tenant" role="tab">Tenant Details</a></li>
-				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tenantstatus" role="tab">Rent Status</a></li>
+				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tenantstatus" role="tab">Occupancy Details</a></li>
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tenantstatement" role="tab">Tenant Statement</a></li>
 				
 				
