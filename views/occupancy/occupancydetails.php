@@ -63,7 +63,7 @@ EOF;
                 <?php
 
                      $searchModel = new OccupancyRentSearch();
-                     $dataProvider =   new ActiveDataProvider(['query' => OccupancyRent::find()->where(['fk_occupancy_id'=>$occupancy_id])]); //$searchModel->search(Yii::$app->request->get()); 
+                     $dataProvider =   new ActiveDataProvider(['query' => OccupancyRent::find()->where(['fk_occupancy_id'=>$occupancy_id])->orderBy("id desc")]); //$searchModel->search(Yii::$app->request->get()); 
                     echo Yii::$app->controller->renderPartial("../occupancy-rent/index", [
                     'dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'occupancy'=> new Occupancy() 
                 ]);    ?>
@@ -73,7 +73,7 @@ EOF;
                 <?php
 
                      $searchModel = new OccupancyPaymentsSearch();
-                     $dataProvider = new ActiveDataProvider(['query' => OccupancyPayments::find()->where(['fk_occupancy_id'=>$occupancy_id])]);
+                     $dataProvider = new ActiveDataProvider(['query' => OccupancyPayments::find()->where(['fk_occupancy_id'=>$occupancy_id])->orderBy("id desc")]);
                     echo Yii::$app->controller->renderPartial("../occupancy-payments/index", [
                     'dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'occupancy'=> new Occupancy()
                 ]);  
@@ -84,7 +84,7 @@ EOF;
                 <?php
 
                      $searchModel = new OccupancyTermSearch();
-                     $dataProvider = new ActiveDataProvider(['query' => OccupancyTerm::find()->where(['fk_occupancy_id'=>$occupancy_id])]);
+                     $dataProvider = new ActiveDataProvider(['query' => OccupancyTerm::find()->where(['fk_occupancy_id'=>$occupancy_id])->orderBy("id desc")]);
                     echo Yii::$app->controller->renderPartial("../occupancy-term/index", [
                     'dataProvider' => $dataProvider, 'searchModel' => $searchModel, 'occupancy'=> new Occupancy()
                 ]);    ?>

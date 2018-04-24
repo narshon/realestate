@@ -55,7 +55,7 @@ use yii\jui\DatePicker;
     <div class="col-md-12">
         <div class="col-md-4"></div>
         <div class="col-md-4">
-            <?= $form->field($model, 'payment_date')->widget(DatePicker::className(), [
+            <?php /* echo  $form->field($model, 'payment_date')->widget(DatePicker::className(), [
                 'dateFormat' => 'php:Y-m-d',
                 'options'=>[
                     'class'=>'form-control'
@@ -66,7 +66,8 @@ use yii\jui\DatePicker;
                     'maxDate'=>'today',
                     'defaultDate'=>'today',
                     ]
-            ])?>
+            ]); */ 
+            ?>
         </div>
         <div class="col-md-4"></div>
         

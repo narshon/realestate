@@ -34,8 +34,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 'columns' => [
                     ['class' => 'yii\grid\SerialColumn'],
 
-                    'id',
-                    //'term_type',
+                    //'id',
+                    [
+                        'attribute'=>'term_type',
+                        'label'=>'Term Type',
+                        'value'=>function ($data){
+                            return \app\models\Lookup::getLookupCategoryValue(app\models\LookupCategory::getLookupCategoryID("Term Type"), $data->term_type);
+                        }
+                    ],
                     'term_name',
                     'term_desc:ntext',
                    // '_status',

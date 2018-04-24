@@ -39,7 +39,16 @@ EOD;
 </div>
 
     <?= $form->field($model, 'address')->textarea(['rows' => 6]) ?>
-    <?= $form->field($model, 'residence')->textInput(); ?>
+    
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'county')->textInput(['maxlength' => true]) ?></div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'subcounty')->textInput(['maxlength' => true]) ?></div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'ward')->textInput(['maxlength' => true]) ?></div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'location')->textInput(['maxlength' => true]) ?></div>
+</div>
+<?= $form->field($model, 'residence')->textInput(); ?>
 <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'occupation')->textInput(['maxlength' => true]) ?></div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><?= $form->field($model, 'employer')->textInput(['maxlength' => true]) ?></div>

@@ -138,7 +138,7 @@ class Disbursements extends \yii\db\ActiveRecord
             foreach($bills as $bill) {
                 $key = $bill->id.'_'.$bill->amount;
                 $list[$key] = [
-                    'content' =>  $bill->fkOccupancyRent->fkOccupancy->fkTenant->getNames().' - '.$bill->fkOccupancyRent->fkSource->source_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')',
+                    'content' =>  $bill->fkOccupancyRent->fkOccupancy->fkTenant->getNames().' - '.$bill->fkOccupancyRent->fkTerm->term_name . ' - ' . $bill->amount. ' ('. $bill->year . '/' . $bill->month .')',
                 ];
             }
         }
@@ -200,6 +200,12 @@ class Disbursements extends \yii\db\ActiveRecord
             if(!$check_paid){
                 return $billed_amount;
             }
+            else{
+                //let's check if this payment is sufficient to offse this bill
+                if($check_paid->amount < $billed_amount){
+                    return $billed_amount - $check_paid->amount;
+                }
+            }
         }
         
         return '';
@@ -247,7 +253,7 @@ class Disbursements extends \yii\db\ActiveRecord
                                
                            }
                            else{
-                               $percentage = 20; //defaults to 20%.
+                               $percentage = 10; //defaults to 10%.
                               return $amount = ($occupancyRent->amount * $percentage / 100);
                            }
                             

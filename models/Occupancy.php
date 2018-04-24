@@ -353,14 +353,34 @@ class Occupancy extends \yii\db\ActiveRecord
         $year = date('Y');
         $date = date('d');
         if(($source = Source::findOne(['source_name' => 'Rent'])) !== null) {
-            return $this->generateBill($term, $source->id, ['month'=>$month,'year'=>$year]);
+            //check if the date is due for this bill.
+            $billdueterm = Term::findone(['term_name'=>"Date Rent Pay"]);
+            if($billdueterm){
+                $term_day = $this->getTermValue($billdueterm);
+               if($term_day <= $date){
+                  return $this->generateBill($term, $source->id, ['month'=>$month,'year'=>$year]);
+               }
+            }
+            
         }
+        
+        return true;
     }
     
     
     public function RentDeposit($term){
+        $month = date('m');
+        $year = date('Y');
+        $date = date('d');
         if(($source = Source::findOne(['source_name' => 'Rent Deposit'])) !== null) {
-            return $this->generateBill($term, $source->id);
+            //check if the date is due for this bill.
+            $billdueterm = Term::findone(['term_name'=>"Date Rent Pay"]);
+            if($billdueterm){
+                $term_day = $this->getTermValue($billdueterm);
+               if($term_day <= $date){
+                  return $this->generateBill($term, $source->id);
+               }
+            }
         }
     }
     public function WaterDeposit($term){
@@ -390,10 +410,53 @@ class Occupancy extends \yii\db\ActiveRecord
         }
     }
     public function PenatlyDate($term){
-        return true;
+        
     }
     public function PenaltyPercentage($term){
+        $month = date('m');
+        $year = date('Y');
+        $date = date('d');
+        if(($source = Source::findOne(['source_name' => 'Penalty'])) !== null) {
+            //check if the date is due for this bill.
+            $billdueterm = Term::findone(['term_name'=>"Penalty Date"]);
+            if($billdueterm){
+                $term_day = $this->getTermValue($billdueterm);
+              if($term_day <= $date){
+                if(($bill = OccupancyRent::findOne(['month'=>$month,'year'=>$year,'fk_occupancy_id' => $this->id, 'fk_source'=>$source->id])) === null) {
+                    if($this->checkIfTermIsActive($term->id)) {
+                        $model = new OccupancyRent();
+                        $model->fk_source = $source->id;
+                        $model->fk_occupancy_id = $this->id;
+                        $model->month = date('m');
+                        $model->year = date('Y');
+                        $model->fk_term = $term->id;
+                        //let's get the current rent amount and calculate penalty percentage.
+                        $model->amount = $this->getPenaltyAmount($term);
+                        $status = \app\models\Lookup::findOne(['_value' => 'Unmatched', 'category'=>6]);
+                        $model->_status = $status ? $status->_key : 0;
+                        return ($model->save()) ? 99 : false;
+                    }
+                }
+              }
+            }
+            
+        }
         return true;
+    }
+    
+    public function getPenaltyAmount($term){
+        //rent term
+        $rentTerm = Term::findone(['term_name'=>"Rent Amount"]);
+        if($rentTerm){
+            $bill_amount = $this->getBillAmount($rentTerm);
+            //get penalty term value
+            $penalty = $this->getTermValue($term);
+            if($penalty){
+                return ($penalty*$bill_amount/100);
+            }
+        }
+        
+        return 0;
     }
     public function RentDueDate($term){
         return true;
@@ -477,7 +540,6 @@ class Occupancy extends \yii\db\ActiveRecord
             return 0;
         }
     }
-    
     public function generateStatement($start = false, $end = false)
     {
         $start_date = isset($start) ? new \DateTime($start) : new \DateTime('2000-01-01');
@@ -623,6 +685,23 @@ class Occupancy extends \yii\db\ActiveRecord
          $lookup = Lookup::getLookupCategoryValue(LookupCategory::getLookupCategoryID('Status'), $this->_status);
          
          return $lookup;
+     }
+     
+     public function getTermValue($term){
+         //get the property term for this occupancy
+         $propertyterm = PropertyTerm::find()->where(['fk_property_id'=>$this->fk_property_id,'fk_term_id'=>$term->id, '_status'=>1])->one();
+         if($propertyterm){
+             //check if we have an occupancy term for this property term.
+             $occupancyterm = OccupancyTerm::find()->where(['fk_occupancy_id'=>$this->id,'fk_property_term_id'=>$propertyterm->id,'_status'=>1])->one();
+             if($occupancyterm){
+                 return $occupancyterm->value;
+             }
+             else{
+                 return $propertyterm->term_value;
+             }
+         }
+         
+         return null;
      }
     
 }

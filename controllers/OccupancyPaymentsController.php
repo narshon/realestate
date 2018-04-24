@@ -270,6 +270,7 @@ class OccupancyPaymentsController extends Controller
                                         return array(
                                                  'status'=>"success", 
                                                  'div'=>"Successfully matched bills! ",
+                                                 'gridid'=>'pjax-occupancy',
                                          ); 
                                     
 				}

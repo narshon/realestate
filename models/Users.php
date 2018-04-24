@@ -62,10 +62,10 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['fk_group_id','fk_management_id','name1','name3'], 'required'],
+            [['fk_group_id','fk_management_id','name1','name3','phone'], 'required'],
             [['fk_group_id', 'age','fk_management_id'], 'integer'],
             [['fk_group_id', 'age'], 'integer'],
-            [['address'], 'string'],
+            [['address','county','subcounty','ward','location'], 'string'],
             [['date_added','id_number','fk_sublet_id'], 'safe'],
             [['username'], 'string', 'max' => 50],
             [['pass','confirm_pass','confirmpass'], 'string', 'max' => 100],
@@ -367,7 +367,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
     }
 	
 	public static function getSearchQuery($searchModel, $group, $agency){
-		$query = Users::find()->where(['fk_group_id'=>$group,'fk_management_id'=>$agency]);
+		$query = Users::find()->where(['fk_group_id'=>$group,'fk_management_id'=>$agency])->orderBy("id desc");
 		
 		if($searchModel->id != ""){
 			$query->andWhere(['=', 'id', $searchModel->id]);
@@ -397,7 +397,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
 	}
 	
 	public static function getSearchTenant($searchModel, $group, $tenant){
-		$query = Users::find()->where(['fk_group_id'=>$group,'fk_management_id'=>$tenant]);
+		$query = Users::find()->where(['fk_group_id'=>$group,'fk_management_id'=>$tenant])->orderBy("id desc");
 		
 		if($searchModel->id != ""){
 			$query->andWhere(['=', 'id', $searchModel->id]);

@@ -43,7 +43,7 @@ class OccupancyTermSearch extends OccupancyTerm
      */
     public function search($params)
     {
-        $query = OccupancyTerm::find();
+        $query = OccupancyTerm::find()->orderBy("id desc");
 
         // add conditions that should always apply here
         $query->joinWith(['fkPropertyTerm','fkOccupancy']);

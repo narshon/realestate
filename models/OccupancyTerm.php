@@ -142,7 +142,9 @@ class OccupancyTerm extends \yii\db\ActiveRecord
             $terms = PropertyTerm::findAll(['fk_property_id' => $occupancy->fk_property_id]);
             if(is_array($terms)) {
                 foreach($terms as $term) {
+                    if($term->fkTerm->term_type == 1){
                     $list[$term->fk_term_id] = $term->fkTerm->term_name;
+                    }
                 }
             }
         }

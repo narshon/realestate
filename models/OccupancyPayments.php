@@ -43,7 +43,7 @@ class OccupancyPayments extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fk_occupancy_id', 'amount', 'payment_date', 'fk_receipt_id', 'payment_method', 'status'], 'required'],
+            [['fk_occupancy_id', 'amount', 'fk_receipt_id', 'payment_method', 'status'], 'required'],
             [['fk_occupancy_id', 'fk_receipt_id', 'payment_method', 'status', 'created_by', 'modified_by'], 'integer'],
             [['amount'], 'number'],
             [['payment_date', 'created_on', 'modified_on'], 'safe'],
@@ -103,6 +103,7 @@ class OccupancyPayments extends \yii\db\ActiveRecord
         if($this->isNewRecord) {
             $this->created_by = isset(\yii::$app->user->identity->id) ? \yii::$app->user->identity->id: 1;
             $this->created_on = date('Y-m-d');
+            $this->payment_date = date('Y-m-d');
         } else {
             $this->modified_by = isset(\yii::$app->user->identity->id) ? \yii::$app->user->identity->id: 1;
             $this->modified_on = date('Y-m-d');

@@ -22,7 +22,14 @@ use kartik\widgets\Select2;
 
     <?= $form->field($model, 'term_desc')->textarea(['rows' => 6]) ?>
 
-   
+       <?php  // Usage with ActiveForm and model
+        echo $form->field($model, 'term_type')->widget(Select2::classname(), [
+            'data' => \app\models\Lookup::getLookupValues('Term Type'),
+            'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_term_type'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+        ]);  ?>
 
      <div class="form-group">
         <?php $url =  Url::to([$model->isNewRecord ? 'term/create' : 'term/update','id'=>$model->id]);  ?>

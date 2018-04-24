@@ -30,7 +30,11 @@ use app\models\LookupCategory;
            </div>
 
 	   </div>
-	   <div class="row"><label>RECEIVED from: </label><?=$model->fkOccupancy->fkUsers->getNames()?></div>
+	   <div class="row">
+               <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3"> <label>RECEIVED from: </label><?=$model->fkOccupancy->fkUsers->getNames()?> </div>
+               <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3"> <label>Payment Method: </label><?= Lookup::getLookupCategoryValue(LookupCategory::getLookupCategoryID("Payment Method"), $model->payment_method)   ?> </div>
+               <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3"> <label>Payment Ref: </label><?= $model->ref_no ?> </div>
+           </div>
            <div class="row"><label>The sum of shillings: </label><?php 
             echo $model->amount.": "; 
             $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
@@ -90,12 +94,61 @@ EOF;
            </div>
 		<div class="row">
                     <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1"></div>
-			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">REMARKS:</div>
-			<div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">signature:</div>
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                            <span> REMARKS: </span>
+                            <?php
+                             //check for pending bills.
+                            $pendingBills = \app\models\OccupancyRent::find()->where(" fk_occupancy_id = $model->fk_occupancy_id AND (_status = 0 OR _status = 2)")->all();
+                            if($pendingBills){
+                                ?>
+                            <small>Please note of the below pending bills...</small>
+                             <table id="t02">   
+                                <tr>
+                                  <th>Item</th>
+                                  <th>Period</th> 
+                                  <th>Amount Billed</th>
+                                  <th>Amount Paid</th>
+                                  <th>Balance</th>
+                                </tr>
+                      <?php
+                             foreach($pendingBills as $pending){
+                                 $pending_item = $pending->fkTerm->term_name;
+                                 $pending_period = $pending->period;
+                                 $pending_billed_amount = $pending->amount;
+                                 $pending_amount_paid = '';
+                                 //check if a payment exist on this bill
+                                 $pendingPaid = \app\models\OccupancyPaymentsMapping::findone(['fk_occupancy_rent'=>$pending->id]);
+                                 if($pendingPaid){
+                                     $pending_amount_paid = $pendingPaid->amount;
+                                 }
+                                 $epending_balance = $pending_billed_amount - $pending_amount_paid;
+                                 echo <<<EOF
+                                 
+                              <tr>
+                                  <td>$pending_item</td>
+                                  <td>$pending_period</td> 
+                                  <td>$pending_billed_amount</td>
+                                  <td>$pending_amount_paid</td>
+                                  <td>$epending_balance</td>
+                                </tr>
+EOF;
+                                 
+                             }
+                             echo "</table>";
+                             
+                            }
+                            
+                            ?>
+                        </div>
+			
 		</div>
        <div class="row">
            <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1"></div>
-           <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11" align=" center"><small>Printed on: <?=date('Y-m-d h:s')?> Thank you for making payments with us.</small></div>
+           <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">signature:</div>
+           <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11" align=" center"><small>Printed on: <?=date('Y-m-d h:s')?> Thank you for making payments with us.</small>
+               <br/>
+               <small> Rent to be paid in office only. </small>
+           </div>
        </div>
         </div> 
     <div class="no-print" align=" center">

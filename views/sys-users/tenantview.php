@@ -7,6 +7,7 @@ use app\models\OccupancyIssueSearch;
 use app\utilities\DataHelper;
 use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SysUsers */
@@ -63,7 +64,7 @@ $this->registerCss("
          ?>
         
     </p>
-
+    <?php Pjax::begin(['id'=>'pjax-tenant-view',]); ?> 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
@@ -85,14 +86,15 @@ $this->registerCss("
            
         ],
     ]) ?>
-
+    <?php Pjax::end(); ?>
+    
 </div>
 </div>
         <div class="tab-pane" id="tenantstatus" role="tabpanel">
           <?php
             //show occupancy of this tenant
             $searchModel = new \app\models\OccupancySearch();
-            $dataProvider = new ActiveDataProvider(['query' => \app\models\Occupancy::find()->where(['fk_user_id'=> $model->id]),]);
+            $dataProvider = new ActiveDataProvider(['query' => \app\models\Occupancy::find()->where(['fk_user_id'=> $model->id])->orderBy("id desc"),]);
              echo Yii::$app->controller->renderPartial("../occupancy/index", [
                   'dataProvider' => $dataProvider, 'searchModel' => $searchModel,
                   'tenant'=>$model

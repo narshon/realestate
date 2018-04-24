@@ -250,14 +250,14 @@ class SysUsersController extends Controller
             //return $this->redirect(['view', 'id' => $model->id]);
             if (Yii::$app->request->isAjax)
             {
-               return $dh->processResponse($this, $model, 'tenantform', 'success', 'Successfully Saved!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);
+               return $dh->processResponse($this, $model, 'tenantform', 'success', 'Successfully Saved!', 'pjax-tenant-view', $keyword.'-form-alert-'.$model->id);
                exit;               
             }
             
         } else {
             if (Yii::$app->request->isAjax)
             {
-                return $dh->processResponse($this, $model, 'tenantform', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-0');
+                return $dh->processResponse($this, $model, 'tenantform', 'danger', 'Please fix the below errors!', 'pjax-tenant-view', $keyword.'-form-alert-0');
                exit; 
                      
             }

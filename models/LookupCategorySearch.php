@@ -41,7 +41,7 @@ class LookupCategorySearch extends LookupCategory
      */
     public function search($params)
     {
-        $query = LookupCategory::find();
+        $query = LookupCategory::find()->orderBy("id desc");
 
         // add conditions that should always apply here
 

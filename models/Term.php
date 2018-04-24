@@ -36,8 +36,8 @@ class Term extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-			[[ 'term_name'], 'required'],
-            [[ '_status', 'created_by', 'modified_by'], 'integer'],
+	    [[ 'term_name','term_type'], 'required'],
+            [[ '_status', 'created_by', 'modified_by','term_type'], 'integer'],
             [['term_desc','actionhandler'], 'string'],
             [['date_created', 'date_modified'], 'safe'],
             [['term_name'], 'string', 'max' => 200],
@@ -69,14 +69,6 @@ class Term extends \yii\db\ActiveRecord
     public function getPropertyTerms()
     {
         return $this->hasMany(PropertyTerm::className(), ['fk_term_id' => 'id']);
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTermType()
-    {
-        return $this->hasOne(Lookup::className(), ['id' => 'term_type']);
     }
     
     public static function getRentTermID(){

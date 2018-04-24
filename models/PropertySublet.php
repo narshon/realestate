@@ -114,9 +114,16 @@ class PropertySublet extends \yii\db\ActiveRecord
             return Html::a(Html::encode($occupant->fkTenant->getNames()), ['sys-users/tenantview', 'id' => $occupant->fk_user_id]);
         }
         else{
-            $dh = new \app\utilities\DataHelper();
-            $url = Url::to(['occupancy/set', 'fk_sublet_id' => $this->id]);
-            return $dh->getModalButton(new \app\models\PropertySublet, 'occupancy/set', 'Find Tenant', 'btn btn-success btn-sm','Set',$url); 
+            //check if this property is available for letting.
+            if($this->fkProperty->_status == 1){
+                $dh = new \app\utilities\DataHelper();
+                $url = Url::to(['occupancy/set', 'fk_sublet_id' => $this->id]);
+                return $dh->getModalButton(new \app\models\PropertySublet, 'occupancy/set', 'Find Tenant', 'btn btn-success btn-sm','Set',$url); 
+            }
+            else{
+                return "N/A";
+            }
+            
         }
     }
     public static function getPropertyID($fk_sublet_id){

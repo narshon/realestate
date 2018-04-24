@@ -1,6 +1,6 @@
 <?php
 
-
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -30,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]);?>
             </div> 
       <div  id="occupancy-div" class="panel-body occupancy-index">
+          <?php  Pjax::begin(['id'=>'pjax-occupancy',]); ?> 
           <?php
           //get default occupancy and render view.
           $occupancy_id = \app\models\Occupancy::getDefaultOccupancy($tenant->id);
@@ -37,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'occupancy_id'=> $occupancy_id
             ]);
           ?>
-            <?php // Pjax::begin(['id'=>'pjax-occupancy',]); ?> 
+            
             <?php /* echo GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
@@ -128,7 +129,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                 ],
             ]); */ ?>
-             <?php // Pjax::end(); ?>
+             <?php  Pjax::end(); ?>
 
         </div>
 

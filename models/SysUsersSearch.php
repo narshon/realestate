@@ -43,7 +43,7 @@ class SysUsersSearch extends Users
      */
     public function search($params)
     {
-        $query = Users::find();
+        $query = Users::find()->orderBy("id desc");
 
         // add conditions that should always apply here
         $query->joinWith(['fkGroup','fkManagement']);

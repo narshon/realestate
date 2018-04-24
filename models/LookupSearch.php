@@ -42,7 +42,7 @@ class LookupSearch extends Lookup
      */
     public function search($params)
     {
-        $query = Lookup::find();
+        $query = Lookup::find()->orderBy("id desc");
 
         // add conditions that should always apply here
         $query->joinWith(['category0']);

@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
               'header'=>'Term',
                'filter'=>true,
                 'value'=>function($data){
-                     return $data->fkPropertyTerm->term_title;
+                     return $data->fkPropertyTerm->fkTerm->term_name;
                 }
             ],
             'date_signed',

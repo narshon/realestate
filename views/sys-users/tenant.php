@@ -55,7 +55,7 @@ $this->registerCss("
                        
                 ?>
             </p>
-             <?php Pjax::begin(['id'=>'pjax-sys-users',]); ?> 
+             <?php // Pjax::begin(['id'=>'pjax-tenant-view',]); ?> 
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,
@@ -103,7 +103,7 @@ $this->registerCss("
                     ],
                 ],
             ]); ?>
-             <?php Pjax::end(); ?>
+             <?php // Pjax::end(); ?>
   
         </div>
       

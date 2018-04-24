@@ -48,7 +48,8 @@ echo "Owner ID = ".$owner_id."<br/>";
     <th>Period</th> 
     <th>Paid By Tenant</th>
     <th>Paid By Agent</th>
-    <th>Total</th>
+    <th>Commission</th>
+    <th>Net Pay</th>
   </tr>
   <?php
   //start with cleared bills.
@@ -65,6 +66,7 @@ echo "Owner ID = ".$owner_id."<br/>";
                 <td>$disbursement->month/$disbursement->year</td>
                 <td>{$disbursement->getPaidByTenantAmount()}</td>
                 <td>{$disbursement->getPaidByAgentAmount()}</td>
+                <td>{$disbursement->getCommissionCharged()}</td>
                 <td>{$disbursement->getTotalPaid()}</td>
           </tr>
            
