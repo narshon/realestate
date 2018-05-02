@@ -111,4 +111,14 @@ class Term extends \yii\db\ActiveRecord
         }
     }
     
+    public static function getTermOptions(){
+        $return = [];
+        $terms = Self::find()->all();
+        foreach($terms as $term){
+            $return[$term->id] = $term->term_name;
+        }
+        
+        return $return;
+    }
+    
 }

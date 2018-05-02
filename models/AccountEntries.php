@@ -94,7 +94,7 @@ class AccountEntries extends \yii\db\ActiveRecord
 			$accounttype = Url::to(['account-type/index']);
             $dh = new DataHelper();
             $url = Url::to(['journal/transfer']);  //'site/update-data'
-            $button = $dh->getModalButton(new journal, '', '', '','',$url);
+            $button = $dh->getModalButton(new Journal, '', '', '','',$url);
             $return = '<ul class=" nav nav-pills nav-stacked">';
             $return .= $button;
             $return .= Button::widget(["label" => "Account Type", "options" => ["class" => "btn-danger grid-button pull-right btn-margin", "onclick"=>"redirectTo('$accounttype')"]]);
@@ -112,8 +112,8 @@ class AccountEntries extends \yii\db\ActiveRecord
             $transfer = Url::to(['account-entries/transfer']);
             $register = Url::to(['account-entries/create']);
 			
-            $register_button = $dh->getModalButton(new journal, '', 'Register Expense', 'btn btn-danger btn-register pull-right','Register Expense',$register);
-            $transfer_button = $dh->getModalButton(new journal, '', 'Transfer Funds', 'btn btn-danger btn-transfer pull-right','Transfer Funds',$transfer);
+            $register_button = $dh->getModalButton(new Journal, '', 'Register Expense', 'btn btn-danger btn-register pull-right','Register Expense',$register);
+            $transfer_button = $dh->getModalButton(new Journal, '', 'Transfer Funds', 'btn btn-danger btn-transfer pull-right','Transfer Funds',$transfer);
              
             $return = '<ul class=" nav nav-pills nav-stacked">';
             $return .= $transfer_button;

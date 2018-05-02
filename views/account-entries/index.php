@@ -76,7 +76,7 @@ $this->registerCss("
                                       'Settings' => [
                                           'label' => 'Settings',
                                           'content' => [
-                                              '<li class="nav-item list-group-item"><a class="nav-link active" data-toggle="tab" href="#accountsource" role="tab">Source</a></li>',
+                                              
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#chart" role="tab">Account Charts</a></li>',
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#map" role="tab">Account Map</a></li>',
                                               '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#accounttype" role="tab">Account Type</a></li>',
@@ -180,16 +180,6 @@ $this->registerCss("
 	<div class="tab-pane" id="m-report" role="tabpanel">7</div>
         
         <!-------  Settings Tabs ----------------->
-        <div class="tab-pane" id="accountsource" role="tabpanel">
-        <?php  $osearch = new app\models\SourceSearch;
-          $omodel = new app\models\Source();
-          $odataProvider = $osearch->search(Yii::$app->request->get());
-            echo Yii::$app->controller->renderPartial('/source/index', [
-                  'dataProvider' => $odataProvider,
-                  'searchModel' => $osearch,
-                  'model'=>$omodel
-            ]); ?>
-        </div>
 	<div class="tab-pane" id="chart" role="tabpanel">
           <?php  $search = new app\models\AccountChartSearch();
           $model = new app\models\AccountChart();

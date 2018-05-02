@@ -19,25 +19,28 @@ EOD;
         $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
 ?>
 
-    <?php $form = ActiveForm::begin(); ?>
-
     <?= $form->field($model, 'code')->textInput() ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'fk_re_account_type')->textInput() ?>
+    <?= $form->field($model, 'fk_re_account_type')->widget(Select2::classname(), [
+            'data' => app\models\AccountType::getAccountTypeOptions(),
+            'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_account_type'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+            ]) ?>
 
-    <?= $form->field($model, 'status')->textInput() ?>
+   <?=   $form->field($model, 'status')->widget(Select2::classname(), [
+            'data' => \app\models\Lookup::getLookupValues('Status'),
+            'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_status'],
+            'pluginOptions' => [
+                'allowClear' => true
+            ],
+            ]);  ?>
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'created_by')->textInput() ?>
-
-    <?= $form->field($model, 'modified_by')->textInput() ?>
-
-    <?= $form->field($model, 'created_on')->textInput() ?>
-
-    <?= $form->field($model, 'modified_on')->textInput() ?>
 
    <div class="form-group">
         <?php $url =  Url::to([$model->isNewRecord ? "$view_name/create" : "$view_name/update",'id'=>$model->id]);  ?>

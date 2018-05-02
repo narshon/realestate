@@ -64,7 +64,7 @@ $this->registerCss("
          ?>
         
     </p>
-    <?php Pjax::begin(['id'=>'pjax-tenant-view',]); ?> 
+    <?php Pjax::begin(['id'=>'pjax-tenant-view-details',]); ?> 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [

@@ -116,10 +116,12 @@ class AccountTypeController extends Controller
      */
     public function actionUpdate($id)
     {
+        Yii::$app->response->format = Response::FORMAT_JSON;
         $model = $this->findModel($id);
         $dh = new DataHelper;
         $keyword = 'account-type';
-
+      
+        
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             //return $this->redirect(['view', 'id' => $model->id]);
             if (Yii::$app->request->isAjax)

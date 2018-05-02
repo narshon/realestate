@@ -64,4 +64,34 @@ class AccountType extends \yii\db\ActiveRecord
     {
         return $this->hasMany(AccountChart::className(), ['fk_re_account_type' => 'id']);
     }
+    
+    public function beforeSave($insert){
+        if($this->isNewRecord){
+            $this->created_on = Date("Y-m-d");
+            $this->created_by = Yii::$app->user->identity->id;
+        }
+        else{
+            $this->modified_on = Date("Y-m-d");
+            $this->modified_by = Yii::$app->user->identity->id;
+        }
+        
+        if($this->hasErrors()){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    
+    public static function getAccountTypeOptions(){
+        $return = [];
+        $models = Self::find()->all();
+        if($models){
+            foreach($models as $model){
+                $return[$model->id] = $model->name;
+            }
+        }
+        
+        return $return;
+    }
 }
