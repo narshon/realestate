@@ -12,16 +12,51 @@ use app\models\AccountEntries;
 /* @var $searchModel app\models\AccountChartSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Account Charts';
-$this->params['breadcrumbs'][] = $this->title;
-?>
-<div class="account-chart-index admin-content">
+use yii\bootstrap\Collapse;
 
-    
-	 <ul class=" nav nav-pills nav-stacked">
-             <?php //  echo AccountEntries::showButtons();?>
-         </ul>
-        <h1><?= Html::encode($this->title) ?></h1>
+
+$this->registerCss("
+            .container{
+                width:98% !important;
+            }
+            .leftbar{
+               background: #B5121B;
+               color:#ffffff !important;
+               padding-top:10px;
+            }
+            .leftbar a{
+                color:#ffffff !important;
+            }
+            .leftbar a:hover, a:active{
+                color:#000000 !important;;
+                /* background-color: #000000 !important; */
+            }
+            
+            .rightbar{
+                
+            }
+        "); 
+?>
+<div  class="account-entries-index panel panel-danger admin-content">
+   <div class="panel-heading">
+        <h1>Financial Records</h1>
+   </div>
+
+    <div class="panel-body">
+	<div class="leftbar__ col-md-2">
+            <ul class="nav nav-tabs" id="myTab__" role="tablist">
+                          
+                <?php
+                echo Collapse::widget([
+                    'items' => \app\models\AccountEntries::getNavigationItems()
+                ]); ?>
+	     </ul> 
+	</div>
+        <div id="statement_box" class="rightbar col-md-10">
+
+        <div class="account-chart-index admin-content">
+
+        <h1><?= Html::encode("Charts of Accounts") ?></h1>
     <p>
          <?php 
 		  $dh = new DataHelper();
@@ -87,4 +122,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 	<?php Pjax::end(); ?>
+       </div>
+
+        </div>
+    </div>
 </div>

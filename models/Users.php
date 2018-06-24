@@ -65,7 +65,7 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             [['fk_group_id','fk_management_id','name1','name3','phone'], 'required'],
             [['fk_group_id', 'age','fk_management_id'], 'integer'],
             [['fk_group_id', 'age'], 'integer'],
-            [['address','county','subcounty','ward','location'], 'string'],
+            [['address','county','subcounty','ward','location','fk_role'], 'string'],
             [['date_added','id_number','fk_sublet_id'], 'safe'],
             [['username'], 'string', 'max' => 50],
             [['pass','confirm_pass','confirmpass'], 'string', 'max' => 100],
@@ -102,7 +102,8 @@ class Users extends \yii\db\ActiveRecord implements IdentityInterface
             'gender' => 'Gender',
             'color_code' => 'Color Code',
             'icon_id' => 'Icon ID',
-            'residence' => "Residence"
+            'residence' => "Residence",
+            'fk_role' => "Role"
         ];
     }
     
@@ -465,6 +466,31 @@ public static function getUsersOptions(){
     }
     public function getLandlordName1(){
         return Html::a($this->name1,['landlordview', 'id'=>$this->id]);
+    }
+    
+    public static function checkifRoleAllowed($_role){
+        $user_roles_array = explode(",",Yii::$app->user->identity->fk_role);
+        
+        if(in_array($_role, $user_roles_array)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    
+    public static function getTenantTabs($tenant_id){
+        $tenant_url = Url::to(['sys-users/tenantview','id'=>$tenant_id]);
+        $occupancy_url = Url::to(['occupancy/index','tenant_id'=>$tenant_id]);
+        $statement_url = Url::to(['occupancy/statement','tenant_id'=>$tenant_id]);
+        
+        return <<<EOF
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+				<li class="nav-item"><a class="nav-link active"  href="$tenant_url" role="tab">Tenant Details</a></li>
+				<li class="nav-item"><a class="nav-link"  href="$occupancy_url" role="tab">Occupancy Details</a></li>
+				<li class="nav-item"><a class="nav-link"  href="$statement_url" role="tab">Tenant Statement</a></li>
+			</ul> 
+EOF;
     }
 }
 

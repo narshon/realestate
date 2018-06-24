@@ -8,6 +8,7 @@ use app\utilities\DataHelper;
 use yii\helpers\Url;
 use yii\data\ActiveDataProvider;
 use yii\widgets\Pjax;
+use app\models\Users;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\SysUsers */
@@ -43,14 +44,10 @@ $this->registerCss("
       </div>
       <div class="panel-body">
 	  <div class="leftbar col-md-2">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-				<li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#tenant" role="tab">Tenant Details</a></li>
-				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tenantstatus" role="tab">Occupancy Details</a></li>
-				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tenantstatement" role="tab">Tenant Statement</a></li>
-				
-				
-			</ul> 
-			</div>
+            <?php
+               echo Users::getTenantTabs($model->id);
+            ?>
+	</div>
 		<div class="rightbar col-md-10">
 			<div class="tab-content">
 				<div class="tab-pane active" id="tenant" role="tabpanel">

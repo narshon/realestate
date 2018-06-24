@@ -1,160 +1,153 @@
 <?php
 use yii\helpers\Html;
-use yii\grid\GridView;
 use yii\widgets\Pjax;
-//use kartik\grid\GridView;
+use yii\bootstrap\Collapse;
+use app\models\Term;
+use kartik\grid\GridView;
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-?>
-<h3>Daily Report for: <?= date('d-m-Y')  ?></h3>
-<?php Pjax::begin(); ?><?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        //'showPageSummary' => true,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
 
-            [
-                'attribute' =>'property',
-				'label' => 'Property/Account',
-                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
-                 'value' => function($data){
-                   // return $data->origin_model;
-                      //get origin of this transaction
-                      $originModel = $data->origin_model;
-                      if($originModel == "app\models\OccupancyPayments"){
-                          
-                          //occupancyRent
-                          $occupancyPayment = $originModel::findone(['id'=>$data->origin_id]);
-                          if($occupancyPayment){
-                              return $occupancyPayment->fkOccupancy->fkProperty->property_name;
-                          }
-                          
-                      }
-                      elseif($originModel == "app\models\LandlordImprest"){
-                          //LandlordImprest
-                          $imprest = $originModel::findone(['id'=>$data->origin_id]);
-                          if($imprest){
-                              $prop_name = '';
-                              //get properties of this landlord
-                              $properties = \app\models\Property::find()->where(['owner_id'=>$imprest->fk_landlord])->all();
-                              if($properties){
-                                  foreach($properties as $property){
-                                      $prop_name .= $property->property_name.', ';
-                                  }
-                                  //remove trailing comma
-                                  $prop_name = substr($prop_name, 0, -2);
-                              }
-                              return $prop_name;
-                          }
-                          
-                      }
-					  elseif($originModel == "app\models\Term"){
-						  $term = $originModel::findone(['id'=>$data->origin_id]);
-						  if($term)
-						  {
-							  return $term->term_name;
-						  }
-					  }
-                 }
-               ],
-                       
-              [
-                'attribute' =>'client',
-                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
-                 'value' => function($data){
-                   // return $data->origin_model;
-                      //get origin of this transaction
-                      $originModel = $data->origin_model;
-                      if($originModel == "app\models\OccupancyPayments"){
-                          
-                          //occupancyRent
-                          $occupancyPayment = $originModel::findone(['id'=>$data->origin_id]);
-                          if($occupancyPayment){
-                              return $occupancyPayment->fkOccupancy->fkTenant->getNames();
-                          }
-                      }
-                      elseif($originModel == "app\models\LandlordImprest"){
-                          //LandlordImprest
-                          $imprest = $originModel::findone(['id'=>$data->origin_id]);
-                          if($imprest){
-                             return $imprest->fkLandlord->getNames();
-                          }
-                          
-                        }
-					elseif($originModel == "app\models\Term"){
-						return "Official";
-					}
-                 }
-               ],
-               [
-                'attribute' =>'client_type',
-                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
-                 'value' => function($data){
-                    // return $data->origin_model;
-                      //get origin of this transaction
-                      $originModel = $data->origin_model;
-                      if($originModel == "app\models\OccupancyPayments"){
-                          return "Tenant";
-                      }
-                      elseif($originModel == "app\models\LandlordImprest"){
-                          //LandlordImprest
-                          return "Landlord";
-                          
-                        }
-					elseif($originModel == "app\models\Term"){
-						return "Staff";
-					}
-                 }
-               ],
-               [
-                'attribute' =>'item',
-                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
-                 'value' => function($data){
-                    // return $data->origin_model;
-                      //get origin of this transaction
-                      $originModel = $data->origin_model;
-                      if($originModel == "app\models\OccupancyPayments"){
-                          //occupancyRent
-                         return "Tenant Payments";
-                         
-                      }
-                      elseif($originModel == "app\models\LandlordImprest"){
-                          //LandlordImprest
-                          return "Landlord Payments";
-                          
-                        }
-					 elseif($originModel == "app\models\Term"){
-						return $data->particulars;
-					}
-                 }
-               ],
-             [
-                'attribute' =>'amount',
-                 'label'=>"Dr",
-                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
-                 'value' => function($data){
-                     if($data->trasaction_type == "debit"){
-                      return $data->amount;
-                     }
-                 },
-              //  'pageSummary' => true
-               ],
-              [
-                'attribute' =>'amount',
-                'label'=>"Cr",
-                // 'footer' => \app\models\AccountEntries::getTotal($dataProvider->models, 'amount'),
-                 'value' => function($data){
-                      if($data->trasaction_type == "credit"){
-                      return $data->amount;
-                     }
-                 },
-              //  'pageSummary' => true
-               ],
-              
+$this->registerCss("
+            .container{
+                width:98% !important;
+            }
+            .leftbar{
+               background: #B5121B;
+               color:#ffffff !important;
+               padding-top:10px;
+            }
+            .leftbar a{
+                color:#ffffff !important;
+            }
+            .leftbar a:hover, a:active{
+                color:#000000 !important;;
+                /* background-color: #000000 !important; */
+            }
             
-        ],
-    ]); ?>
-<?php Pjax::end(); ?>
+            .rightbar{
+                
+            }
+        "); 
+?>
+
+<div id="print_area">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3"> <h3> <?php echo $account->name; ?> Report</h3></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> <br/> <strong> OPENING BALANCE: <span><?= \app\models\AccountEntries::getDailyReportItem($account->code, date("Y-m-d",strtotime("-1 days")))?></span></strong></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+           <table id="t01">   
+              <tr>
+                <th>NAME</th>
+                <th>HSE</th> 
+                <th>C/RENT</th>
+                <th>BAL</th>
+                <th>Visit/Locking Fee</th>
+                <th>Agency Fee</th>
+                <th>Other Fees</th>
+                <th>Total</th>
+              </tr>
+              
+              <?php
+               //loop through and generate report.
+              if($transactions){
+                  foreach($transactions as $data){
+                      echo "<tr>";
+                        echo "<td>";
+                        echo $data->getClientName();
+                        echo "</td>";
+                        
+                        echo "<td>";
+                        echo $data->getHouse();
+                        echo "</td>";
+                        
+                        echo "<td>";
+                        echo $data->getCRent();
+                        echo "</td>";
+                        
+                        echo "<td>";
+                        echo $data->getRentBal();
+                        echo "</td>";
+                        
+                        echo "<td>";
+                        echo $data->getVLockFee();
+                        echo "</td>";
+                        
+                        echo "<td>";
+                        echo $data->getAgencyFee();
+                        echo "</td>";
+                        
+                        echo "<td>";
+                        echo $data->getOtherFee();
+                        echo "</td>";
+                        
+                        echo "<td>";
+                        echo $data->amount;
+                        echo "</td>";
+                        
+                      echo "</tr>";
+                      
+                  }
+              }
+              ?>
+              <tr>
+                  <td> <strong>TOTALS</strong>  </td>
+                <td></td> 
+                <td><strong><?php echo app\models\AccountEntries::getTotalCRent($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalBalance($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalVLockFee($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalAgencyFee($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalOtherFee($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalAmountReceived($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
+              </tr>
+           </table>
+            <strong>LESS </strong> 
+            <table id="t02">   
+              <tr>
+                <th>NAME</th>
+                <th>TYPE</th> 
+                <th>PARTICULARS</th>
+                <th>AMOUNT</th>
+              </tr>
+              <?php
+               $credits = app\models\AccountEntries::find()->where(['fk_account_chart'=>$account->id, 'trasaction_type'=>"credit", 'entry_date'=>date('Y-m-d')])->all();
+               if($credits){
+                   foreach($credits as $credit){
+                      echo "<tr>";
+                        echo "<td>";
+                        echo $credit->getTransactedUser();
+                        echo "</td>"; 
+                        echo "<td>";
+                        echo $credit->getTransactionSourceName();
+                        echo "</td>"; 
+                        echo "<td>";
+                        echo $credit->getTransactionParticulars();
+                        echo "</td>"; 
+                        echo "<td>";
+                        echo $credit->amount;
+                        echo "</td>"; 
+                        
+                        echo "</tr>";
+                   }
+               }
+              ?>
+              <tr>
+                  <td> <strong>TOTALS</strong>  </td>
+                <td></td> 
+                <td></td> 
+                <td><strong><?php echo app\models\AccountEntries::getTotalAmountPaid($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
+              </tr>
+            </table>
+        </div>
+    </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> <br/> <strong> CLOSING BALANCE: <span><?= \app\models\AccountEntries::getDailyReportItem($account->code, date("Y-m-d"))?></span></strong></div>
+    </div>
+</div>
+ 

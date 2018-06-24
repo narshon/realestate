@@ -134,23 +134,47 @@ class OccupancyRentController extends Controller
      */
     public function actionCreate($occupancy_id)
     {
-        if(($occupancy = \app\models\Occupancy::findOne($occupancy_id)) !== null) {
-            $model = new OccupancyRent();
-            $model->fk_occupancy_id = $occupancy->id;
+        $model = new OccupancyRent();
+        $dh = new DataHelper;
+        $keyword = 'occupancy-rent';
+        
+        if(($occupany = \app\models\Occupancy::findOne($occupancy_id)) !== null) {
+            
+            $model->fk_occupancy_id = $occupany->id;
+
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
-                //Set Flash Message..
-                return $this->redirect(Yii::$app->request->referrer);
-            } elseif(\yii::$app->request->isAjax) {
-                return $this->renderAjax('create',[
-                    'model' => $model,
-                ]);
+                //$model->postJournal();
+                if(\Yii::$app->request->isAjax) {
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return  array(
+                        'status'=>"success", 
+                       // 'message'=>$message,
+                        'div'=>"Saved Successfully!",
+                        'gridid'=>'pjax-'.$keyword,
+                        'alert_div'=>$keyword.'-form-alert-'.$model->id
+                        );
+                }else{
+                    return $this->redirect(Yii::$app->request->referrer);
+                }
+            }elseif(\Yii::$app->request->isAjax) {
+                
+               // return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                $form = $this->renderAjax("create", ['model' => $model,'occupancy_id'=>$occupancy_id],false,false);
+              return array(
+                    'status'=>"danger", 
+                    'message'=>"Please fix the below errors!",
+                    'div'=>$form,
+                    'gridid'=>'pjax-'.$keyword, $keyword,
+                    'alert_div'=>$keyword.'-form-alert-0'
+                    );
             } else {
                 return $this->render('create', [
-                    'model' => $model,
+                    'model' => $model, 'occupancy_id'=>$occupancy_id
                 ]);
             }
-        } else {
-            throw new NotFoundHttpException('Invalid Occupancy Record');
+        }else {
+            throw new NotFoundHttpException('Occupancy Not Found');
         }
     }
 

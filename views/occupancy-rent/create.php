@@ -8,11 +8,7 @@ use yii\helpers\Html;
 
 
 ?>
-<div class="occupancy-rent-create">
-
 
     <?= $this->render('_form', [
-        'model' => $model,
+        'model' => $model, 'occupancy_id'=>$occupancy_id
     ]) ?>
-
-</div>

@@ -14,7 +14,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <p>
        
     </p>
-<?php Pjax::begin(); ?>    <?= GridView::widget([
+<?php Pjax::begin(['id'=>'pjax-occupancy-payments']); ?>    
+  <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [
@@ -33,10 +34,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute' => 'status',
+                'attribute' => 'mode',
                 'value' => function($data) {
-                $list = \app\models\Lookup::getLookupValues('Payment Status');
-                    return array_key_exists($data->status, $list) ? $list[$data->status] : $data->status;
+                $list = \app\models\Lookup::getLookupValues('Payment Mode');
+                    return array_key_exists($data->mode, $list) ? $list[$data->mode] : $data->mode;
                 }
             ],
             'ref_no',
@@ -58,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     
                 }
             ],
-            ['class' => 'yii\grid\ActionColumn'],
+          //  ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
 <?php Pjax::end(); ?></div>

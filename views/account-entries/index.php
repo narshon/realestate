@@ -39,16 +39,9 @@ $this->registerCss("
             }
         "); 
 ?>
-
-
-
 <div class="account-entries-index panel panel-danger admin-content">
 <div class="panel-heading">
         <h1>Financial Records</h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); 
-      // $session = Yii::$app->session->remove('AccountEntries-0');
-      // print_r($_SESSION);
-    ?>
    </div>
 
 	<div class="panel-body">
@@ -60,34 +53,10 @@ $this->registerCss("
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#entries" role="tab">Account Entries</a></li> -->
 				<?php
 				echo Collapse::widget([
-                                    'items' => [
-                                      'Reports' => [
-                                          'label' => 'Financial Reports',
-                                          "content"=>[
-                                              '<li class="nav-item list-group-item"><a class="nav-link active" data-toggle="tab" href="#d-report" role="tab">Daily Reports</a></li>',
-                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#A-statement" role="tab">Account statement</a></li>',
-                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#rent" role="tab">Pending Rent</a></li>',
-                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#trial" role="tab">Trial Balance</a></li>',
-                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#report" role="tab">I&E Report</a></li>',
-                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#m-report" role="tab">Monthly Report</a></li>'
-                                          ],
-                                          'contentOptions' => ['class' => 'in']
-                                          ],
-                                      'Settings' => [
-                                          'label' => 'Settings',
-                                          'content' => [
-                                              
-                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#chart" role="tab">Account Charts</a></li>',
-                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#map" role="tab">Account Map</a></li>',
-                                              '<li class="nav-item list-group-item"><a class="nav-link" data-toggle="tab" href="#accounttype" role="tab">Account Type</a></li>',
-                                              
-                                          ]
-                                      ]
-                                      
-                                  ]
+                                    'items' => AccountEntries::getNavigationItems()
                                 ]); ?>
-			</ul> 
-		</div>
+	     </ul> 
+	</div>
 		
 	<div class="rightbar col-md-10">
 	<div class="tab-content">
@@ -214,7 +183,6 @@ $this->registerCss("
 	</div>
 	</div>
 	</div>
-	
-
+</div>
 
 

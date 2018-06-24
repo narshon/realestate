@@ -219,9 +219,7 @@ class Occupancy extends \yii\db\ActiveRecord
                         //call the actions
                         if($handler){
                         $check = $occupant->$handler($term);
-                            if($check===false){
-                                throw new Exception('An Error Occured');
-                            }elseif($check===99)
+                            if($check===99)
                             {
                                 $test = 0;
                                 $insertIds[] = Yii::$app->db->getLastInsertID();
@@ -358,7 +356,7 @@ class Occupancy extends \yii\db\ActiveRecord
             if($billdueterm){
                 $term_day = $this->getTermValue($billdueterm);
                if($term_day <= $date){
-                  return $this->generateBill($term, $source->id, ['month'=>$month,'year'=>$year]);
+                  return $this->generateBill($term, ['month'=>$month,'year'=>$year]);
                }
             }
             
@@ -378,19 +376,19 @@ class Occupancy extends \yii\db\ActiveRecord
             if($billdueterm){
                 $term_day = $this->getTermValue($billdueterm);
                if($term_day <= $date){
-                  return $this->generateBill($term, $source->id);
+                  return $this->generateBill($term);
                }
             }
         }
     }
     public function WaterDeposit($term){
         if(($source = Source::findOne(['source_name' => 'Water Deposit'])) !== null) {
-            return $this->generateBill($term, $source->id);
+            return $this->generateBill($term);
         }
     }
     public function ElectricityDeposit($term){
         if(($source = Source::findOne(['source_name' => 'Electricity Deposit'])) !== null) {
-            return $this->generateBill($term, $source->id);
+            return $this->generateBill($term);
         }
     }
     public function WaterBills($term){
@@ -398,7 +396,7 @@ class Occupancy extends \yii\db\ActiveRecord
         $year = date('Y');
         $date = date('d');
         if(($source = Source::findOne(['source_name' => 'Water Bill'])) !== null) {
-            return $this->generateBill($term, $source->id, ['month'=>$month,'year'=>$year]);
+            return $this->generateBill($term, ['month'=>$month,'year'=>$year]);
         }
     }
     public function ElectricityBills($term){
@@ -406,7 +404,7 @@ class Occupancy extends \yii\db\ActiveRecord
         $year = date('Y');
         $date = date('d');
         if(($source = Source::findOne(['source_name' => 'Electricity Bill'])) !== null) {
-            return $this->generateBill($term, $source->id, ['month'=>$month,'year'=>$year]);
+            return $this->generateBill($term, ['month'=>$month,'year'=>$year]);
         }
     }
     public function PenatlyDate($term){
@@ -422,19 +420,29 @@ class Occupancy extends \yii\db\ActiveRecord
             if($billdueterm){
                 $term_day = $this->getTermValue($billdueterm);
               if($term_day <= $date){
-                if(($bill = OccupancyRent::findOne(['month'=>$month,'year'=>$year,'fk_occupancy_id' => $this->id, 'fk_source'=>$source->id])) === null) {
-                    if($this->checkIfTermIsActive($term->id)) {
-                        $model = new OccupancyRent();
-                        $model->fk_source = $source->id;
-                        $model->fk_occupancy_id = $this->id;
-                        $model->month = date('m');
-                        $model->year = date('Y');
-                        $model->fk_term = $term->id;
-                        //let's get the current rent amount and calculate penalty percentage.
-                        $model->amount = $this->getPenaltyAmount($term);
-                        $status = \app\models\Lookup::findOne(['_value' => 'Unmatched', 'category'=>6]);
-                        $model->_status = $status ? $status->_key : 0;
-                        return ($model->save()) ? 99 : false;
+                //we need to check if payment exists or not.
+                $rentTerm = Term::findone(['term_name'=>"Rent Amount"]);  $checkrent = false;
+                if($rentTerm){
+                    $checkrent = OccupancyRent::findOne(['month'=>$month,'year'=>$year,'fk_occupancy_id' => $this->id, 'fk_term'=>$rentTerm->id]);
+                    if($checkrent){
+                        $checkrent = true;
+                    }
+                }
+                if(!$checkrent){
+                    if(($bill = OccupancyRent::findOne(['month'=>$month,'year'=>$year,'fk_occupancy_id' => $this->id, 'fk_source'=>$source->id])) === null) {
+                        if($this->checkIfTermIsActive($term->id)) {
+                            $model = new OccupancyRent();
+                           // $model->fk_source = $source->id;
+                            $model->fk_occupancy_id = $this->id;
+                            $model->month = date('m');
+                            $model->year = date('Y');
+                            $model->fk_term = $term->id;
+                            //let's get the current rent amount and calculate penalty percentage.
+                            $model->amount = $this->getPenaltyAmount($term);
+                            $status = \app\models\Lookup::findOne(['_value' => 'Unmatched', 'category'=>6]);
+                            $model->_status = $status ? $status->_key : 0;
+                            return ($model->save()) ? 99 : false;
+                        }
                     }
                 }
               }
@@ -465,12 +473,14 @@ class Occupancy extends \yii\db\ActiveRecord
         return true;
     }
     
-    private function generateBill($term,$source_id, $conditions = null)
+    private function generateBill($term, $conditions = null)
     {
        
-        if(($bill = OccupancyRent::findOne(is_array($conditions) ? array_merge($conditions, ['fk_occupancy_id' => $this->id, 'fk_source'=>$source_id]) : ['fk_occupancy_id' => $this->id, 'fk_source'=>$source_id])) === null) {
+        if(($bill = OccupancyRent::findOne(is_array($conditions) ? array_merge($conditions, ['fk_occupancy_id' => $this->id]) : ['fk_occupancy_id' => $this->id])) === null) {
             if($this->checkIfTermIsActive($term->id)) {
-                return $this->billTerm($term->id, $source_id, true);
+                //check if already billed this transaction
+                
+                return $this->billTerm($term->id, true);
             }
         }
     }
@@ -511,11 +521,12 @@ class Occupancy extends \yii\db\ActiveRecord
         }
     }
     
-    private function billTerm($term_id, $source, $new_bill)
+    private function billTerm($term_id, $new_bill)
     {
+        
         if($new_bill) {
             $model = new OccupancyRent();
-            $model->fk_source = $source;
+           // $model->fk_source = $source;
             $model->fk_occupancy_id = $this->id;
             $model->month = date('m');
             $model->year = date('Y');

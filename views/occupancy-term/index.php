@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ?>
                                     
             </p>
-            <?php Pjax::begin(['id'=>'pjax-occupancy-term',]); ?> 
+            <?php Pjax::begin(['id'=>'pjax-occupancy-term']); ?> 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,

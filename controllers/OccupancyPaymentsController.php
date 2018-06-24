@@ -11,6 +11,7 @@ use yii\filters\VerbFilter;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 use yii\web\Response;
+use app\utilities\DataHelper;
 
 /**
  * OccupancyPaymentsController implements the CRUD actions for OccupancyPayments model.
@@ -79,26 +80,43 @@ class OccupancyPaymentsController extends Controller
      */
     public function actionCreate($id)
     {
+        $model = new OccupancyPayments();
+        $dh = new DataHelper;
+        $keyword = 'occupancy-payments';
+        
         if(($occupany = \app\models\Occupancy::findOne($id)) !== null) {
-            $model = new OccupancyPayments();
+            
             $model->fk_occupancy_id = $occupany->id;
 
             if ($model->load(Yii::$app->request->post()) && $model->save()) {
                 //$model->postJournal();
                 if(\Yii::$app->request->isAjax) {
-                    return $this->renderAjax('receipt',[
-                        'model' => $model,
-                    ]);
+                    Yii::$app->response->format = Response::FORMAT_JSON;
+                    return  array(
+                        'status'=>"success", 
+                       // 'message'=>$message,
+                        'div'=>"Saved Successfully!",
+                        'gridid'=>'pjax-'.$keyword,
+                        'alert_div'=>$keyword.'-form-alert-'.$model->id
+                        );
                 }else{
                     return $this->redirect(Yii::$app->request->referrer);
                 }
             }elseif(\Yii::$app->request->isAjax) {
-                return $this->renderAjax('create', [
-                   'model' => $model, 
-                ]);
+                
+               // return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-'.$model->id);
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                $form = $this->renderAjax("create", ['model' => $model,'id'=>$id],false,false);
+              return array(
+                    'status'=>"danger", 
+                    'message'=>"Please fix the below errors!",
+                    'div'=>$form,
+                    'gridid'=>'pjax-'.$keyword, $keyword,
+                    'alert_div'=>$keyword.'-form-alert-0'
+                    );
             } else {
                 return $this->render('create', [
-                    'model' => $model,
+                    'model' => $model, 'id'=>$id
                 ]);
             }
         }else {

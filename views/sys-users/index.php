@@ -63,7 +63,7 @@ $this->registerCss("
                        echo $dh->getModalButton(new \app\models\LookupCategory, 'sys-users/create', 'Users', 'btn btn-danger btn-create');
                 ?>
             </p>
-             <?php Pjax::begin(['id'=>'pjax-sys-users',]); ?> 
+             <?php Pjax::begin(['id'=>'pjax-sys-users']); ?> 
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 'filterModel' => $searchModel,

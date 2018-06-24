@@ -10,8 +10,16 @@ use yii\helpers\Url;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="occupanty-rent-form" style="text-align: center">
-    <?php $form = ActiveForm::begin(); ?>
+    <?php 
+        $view_name = 'occupancy-rent';
+        $id = isset($model->id)?$model->id:0;
+        echo <<<EOD
+        <div class="$view_name-form" id="$view_name-form-div-$id" style="text-align: center">
+              
+EOD;
+        $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
+?>
+    <div id="<?= $view_name."-form-alert-".$id ?>">  
     <?php  
       if($model->hasErrors()){
           echo "Errors";
@@ -21,8 +29,8 @@ use yii\helpers\Url;
           
       }
     ?>
-    <div class="col-md-12">
-        <div class="header" style="border-bottom: 1px #505039 solid; padding-bottom: 30px;">
+   </div>
+        <div class="header" >
             <div class="col-md-4">
                 <label>Property Name:</label>
                 <?=$model->fkOccupancy->fkProperty->property_name ?>
@@ -35,77 +43,33 @@ use yii\helpers\Url;
                 <label>Occupant:</label>
                 <?=$model->fkOccupancy->fkTenant->getNames()?>
             </div>
-        </div>
-    </div>
-    <div class="col-md-12">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
+         </div> 
             <?= $form->field($model, 'month')->dropdownList(
              app\utilities\DataHelper::getMonthOptions(),
             ['prompt'=>'Please Select']
         ); ?>
-        </div>
-        <div class="col-md-4"></div>
-    </div>
-
-    <div class="col-md-12">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
+        
             <?= $form->field($model, 'year')->dropdownList(
              app\utilities\DataHelper::getYearOptions(),
             ['prompt'=>'Please Select']
         ); ?>
-        </div>
-        <div class="col-md-4"></div>
-    </div>
-
-  <!--  <div class="col-md-12">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
-            <?php /* $form->field($model, 'fk_source')->dropdownList(
-             app\models\Source::getTenantOptions(),
-            ['prompt'=>'Please Select']
-        ); */ ?>
-        </div>
-        <div class="col-md-4"></div>
-    </div>  -->
-    <div class="col-md-12">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
+       
             <?= $form->field($model, 'fk_term')->dropdownList(
  app\models\OccupancyTerm::getTermList($model->fk_occupancy_id),
             ['prompt'=>'Please Select']
         ); ?>
-        </div>
-        <div class="col-md-4"></div>
-    </div>
-
-    <div class="col-md-12">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
+        
             <?= $form->field($model, 'amount')->textInput() ?>
-        </div>
-        <div class="col-md-4"></div>
-    </div>
-
-    <div class="col-md-12">
-        <div class="col-md-4"></div>
-        <div class="col-md-4">
-            <?php  // Usage with ActiveForm and model
-          /*  echo $form->field($model, '_status')->widget(Select2::classname(), [
-                'data' => \app\models\Lookup::getLookupValues('Bill Status'),
-                'options' => ['placeholder' => 'Please Select ...', 'id'=>'select2_status'],
-                'pluginOptions' => [
-                    'allowClear' => true
-                ],
-            ]); */ ?>
-        </div>
-        <div class="col-md-4"></div>
-    </div>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Save', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-danger']) ?>
-    </div>
+        
+     
+       
+            <?php // echo Html::submitButton('Receive', ['class' => 'btn btn-danger showModalButton']) ?>
+            <div class="form-group">
+                <?php 
+                    $url =  Url::to(["$view_name/create",'occupancy_id'=>$occupancy_id]);  
+                 ?>
+                <?= Html::submitButton('Add Bill', ['class' =>'btn btn-danger btn-create','onclick'=>"ajaxFormSubmit('$url','$view_name-form-div-$id','$view_name-form-$id',1); return false;"]) ?>
+           </div> <br/><br/>
 
     <?php ActiveForm::end(); ?>
 </div>

@@ -46,6 +46,10 @@ $this->registerCss("
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#tenant" role="tab">Properties</a></li>
 				<!-- <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#issue" role="tab">Issues</a></li>  -->
 				<li class="nav-item"><a class="nav-link" data-toggle="tab" href="#payment" role="tab">Payments</a></li>
+                                <?php  
+                                  $statement_url = Url::to(['landlord-statement','id'=>$model->id]);
+                                ?>
+                                <li class="nav-item"><a class="nav-link"  href="<?= $statement_url ?>" role="tab">Statement</a></li>
 				
 				
 			</ul> 
@@ -115,7 +119,8 @@ $this->registerCss("
                   ]);
              ?>
         </div>
-	  </div>
-	  </div>
+          
+    </div>
+    </div>
 </div>
 </div>

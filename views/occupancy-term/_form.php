@@ -5,14 +5,13 @@ use yii\widgets\ActiveForm;
 use kartik\widgets\Select2;
 use kartik\widgets\DatePicker;
 use kartik\widgets\DateTimePicker;
-
+use yii\helpers\Url;
 /* @var $this yii\web\View */
 /* @var $model app\models\OccupancyTerm */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
 <?php 
-        use yii\helpers\Url;
         $view_name = 'occupancy-term';
         $id = isset($model->id)?$model->id:0;
         echo <<<EOD

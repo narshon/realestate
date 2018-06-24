@@ -25,6 +25,7 @@ class Disbursements extends \yii\db\ActiveRecord
     public $payments_pool;
     public $payments_advance;
     public $payments_advance_ids;
+
     /**
      * @inheritdoc
      */
@@ -109,12 +110,12 @@ class Disbursements extends \yii\db\ActiveRecord
         $propertyTerm = PropertyTerm::find()->where(['fk_term_id'=>Term::getCommissionTermID(),'fk_property_id'=>$occupant->fk_property_id,'_status'=>1])->one();
         if($propertyTerm){
             $percentage = $propertyTerm->term_value;
-            $amount = ($occupant->getBillAmount(Term::getRentTermID()) * (100-$percentage) / 100);
+            $amount = $rentbill->amount * ((100-$percentage) / 100);  //($occupant->getBillAmount(Term::getRentTermID())
 
         }
         else{
             $percentage = 90; //defaults to 10%.
-            $amount = ($occupant->getBillAmount(Term::getRentTermID()) * $percentage / 100);
+            $amount =  $rentbill->amount * ($percentage / 100); //($occupant->getBillAmount(Term::getRentTermID())
         }
         $disburse = New Disbursements();
         $disburse->fk_occupancy_rent = $rentbill->id;
@@ -211,12 +212,55 @@ class Disbursements extends \yii\db\ActiveRecord
         return '';
     }
     
+    public function getTotalPaidBeforeCommission(){
+        $by_tenant = (float)$this->getPaidByTenantAmount();
+        $by_agent = (float)$this->getPaidByAgentAmount();
+        
+        return $by_tenant + $by_agent;
+    }
+    
     public function getTotalPaid(){
         $by_tenant = (float)$this->getPaidByTenantAmount();
         $by_agent = (float)$this->getPaidByAgentAmount();
         $commission = (float)$this->getCommissionCharged();
         
         return $by_tenant + $by_agent - $commission;
+    }
+    
+    public function getTotalCommission($cleared_bills){
+        $total_commission = 0;
+        $cleared_array = explode(",", $cleared_bills);
+            if(is_array($cleared_array)){
+                foreach($cleared_array as $bill){
+                    $bill_array = explode('_',$bill);
+                    $bill_id = $bill_array[0];
+                    $disbursement = \app\models\Disbursements::find()->where(['id'=>$bill_id])->one();
+                    if($disbursement){
+                        $total_commission += $disbursement->getCommissionCharged();
+                    }
+                }
+            }
+            
+            return $total_commission;
+    }
+    
+    public function getTotalBills($cleared_bills){
+        //get total cleared bills.
+        $total_bills = 0;
+        $cleared_array = explode(",", $cleared_bills);
+        if(is_array($cleared_array)){
+         foreach($cleared_array as $bill){
+             $bill_array = explode('_',$bill);
+             $bill_id = $bill_array[0];
+             $disbursement = \app\models\Disbursements::find()->where(['id'=>$bill_id])->one();
+             if($disbursement){
+                 $total_bills += $disbursement->getTotalPaidBeforeCommission();
+             }
+         }
+       }
+       
+       //total amount
+       return $total_bills;
     }
     
     public function getTotalPayable($cleared_bills, $payments_advance){
@@ -263,9 +307,12 @@ class Disbursements extends \yii\db\ActiveRecord
                 
     }
     
-    public function settleDisbursements($owner_id, $cleared_bills, $advance_ids, $total_advance){
+    public function settleDisbursements($owner_id, $cleared_bills, $advance_ids, $total_advance,$account){
         //get total payable
         $total_amount = $this->getTotalPayable($cleared_bills, $total_advance);
+        //check if these funds are available in the account specified.
+        $checkfunds = AccountChart::checkSufficientFunds($account, $total_amount);
+        if($checkfunds){
         //raise this imprest
         $imprest = new LandlordImprest();
         $imprest->fk_landlord = $owner_id;
@@ -275,6 +322,7 @@ class Disbursements extends \yii\db\ActiveRecord
         $imprest->created_on = date("Y-m-d H:i:s");
         $imprest->created_by = Yii::$app->user->identity->id;
         $imprest->_status = 1;
+        $imprest->account = $account; //this is the account we will use to credit funds.
         if($imprest->save(false)){
             //update settled bills
             $cleared_array = explode(",", $cleared_bills);
@@ -301,9 +349,11 @@ class Disbursements extends \yii\db\ActiveRecord
                 }
             }
         }
-        
-        
-         return "success";
+        return "success";
+      }
+      else{
+          return "insufficient";
+      }
     }
     
     

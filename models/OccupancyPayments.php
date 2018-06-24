@@ -16,6 +16,8 @@ use kartik\helpers\Html;
  * @property string $payment_date
  * @property integer $fk_receipt_id
  * @property integer $payment_method
+ * @property integer $mode
+ * @property integer $account
  * @property string $ref_no
  * @property integer $status
  * @property integer $created_by
@@ -43,8 +45,8 @@ class OccupancyPayments extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['fk_occupancy_id', 'amount', 'fk_receipt_id', 'payment_method', 'status'], 'required'],
-            [['fk_occupancy_id', 'fk_receipt_id', 'payment_method', 'status', 'created_by', 'modified_by'], 'integer'],
+            [['fk_occupancy_id', 'amount', 'fk_receipt_id', 'payment_method', 'mode','account'], 'required'],
+            [['fk_occupancy_id', 'fk_receipt_id', 'payment_method', 'status', 'created_by', 'modified_by','mode','account'], 'integer'],
             [['amount'], 'number'],
             [['payment_date', 'created_on', 'modified_on'], 'safe'],
             [['ref_no'], 'string', 'max' => 50],
@@ -71,6 +73,8 @@ class OccupancyPayments extends \yii\db\ActiveRecord
             'created_on' => 'Created On',
             'modified_by' => 'Modified By',
             'modified_on' => 'Modified On',
+            'mode'=>'Payment Mode',
+            'account' => "Account"
         ];
     }
 
@@ -100,15 +104,27 @@ class OccupancyPayments extends \yii\db\ActiveRecord
     }
     
     public function beforeSave($insert) {
+        parent::beforeSave($insert);
         if($this->isNewRecord) {
             $this->created_by = isset(\yii::$app->user->identity->id) ? \yii::$app->user->identity->id: 1;
             $this->created_on = date('Y-m-d');
             $this->payment_date = date('Y-m-d');
+            //status is Paid by default
+            $this->status = 1; //paid by default.
         } else {
             $this->modified_by = isset(\yii::$app->user->identity->id) ? \yii::$app->user->identity->id: 1;
             $this->modified_on = date('Y-m-d');
         }
-        return parent::beforeSave($insert);
+        
+        $this->validateAccount();
+        
+        if($this->hasErrors()){
+            return false;
+        }
+        else{
+            return true;
+        }
+        
     }
     private function generateReceipt()
     {
@@ -157,10 +173,21 @@ class OccupancyPayments extends \yii\db\ActiveRecord
 	
     public function afterSave($insert, $changedAttributes) 
     {
-        $accountmap = AccountMap::find()->where(['fk_term' => Term::getPaymentTermID() , 'status'=> 1])->all();
+        $accountmap = AccountMap::find()->where(['fk_term' => Term::getPaymentTermID($this->mode) , 'status'=> 1])->all();
         if(is_array($accountmap)) {
             foreach($accountmap as $account) {
-                AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->payment_date, $this->id,$this->className());
+                
+                if($this->mode == 1 && $account->transaction_type == "debit"){
+                    $ac_no = $this->account;
+                }
+                elseif($this->mode == 2 && $account->transaction_type == "credit"){
+                    $ac_no = $this->account;
+                }
+                else{
+                    $ac_no = $account->fk_account_chart;
+                }
+                
+                AccountEntries::postTransaction($ac_no, $account->transaction_type, $this->amount, $this->payment_date, $this->id,$this->className());
             }
         }
         return parent::afterSave($insert, $changedAttributes);
@@ -250,34 +277,40 @@ class OccupancyPayments extends \yii\db\ActiveRecord
     }
     
     public function matchBills(){
-        $print = ''; $match = '';
-        //check if this payment has not been exhausted already
-        $this->totalbilledamount = OccupancyPaymentsMapping::find()
-                        ->where(['fk_occupancy_payment' => $this->id])
-                        ->sum('amount');
-        $this->totalbilledamount = ($this->totalbilledamount == null)? 0 : $this->totalbilledamount;
+        if($this->mode != 2){
+            $print = ''; $match = '';
+            //check if this payment has not been exhausted already
+            $this->totalbilledamount = OccupancyPaymentsMapping::find()
+                            ->where(['fk_occupancy_payment' => $this->id])
+                            ->sum('amount');
+            $this->totalbilledamount = ($this->totalbilledamount == null)? 0 : $this->totalbilledamount;
+
+            if($this->totalbilledamount > 0){
+                //this payment has matched bills. Present printing.
+                $url = yii\helpers\Url::to(['occupancy-payments/print-receipt', 'id' => $this->id],true);
+                $print = Html::a('<i class="glyphicon glyphicon-print"> _print</i>',$url, [
+                              //  'type'=>'button',
+                              //  'title'=>'Print Receipt', 
+                                'class'=>'btn', 
+                                'target'=>"_blank",
+                            //    'value' => yii\helpers\Url::to(['occupancy-payments/print-receipt', 'id' => $this->id])
+                                ]);
+            }
+            if($this->totalbilledamount < $this->amount){
+                //present matching link here. Payment still has unallocated funds.
+                $match = Html::button('<i class="glyphicon glyphicon-print"> _match</i>', [
+                                'type'=>'button',
+                                'title'=>'Match This Payment to bills', 
+                                'class'=>'btn  showModalButton', 
+                                'value' => yii\helpers\Url::to(['occupancy-payments/map', 'id' => $this->id])]);
+            }
+
+            return $print.$match;
         
-        if($this->totalbilledamount > 0){
-            //this payment has matched bills. Present printing.
-            $url = yii\helpers\Url::to(['occupancy-payments/print-receipt', 'id' => $this->id],true);
-            $print = Html::a('<i class="glyphicon glyphicon-print"> _print</i>',$url, [
-                          //  'type'=>'button',
-                          //  'title'=>'Print Receipt', 
-                            'class'=>'btn', 
-                            'target'=>"_blank",
-                        //    'value' => yii\helpers\Url::to(['occupancy-payments/print-receipt', 'id' => $this->id])
-                            ]);
         }
-        if($this->totalbilledamount < $this->amount){
-            //present matching link here. Payment still has unallocated funds.
-            $match = Html::button('<i class="glyphicon glyphicon-print"> _match</i>', [
-                            'type'=>'button',
-                            'title'=>'Match This Payment to bills', 
-                            'class'=>'btn  showModalButton', 
-                            'value' => yii\helpers\Url::to(['occupancy-payments/map', 'id' => $this->id])]);
+        else{
+            return "";
         }
-        
-        return $print.$match;
     
     }
     
@@ -291,6 +324,24 @@ class OccupancyPayments extends \yii\db\ActiveRecord
         $pool = $this->amount - $this->totalbilledamount;
         
         return $pool;
+    }
+    
+    public function validateAccount(){
+        //check if on pay mode.
+        if($this->mode == 2){ // pay mode
+            $check = AccountChart::checkSufficientFunds($this->account, $this->amount);
+            if($check){
+                return true;
+            }
+            else{
+                $this->addError('account', "Insufficient funds to make payment.");
+                return false;
+            }
+        }
+        else{
+            return true;
+        }
+        
     }
      
 }

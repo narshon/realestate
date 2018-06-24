@@ -37,8 +37,6 @@ class SysUsersController extends Controller
         if(\yii::$app->request->isAjax) {
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         }
-        
-        
         if($string){
             
             $view = $this->renderPartial('../occupancy/occupancydetails', [
@@ -111,6 +109,18 @@ class SysUsersController extends Controller
     {
         return $this->render('landlordview', [
             'model' => $this->findModel($id),
+        ]);
+    }
+    
+    public function actionLandlordStatement($id){
+        
+        $searchModel = new SysUsersSearch();
+        $dataProvider = new ActiveDataProvider(['query' => \app\models\LandlordImprest::find()->where(['fk_landlord'=>$id,'_status'=>1])->orderBy("id DESC")]);
+        
+
+        return $this->render("../landlord-imprest/statement", [
+            'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel, 'model' => $this->findModel($id)
         ]);
     }
     /**

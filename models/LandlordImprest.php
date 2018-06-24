@@ -22,6 +22,7 @@ use Yii;
  */
 class LandlordImprest extends \yii\db\ActiveRecord
 {
+        public $account = false;
     /**
      * @inheritdoc
      */
@@ -102,7 +103,12 @@ class LandlordImprest extends \yii\db\ActiveRecord
         $accountmap = AccountMap::findAll(['fk_term' => Term::getImprestTermID()]);
         if(is_array($accountmap)) {
             foreach($accountmap as $account) {
-                AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->entry_date,$this->id,$this->className());
+                if($this->account && $account->transaction_type == "credit"){ //modify the default double entry behaviour as we have selected a specific funds account.
+                   AccountEntries::postTransaction($this->account, $account->transaction_type, $this->amount, $this->entry_date,$this->id,$this->className()); 
+                }
+                else{
+                 AccountEntries::postTransaction($account->fk_account_chart, $account->transaction_type, $this->amount, $this->entry_date,$this->id,$this->className());
+                }
             }
         }
     }

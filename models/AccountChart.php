@@ -40,7 +40,7 @@ class AccountChart extends \yii\db\ActiveRecord
     {
         return [
             [['code'], 'required'],
-            [['code', 'fk_re_account_type', 'status', 'created_by', 'modified_by', 'created_on', 'modified_on'], 'integer'],
+            [['code', 'fk_re_account_type', 'status', 'created_by', 'modified_by', 'created_on', 'modified_on','fk_role'], 'integer'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 255],
             [['fk_re_account_type'], 'exist', 'skipOnError' => true, 'targetClass' => AccountType::className(), 'targetAttribute' => ['fk_re_account_type' => 'id']],
@@ -63,6 +63,7 @@ class AccountChart extends \yii\db\ActiveRecord
             'modified_by' => 'Modified By',
             'created_on' => 'Created On',
             'modified_on' => 'Modified On',
+            'fk_role' => "Role",
         ];
     }
 
@@ -112,5 +113,62 @@ class AccountChart extends \yii\db\ActiveRecord
         }
         
         return $return;
+    }
+    
+    public static function getAccountByCode($code){
+        $model = Self::findone(['code'=>$code]);
+        if($model){
+            return $model;
+        }
+    }
+    
+    public static function getFundAccounts(){
+        $return = [];
+        $accounts = AccountChart::findall(['fk_re_account_type'=>1]);
+        if($accounts){
+            foreach($accounts as $account){
+                //check roles
+                $check = \app\models\Users::checkifRoleAllowed($account->fk_role);
+                if($check){
+                  $return[$account->id] = $account->name;
+                }
+            }
+        }
+        
+        return $return;
+    }
+    
+    public static function getAllFundAccounts(){
+        $return = [];
+        $accounts = AccountChart::findall(['fk_re_account_type'=>1]);
+        if($accounts){
+            foreach($accounts as $account){
+                //no check roles
+                
+                  $return[$account->id] = $account->name;
+               
+            }
+        }
+        
+        return $return;
+    }
+    
+    public static function checkSufficientFunds($account, $amount, $date = ""){
+        if($date == ""){
+            $date = date("Y-m-d");
+        }
+        //get account balance for this account.
+        $account_balance = AccountEntries::getAccountBalance($account, $date);
+        
+        if($account_balance < $amount){
+            return false; //insufficient amount available. cannot make this payment.
+        }
+        elseif($account_balance >= $amount){
+            return true; //enough funds.
+        }
+        else{
+            return false; //not sure what happened!
+        }
     } 
+    
 }

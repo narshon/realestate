@@ -121,9 +121,11 @@ class Management extends \yii\db\ActiveRecord
 	}
         
     public static function getAgentTitle(){
+        if(!Yii::$app->user->isGuest){
         $agent_name = Yii::$app->user->identity->fkManagement->management_name;
         $username = Yii::$app->user->identity->username;
         return "<h2>Welcome To ".$agent_name."</h2> Hi  $username";
+        }
         
     }
      public static function getManagementOptions(){

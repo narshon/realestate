@@ -20,6 +20,7 @@ use yii\helpers\Url;
 EOD;
         $form = ActiveForm::begin(['id'=>"$view_name-form-$id"]);
 ?>
+   <?= $form->field($model, 'account')->dropDownList(\app\models\AccountChart::getFundAccounts(), ['prompt' => 'Select Account'])->label("Funds Account") ?>
     <?= $form->field($model, 'fk_account_chart')->dropDownList(\app\models\AccountChart::getExpensesOptions(), ['prompt' => '']) ?>
 
     <?= $form->field($model, 'amount')->textInput() ?>

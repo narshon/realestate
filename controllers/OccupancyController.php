@@ -12,6 +12,7 @@ use yii\filters\VerbFilter;
 use app\utilities\DataHelper;
 use yii\web\Response;
 use yii\helpers\Url;
+use app\models\Users;
 
 /**
  * OccupancyController implements the CRUD actions for Occupancy model.
@@ -58,8 +59,12 @@ class OccupancyController extends Controller
      * Lists all Occupancy models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($tenant_id = '')
     {
+      if($tenant_id){
+          $tenant = Users::findOne(['id'=>$tenant_id]);
+          
+      }
       $searchModel = new OccupancySearch();
         $dataProvider = $searchModel->search(Yii::$app->request->get());
         
@@ -67,6 +72,7 @@ class OccupancyController extends Controller
         return $this->render('index', [
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
+            'tenant' => $tenant
         ]);
     }
     
@@ -323,5 +329,24 @@ class OccupancyController extends Controller
         echo Json::encode(['output'=>'', 'selected'=>'']);
     
     }
+    
+    public function actionSetOccupancy($string=''){
+        if(\yii::$app->request->isAjax) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        }
+        if($string){
+            
+            $view = $this->renderPartial('../occupancy/occupancydetails', [
+                'occupancy_id'=> $string
+            ]);
+            
+            return array(
+                     'status'=>'success', 
+                     'div'=>$view,
+
+                   );
+        }
+    }
+
     
 }

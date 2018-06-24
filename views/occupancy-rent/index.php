@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="occupancy-rent-index">
 
     
-            <?php // Pjax::begin(['id'=>'pjax-occupancy-rent',]); ?> 
+            <?php  Pjax::begin(['id'=>'pjax-occupancy-rent']); ?> 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -69,5 +69,5 @@ $this->params['breadcrumbs'][] = $this->title;
                     ], */
                 ],
             ]); ?>
-             <?php // Pjax::end(); ?>
+             <?php  Pjax::end(); ?>
 </div>

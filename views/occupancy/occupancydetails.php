@@ -16,36 +16,47 @@ use app\models\OccupancySearch;
 use yii\helpers\Url;
 use app\models\PropertyTermSearch;
 use app\models\OccupancyPayments;
-
+$dh = new DataHelper();
 ?>
  <?php
     $occupancy = Occupancy::findone($occupancy_id);
     if($occupancy){
+      //edit link
+        $editurl = Url::to(['occupancy/update','id'=>$occupancy_id]);
+        $editlink =  $dh->getModalButton($occupancy, "occupancy-term/create", "Occupancy", 'glyphicon glyphicon-edit','',$editurl);
         echo <<<EOF
           <div>  
            <h3> {$occupancy->fkProperty->getPropertyNameLink()} {$occupancy->fkSublet->sublet_name} </h3>
         </div>
         <div>  
-           <p> Occupied On: {$occupancy->start_date} To: {$occupancy->getEndDate()} Status: {$occupancy->getStatus()}  </p>
+           <p> Occupied On: {$occupancy->start_date} To: {$occupancy->getEndDate()} Status: {$occupancy->getStatus()} $editlink </p>
+           
         </div><div class="clear"></div>
 EOF;
     
-    $dh = new DataHelper();
+    
     $url = Url::to(['occupancy-term/create','occupancy_id'=>$occupancy_id]);
     echo $dh->getModalButton($occupancy, "occupancy-term/create", "Occupancy", 'btn btn-default pull-right','Add Term',$url)."&nbsp;&nbsp;&nbsp;";
     
-    echo  Html::button('<i class="glyphicon glyphicon-ok">  Recieve Payment</i>', [
+    $url = Url::to(['occupancy-payments/create','id'=>$occupancy_id]);
+    echo $dh->getModalButton($occupancy, "occupancy-payments/create", "Occupancy", 'btn btn-default pull-right','Make Payment',$url)."&nbsp;&nbsp;&nbsp;";
+    
+    $url = Url::to(['occupancy-rent/create','occupancy_id'=>$occupancy_id]);
+    echo $dh->getModalButton($occupancy, "occupancy-rent/create", "Occupancy", 'btn btn-default pull-right','Add Bill',$url)."&nbsp;&nbsp;&nbsp;";
+    
+   /* echo  Html::button('<i class="glyphicon glyphicon-ok">  Make Payment</i>', [
                             'type'=>'button',
                             'title'=>'Receiving Payment', 
+                            'format'=>'json',
                             'class'=>'btn btn-default btn-create showModalButton specmargin pull-right', 
-                            'value' => yii\helpers\Url::to(['occupancy-payments/create', 'id' => $occupancy->id])])."&nbsp;&nbsp;&nbsp;";
+                            'value' => yii\helpers\Url::to(['occupancy-payments/create', 'id' => $occupancy->id])])."&nbsp;&nbsp;&nbsp;";  
     
     echo Html::button('<i class="glyphicon glyphicon-plus">  Add Bill</i>', [
                                      'type'=>'button',
                                      'title'=>'Add Bill', 
                                      'class'=>'btn btn-default showModalButton pull-right', 
                                      'value' => yii\helpers\Url::to(['occupancy-rent/create','occupancy_id'=>$occupancy_id])]
-                             );
+                             );  */
     }
                 
       ?> 

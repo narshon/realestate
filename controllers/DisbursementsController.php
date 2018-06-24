@@ -164,14 +164,24 @@ class DisbursementsController extends Controller
         }
     }
     
-    public function actionMakePayments($owner_id, $cleared_bills, $advance_ids, $total_advance){
+    public function actionMakePayments($owner_id, $cleared_bills, $advance_ids, $total_advance, $string){
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        if(!$string){
+            return array('div'=>"<div class='error'> <span> Failed: Account Not Selected.  <span> </div> ");
+        }
+        else
+        $fund_account = $string;
+        
+        
         //get all the pending disbursements
         $model = new Disbursements();
         
-        $feedback = $model->settleDisbursements($owner_id, $cleared_bills, $advance_ids, $total_advance);
+        $feedback = $model->settleDisbursements($owner_id, $cleared_bills, $advance_ids, $total_advance,$fund_account);
         if($feedback == "success"){
            return array('div'=>"<div class='success'> <span> Successfully made disbursements.  <span> </div> ");
+        }
+        elseif($feedback == "insufficient"){
+            return array('div'=>"<div class='error'> <span> Failed: Insufficient Funds on Account Selected.  <span> </div> ");
         }
         
     }

@@ -115,7 +115,7 @@ class AccountEntriesController extends Controller
         $keyword = 'account-entries';
         
               
-        if ($model->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post()) && $model->validateExpenses()) {
             //return $this->redirect(['view', 'id' => $model->id]);
            
                
@@ -138,7 +138,7 @@ class AccountEntriesController extends Controller
         } else {
             if (Yii::$app->request->isAjax)
             {
-                return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!'.print_r($model->getErrors(),true), 'pjax-'.$keyword, $keyword.'-form-alert-0');
+                return $dh->processResponse($this, $model, 'create', 'danger', 'Please fix the below errors!', 'pjax-'.$keyword, $keyword.'-form-alert-0');
                exit; 
                      
             }
@@ -215,63 +215,13 @@ class AccountEntriesController extends Controller
         if(\yii::$app->request->isAjax) {
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         }
-        if(($type = Yii::$app->request->post('id')) !== null) {
-            switch($type)
-            {
-                case 1: 
-                    $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1101, true);
-                    $payments = $query->all();
-                    $dataProvider = new \yii\data\ActiveDataProvider(['query'=>$query]);
-                            
-                    $dataProvider->pagination->pageSize=100;
-                    return $this->render('partials/cash_summary', [
-                        'dataProvider' => $dataProvider,
-                    ]);
-                    
-                case 2:
-                    $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1105, true);
-                    $bills = $query->all();
-                    $in_string = '';
-                    foreach($bills as $object){
-                         $in_string .= $object->origin_id.',';
-                    }
-                    $in_string = substr($in_string, 0, -1); //remove trailing comma.
-                    $dataProvider = new \yii\data\ActiveDataProvider([
-                        'query' => \app\models\OccupancyRent::find()->where("id in($in_string)"),
-                    ]);
-                    $dataProvider->pagination->pageSize=100;
-                    return $this->render('partials/rent_summary', [
-                        'dataProvider' => $dataProvider, 'in_string'=>$in_string
-                    ]);
-                    
-              /*  case 3:
-                    $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1106, true);
-                    $penalities = $query->all();
-                    $dataProvider = new \yii\data\ActiveDataProvider([
-                        'query' => \app\models\OccupancyRent::find()->where(['in', 'id', array_column($penalities, 'origin_id')]),
-                    ]);
-                    return $this->render('partials/penalties_summary', [
-                        'dataProvider' => $dataProvider,
-                    ]);
-               * 
-               */
-                    
-                case 4:
-                    $query = AccountEntries::getEntrieQuery(date('Y-m-d'), 1107, true);
-                    $disbursements = $query->all(); 
-                    $in_string = '';
-                    foreach($disbursements as $disb){
-                         $in_string .= $disb->origin_id.',';
-                    }
-                    $in_string = substr($in_string, 0, -1); //remove trailing comma.
-                    $dataProvider = new \yii\data\ActiveDataProvider([
-                        'query' => \app\models\Disbursements::find()->where("id in($in_string)"),
-                    ]);
-                    $dataProvider->pagination->pageSize=100;
-                    return $this->render('partials/disbursement_summary', [
-                        'dataProvider' => $dataProvider,
-                    ]);
-            }
+        if(($account_id = Yii::$app->request->post('id')) !== null) {
+            
+            $query = AccountEntries::getEntrieQuery(date('Y-m-d'), $account_id, true);
+            $payments = $query->andwhere(['trasaction_type'=>'debit'])->orderBy("id DESC")->all();
+            return $this->render('partials/cash_summary', [ 'transactions' => $payments, 'account'=> \app\models\AccountChart::findOne(['id'=>$account_id])
+            ]);
+              
         }
     }
     public function actionAccountStatement($string){
@@ -279,16 +229,21 @@ class AccountEntriesController extends Controller
         if(\yii::$app->request->isAjax) {
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         }
-        
-        
         if($string){
-            $query = AccountEntries::find()->where(['fk_account_chart'=>$string]);
+            $query = AccountEntries::find()->where(['fk_account_chart'=>$string, 'origin_model'=>"app\models\OccupancyPayments"])->orderBy("id DESC");
             $dataProvider = new \yii\data\ActiveDataProvider(['query'=>$query]);
 
             $dataProvider->pagination->pageSize=100;
+            if(\yii::$app->request->isAjax) {
             $view = $this->render('partials/account_report', [
                 'dataProvider' => $dataProvider, 'account'=> \app\models\AccountChart::findOne(['id'=>$string])
+            ],false,false);
+            }
+            else{
+              return  $this->render('partials/account_report', [
+                'dataProvider' => $dataProvider, 'account'=> \app\models\AccountChart::findOne(['id'=>$string])
             ]);
+            }
             
             return array(
                      'status'=>'success', 
@@ -297,4 +252,60 @@ class AccountEntriesController extends Controller
                    );
         }
     }
+    
+    public function actionPending()
+    {
+        $searchModel = new \app\models\OccupancyRentSearch();
+        $query = \app\models\OccupancyRent::find()->where(['_status'=>0]);
+        $dataProvider = new \yii\data\ActiveDataProvider(['query'=>$query]);    // $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('pending', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    public function actionTrial()
+    {
+        $searchModel = new AccountEntriesSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('trial', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    public function actionIereport()
+    {
+        $searchModel = new AccountEntriesSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('iereport', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+    public function actionMonthly()
+    {
+        
+        return $this->render('monthly');
+    }
+    public function actionMonthlyReport($string){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $range = explode("_", $string);
+        $date1 = date("Y-m-d", strtotime($range[0]));
+        $date2 = date("Y-m-d", strtotime($range[1]));
+        $account_no = $range[2];
+        
+        $query = AccountEntries::find()->where("(entry_date between '$date1' and '$date2') AND fk_account_chart = $account_no ")->groupBy("entry_date")->orderBy("id DESC")->all();
+        //$dataProvider = new \yii\data\ActiveDataProvider(['query'=>$query]);
+        $view = $this->render('partials/monthly_report', [
+                'query' => $query, 'account'=>\app\models\AccountChart::findone($account_no)
+            ]);
+        return array(
+                     'status'=>'success', 
+                     'div'=>$view,
+
+                   );
+    }
+    
 }

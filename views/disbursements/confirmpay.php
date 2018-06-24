@@ -29,7 +29,19 @@ use yii\helpers\Url;
           $names = "";
       }
     ?>
-    <span>Mr/Mrs: <?php echo $names ?></span> 
+    <span style="float:left; width: 60%">Mr/Mrs: <?php echo $names ?></span> 
+    <span style="float:right; width: 40%">
+        <?= '<label class="control-label">Select Funds Account</label>'?>
+        <?=kartik\widgets\Select2::widget([
+            'name' => 'fund_account',
+            'id' => 'fund-account',
+            'data' => \app\models\AccountChart::getFundAccounts(),
+            'options' => [
+                'placeholder' => 'Select Funds',
+                'multiple' => false
+            ]
+        ]);?>
+    </span> 
 </div><br/><div class="clear"></div>
 <?php
 /*
@@ -48,8 +60,8 @@ echo "Owner ID = ".$owner_id."<br/>";
     <th>Period</th> 
     <th>Paid By Tenant</th>
     <th>Paid By Agent</th>
-    <th>Commission</th>
-    <th>Net Pay</th>
+   <!-- <th>Commission</th>
+    <th>Net Pay</th>  -->
   </tr>
   <?php
   //start with cleared bills.
@@ -66,8 +78,8 @@ echo "Owner ID = ".$owner_id."<br/>";
                 <td>$disbursement->month/$disbursement->year</td>
                 <td>{$disbursement->getPaidByTenantAmount()}</td>
                 <td>{$disbursement->getPaidByAgentAmount()}</td>
-                <td>{$disbursement->getCommissionCharged()}</td>
-                <td>{$disbursement->getTotalPaid()}</td>
+              <!--  <td>{$disbursement->getCommissionCharged()}</td>
+                <td>{$disbursement->getTotalPaid()}</td>  -->
           </tr>
            
 EOF;
@@ -76,20 +88,7 @@ EOF;
    } 
   }
   ?>
-</table>
-<table id="t02">
-    <tr>
-        <td colspan="5" text-align="center"> <h3> UnCleared Bills </h3> </td>
-    </tr>  
-  <tr>
-    <th>Tenant's Name</th>
-    <th>Period</th> 
-    <th>-</th>
-    <th>-</th>
-    <th>-</th>
-  </tr>
   <?php
-  //start with cleared bills.
   $uncleared_array = explode(",", $bills);
   if(is_array($uncleared_array)){
    foreach($uncleared_array as $bill){
@@ -103,7 +102,6 @@ EOF;
                 <td>$disbursement->month/$disbursement->year</td>
                 <td>-</td>
                 <td>-</td>
-                <td>-</td>
           </tr>
            
 EOF;
@@ -113,6 +111,7 @@ EOF;
   }
   ?>
 </table>
+<!--
 <table id="t03">
     <tr>
         <td colspan="3" text-align="center"> <h3> Advances/Loans </h3> </td>
@@ -144,10 +143,16 @@ EOF;
    } 
   }
   ?>
-</table>
-<h3> TOTAL AMOUNT PAYABLE = <?php echo $model->getTotalPayable($cleared_bills, $model->payments_advance); ?> 
+</table>  -->
+<h3> TOTAL AMOUNT COLLECTED = <?php echo $model->getTotalBills($cleared_bills); // $model->payments_advance ?> </h3><br/>
+<strong> LESS: COMMISSION = <?php echo $model->getTotalCommission($cleared_bills); ?> <br/>
+     LESS: Advances/Loans = <?php echo $model->payments_advance; ?> </strong><br/>
+     <h3>
+         NET PAYMENT = <?php echo ($model->getTotalBills($cleared_bills) - ($model->getTotalCommission($cleared_bills) + $model->payments_advance)); ?>
+     </h3>
+ 
 <?php $url =  Url::to(['disbursements/make-payments', 'owner_id'=>$owner_id,'cleared_bills'=>$cleared_bills,'advance_ids'=>$model->payments_advance_ids, 'total_advance'=>$model->payments_advance]);  ?>
-<?= Html::submitButton("Confirm Payment", ['class' =>'btn bg-purple btn-flat btn-success specmargin','onclick'=>"ajaxUniversalGetRequest('$url','confirm-pay','', 1); return false;"]) ?>
-</h3>
+<?= Html::submitButton("Confirm Payment", ['class' =>'btn bg-purple btn-flat btn-success specmargin pull-right','onclick'=>"ajaxUniversalGetRequest('$url','confirm-pay',$('#fund-account').val(), 1); return false;"]); //  ?>
+
 
 </div>

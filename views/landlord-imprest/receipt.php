@@ -46,13 +46,12 @@ use app\models\LandlordImprest;
     <th>Amount</th> 
     <th>Paid By Tenant</th>
     <th>Paid By Agent</th>
-    <th>Commission</th>
-    <th>Net Pay</th>
+    
   </tr>
   <?php
   //start with cleared bills.
   $disbursements = \app\models\Disbursements::find()->where(['batch_id'=>$model->id])->all();
-  $total_disb = 0;
+  $total_disb = 0; $total_commission = 0;
   if($disbursements){
    foreach($disbursements as $disbursement){
        
@@ -63,17 +62,17 @@ use app\models\LandlordImprest;
                 <td>{$disbursement->fkOccupancyRent->amount}</td>
                 <td>{$disbursement->getPaidByTenantAmount()}</td>
                 <td>{$disbursement->getPaidByAgentAmount()}</td>
-                <td>{$disbursement->getCommissionCharged()}</td>
-                <td>{$disbursement->getTotalPaid()}</td>
+               
           </tr>
            
 EOF;
-      $total_disb += $disbursement->getTotalPaid();    
+      $total_disb += $disbursement->getTotalPaidBeforeCommission();   
+      $total_commission += $disbursement->getCommissionCharged();
    } 
   }
   ?>
 </table>
-
+<!--
 <table id="t03">
     <tr>
         <td colspan="3" text-align="center"> <h3> Advances/Loans </h3> </td>
@@ -104,8 +103,15 @@ EOF;
    } 
   }
   ?>
-</table>
-<h3> TOTAL AMOUNT PAID = <?php echo $total_disb - $total_advance; ?> </h3>
+</table>  -->
+<h3> TOTAL AMOUNT COLLECTED = <?php echo $total_disb; // $model->payments_advance ?> </h3><br/>
+<strong> LESS: COMMISSION = <?php echo $total_commission; ?> <br/>
+     LESS: Advances/Loans = <?php echo $total_advance; ?> </strong><br/>
+     <h3>
+         NET PAYMENT = <?php echo ($total_disb - ($total_commission + $total_advance)); ?>
+     </h3>
+
+
 <?php } else{ ?>
 <p> 
     Received, Kes <?php echo $model->amount; ?> <i>( <?php 

@@ -387,7 +387,7 @@ $('body').on('change', '#daily-summary', function(){
 
 $('body').on('change', '#account-statement', function(){
     item = $(this).find(':selected');
-    id = item.val();
+    id = item.val();  
     ajaxUniversalGetRequest("account-statement","ac-id",id, 1)
 });
 
@@ -470,6 +470,14 @@ function getContent(url, elem)
         }
     });
     
+}
+
+function getMonthlyReportParams(){
+    var to = $("#to").val();
+    var from = $("#from").val();
+    var account_no = $("#account-no").val();
+    
+    return from+"_"+to+"_"+account_no;
 }
 
 

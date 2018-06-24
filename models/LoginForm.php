@@ -64,9 +64,6 @@ class LoginForm extends Model
         $attributes['pass'] = $this->pass;
         
         $userObject = $this->getUser();
-		return true;
-        
-       //$this->addError('pass', 'Password = '.$this->pass); return false;
         
         if($userObject){
             if ($userObject->validatePassword($this->pass)) { 

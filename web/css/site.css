@@ -275,7 +275,7 @@ border-radius: 6px !important;
     margin: 0 auto;
     width: 600mm;
 	height:298mm;
-    background: #FFF !important;
+    background: #FFF !important;  
 	font-family:arial !important;
 	font-size:60pt !important;
 	
@@ -306,4 +306,7 @@ table#t01 th {
 }
 .btn-register{
     margin-right: 5px;
+}
+.btn-monthly-report{
+    margin-top: 25px;
 }

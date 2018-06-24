@@ -128,7 +128,18 @@ class OccupancyRent extends \yii\db\ActiveRecord
         
         return $return;
     }
-    
+    public function beforeValidate() {
+        //check if no duplicate bill
+        $this->validateBill();
+        return parent::beforeValidate();
+    }
+    public function validateBill(){
+        $checkExist = $this->find()->where(['month'=>$this->month, 'year'=>$this->year, 'fk_term'=>$this->fk_term])->one();
+        if($checkExist){
+            $this->addError("fk_term", "Bill already exist for the selected period.");
+        }
+        
+    }
     public function beforeSave($insert='')
     {
         \app\utilities\DataHelper::recordTimeStamp($this);
