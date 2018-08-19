@@ -44,7 +44,9 @@ $this->registerCss("
                 <th>DATE</th>
                 <th>C/RENT</th>
                 <th>BAL</th>
-                <th>Visit/Locking Fee</th>
+                <th>Lock/Visit Fee</th>
+                <th>Pen Fee</th>
+                <th>Dep Fee</th>
                 <th>Agency Fee</th>
                 <th>Other Fees</th>
                 <th>Total</th>
@@ -60,6 +62,8 @@ $this->registerCss("
                 <td><strong><?php echo app\models\AccountEntries::getTotalCRent($data->fk_account_chart, $data->entry_date, $data->entry_date); ?></strong></td>
                 <td><strong><?php echo app\models\AccountEntries::getTotalBalance($data->fk_account_chart, $data->entry_date, $data->entry_date); ?></strong></td>
                 <td><strong><?php echo app\models\AccountEntries::getTotalVLockFee($data->fk_account_chart, $data->entry_date, $data->entry_date); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalPENFee($data->fk_account_chart, $data->entry_date, $data->entry_date); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalDEPFee($data->fk_account_chart, $data->entry_date, $data->entry_date); ?></strong></td>               
                 <td><strong><?php echo app\models\AccountEntries::getTotalAgencyFee($data->fk_account_chart, $data->entry_date, $data->entry_date); ?></strong></td>
                 <td><strong><?php echo app\models\AccountEntries::getTotalOtherFee($data->fk_account_chart, $data->entry_date, $data->entry_date); ?></strong></td>
                 <td><strong><?php echo app\models\AccountEntries::getTotalAmountReceived($data->fk_account_chart, $data->entry_date, $data->entry_date); ?></strong></td>
@@ -70,6 +74,17 @@ $this->registerCss("
                   }
               }
               ?>
+              <tr>
+                  <td><strong>Total</strong></td> 
+                <td><strong><?php echo app\models\AccountEntries::getTotalCRent($account->id, $date1, $date2); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalBalance($account->id, $date1, $date2); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalVLockFee($account->id, $date1, $date2); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalPENFee($account->id, $date1, $date2); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalDEPFee($account->id, $date1, $date2); ?></strong></td>               
+                <td><strong><?php echo app\models\AccountEntries::getTotalAgencyFee($account->id, $date1, $date2); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalOtherFee($account->id, $date1, $date2); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalAmountReceived($account->id, $date1, $date2); ?></strong></td>
+              </tr>
            </table>
             
         </div>

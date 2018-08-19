@@ -1,5 +1,4 @@
 <?php
-
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
@@ -40,12 +39,12 @@ $this->registerCss("
         "); 
 ?>
 <div class="account-entries-index panel panel-danger admin-content">
-<div class="panel-heading">
+<div class="panel-heading no-print">
         <h1>Financial Records</h1>
    </div>
 
 	<div class="panel-body">
-	<div class="leftbar__ col-md-2">
+	<div class="leftbar__ col-md-2 no-print">
             <ul class="nav nav-tabs" id="myTab__" role="tablist">
                               <!--  
                                 
@@ -139,8 +138,10 @@ $this->registerCss("
         <?=$this->render('partials/d_rep_stats')?>
         <div class ="summary">
             <div class="summary-loader"></div>
-            <div class="summary-content">
-                
+            <div id="summary-content-div" class="summary-content">
+                 <?php
+                    echo Yii::$app->controller->getAssetsReport(\app\models\AccountChart::getAccountByCode(1101), 'daily');
+                 ?>
             </div>
         </div>
     </div>

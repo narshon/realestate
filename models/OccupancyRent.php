@@ -130,11 +130,11 @@ class OccupancyRent extends \yii\db\ActiveRecord
     }
     public function beforeValidate() {
         //check if no duplicate bill
-        $this->validateBill();
+       // $this->validateBill();
         return parent::beforeValidate();
     }
     public function validateBill(){
-        $checkExist = $this->find()->where(['month'=>$this->month, 'year'=>$this->year, 'fk_term'=>$this->fk_term])->one();
+        $checkExist = $this->find()->where(['month'=>$this->month, 'year'=>$this->year, 'fk_term'=>$this->fk_term,'fk_occupancy_id'=>$this->fk_occupancy_id])->one();
         if($checkExist){
             $this->addError("fk_term", "Bill already exist for the selected period.");
         }

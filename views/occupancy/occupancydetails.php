@@ -24,12 +24,13 @@ $dh = new DataHelper();
       //edit link
         $editurl = Url::to(['occupancy/update','id'=>$occupancy_id]);
         $editlink =  $dh->getModalButton($occupancy, "occupancy-term/create", "Occupancy", 'glyphicon glyphicon-edit','',$editurl);
+        $statusMessage = $occupancy->getStatus()=="OFF"?"TENANT LEFT THIS OCCUPANCY":"TENANT STILL IN OCCUPANCY";
         echo <<<EOF
           <div>  
            <h3> {$occupancy->fkProperty->getPropertyNameLink()} {$occupancy->fkSublet->sublet_name} </h3>
         </div>
         <div>  
-           <p> Occupied On: {$occupancy->start_date} To: {$occupancy->getEndDate()} Status: {$occupancy->getStatus()} $editlink </p>
+           <p> Occupied On: {$occupancy->start_date} To: {$occupancy->getEndDate()} Status: {$occupancy->getStatus()} - $statusMessage $editlink </p>
            
         </div><div class="clear"></div>
 EOF;

@@ -118,7 +118,7 @@ class AccountEntries extends \yii\db\ActiveRecord
             $register_button = $dh->getModalButton(new Journal, '', 'Register Expense', 'btn btn-danger btn-register pull-right','Register Expense',$register);
             $transfer_button = $dh->getModalButton(new Journal, '', 'Transfer Funds', 'btn btn-danger btn-transfer pull-right','Transfer Funds',$transfer);
              
-            $return = '<ul class=" nav nav-pills nav-stacked">';
+            $return = '<ul class=" nav nav-pills nav-stacked no-print">';
             $return .= $transfer_button;
             $return .= $register_button."&nbsp; ";
 			
@@ -128,6 +128,25 @@ class AccountEntries extends \yii\db\ActiveRecord
         }
         
     public static function getDailyReportItem($code, $date = true)
+    {
+        if(($account_type = AccountChart::findone(['code'=> $code])) !== null) {
+            $debit = AccountEntries::find()
+                ->where(['fk_account_chart' => $account_type->id])
+                ->andWhere(['and',
+                            ['=','entry_date', $date],
+                            ['trasaction_type' => 'debit']])
+                ->sum('amount');
+            $credit = AccountEntries::find()
+                ->where(['fk_account_chart' => $account_type->id])
+                ->andWhere(['and',
+                       ['=','entry_date', $date], ['trasaction_type' => 'credit']])
+                ->sum('amount');
+            $debit = ($debit == null)? 0 : $debit;
+            $credit = ($credit == null) ? 0 : $credit;
+            return $debit-$credit;
+        }
+    }
+    public static function getCumulativeReportItem($code, $date = true)
     {
         if(($account_type = AccountChart::findone(['code'=> $code])) !== null) {
             $debit = AccountEntries::find()
@@ -146,7 +165,6 @@ class AccountEntries extends \yii\db\ActiveRecord
             return $debit-$credit;
         }
     }
-    
     private static function getDateRange($today)
     {
         if( $today === true)
@@ -470,8 +488,11 @@ class AccountEntries extends \yii\db\ActiveRecord
             $agency_term_id = Term::getTermID("Agency Fee");
             $visit_term_id = Term::getTermID("Visit Fees");
             $locking_term_id = Term::getTermID("Locking Fees");
+            $deposit_term = Term::getTermID("Rent Deposit");
+            $penalty_per_term = Term::getTermID("Penalty Percentage");
+            $penalty_amt_term = Term::getTermID("penalty amount");
             $rent_term_id = Term::getRentTermID();
-            $forbiden_terms = [$agency_term_id, $visit_term_id, $locking_term_id, $rent_term_id];
+            $forbiden_terms = [$agency_term_id, $visit_term_id, $locking_term_id, $rent_term_id,$deposit_term, $penalty_per_term, $penalty_amt_term];
             $cumulative = 0;
             foreach($payMaps as $payMap){
                 //check if the bill for this mapping is what we are looking for
@@ -609,8 +630,11 @@ class AccountEntries extends \yii\db\ActiveRecord
                     $agency_term_id = Term::getTermID("Agency Fee");
                     $visit_term_id = Term::getTermID("Visit Fees");
                     $locking_term_id = Term::getTermID("Locking Fees");
+                    $deposit_term = Term::getTermID("Rent Deposit");
+                    $penalty_per_term = Term::getTermID("Penalty Percentage");
+                    $penalty_amt_term = Term::getTermID("penalty amount");
                     $rent_term_id = Term::getRentTermID();
-                    $forbiden_terms = [$agency_term_id, $visit_term_id, $locking_term_id, $rent_term_id];
+                    $forbiden_terms = [$agency_term_id, $visit_term_id, $locking_term_id, $rent_term_id,$deposit_term, $penalty_per_term, $penalty_amt_term ];
                     foreach($payMaps as $payMap){
                         //check if the bill for this mapping is what we are looking for
                         if(!in_array($payMap->fkOccupancyRent->fk_term, $forbiden_terms) ){ //other fee.
@@ -694,5 +718,88 @@ class AccountEntries extends \yii\db\ActiveRecord
         return $cumulative;
     }
     
+    public function getDepositFee(){
+        //get payment mappings of this transaction.
+        $pay = \app\models\OccupancyPayments::findone(['id'=>$this->origin_id]);
+        $payMaps = \app\models\OccupancyPaymentsMapping::findAll(['fk_occupancy_payment'=>$this->origin_id]);
+        if($payMaps){
+            $agency_term_id = Term::getTermID("Rent Deposit");
+
+            foreach($payMaps as $payMap){
+                //check if the bill for this mapping is what we are looking for
+                if($payMap->fkOccupancyRent->fk_term == $agency_term_id ){ //Agency fee.
+                   return $payMap->amount;
+                }
+            }
+        }
+        return "";    
+    }
+    
+    public function getPenaltyFee(){
+        //get payment mappings of this transaction.
+        $pay = \app\models\OccupancyPayments::findone(['id'=>$this->origin_id]);
+        $payMaps = \app\models\OccupancyPaymentsMapping::findAll(['fk_occupancy_payment'=>$this->origin_id]);
+        if($payMaps){
+            $penalty_per_term = Term::getTermID("Penalty Percentage");
+            $penalty_amt_term = Term::getTermID("penalty amount");
+
+            foreach($payMaps as $payMap){
+                //check if the bill for this mapping is what we are looking for
+                if($payMap->fkOccupancyRent->fk_term == $penalty_per_term || $payMap->fkOccupancyRent->fk_term == $penalty_amt_term ){ //Agency fee.
+                   return $payMap->amount;
+                }
+            }
+        }
+
+        return "";    
+    }
+    
+    public static function getTotalPENFee($account_no, $from, $to){
+        $return = 0;
+        //get transactions between these dates.
+        $models = Self::find()->where("(fk_account_chart = $account_no) and ( entry_date between '$from' and '$to')")->all();
+        if($models){
+            foreach($models as $model){
+                //get payment mappings of this transaction.
+                $pay = \app\models\OccupancyPayments::findone(['id'=>$model->origin_id]);
+                $payMaps = \app\models\OccupancyPaymentsMapping::findAll(['fk_occupancy_payment'=>$model->origin_id]);
+                if($payMaps){
+                    $penalty_per_term = Term::getTermID("Penalty Percentage");
+                    $penalty_amt_term = Term::getTermID("penalty amount");
+
+                    foreach($payMaps as $payMap){
+                        //check if the bill for this mapping is what we are looking for
+                        if($payMap->fkOccupancyRent->fk_term == $penalty_per_term || $payMap->fkOccupancyRent->fk_term == $penalty_amt_term  ){ //Agency fee.
+                           $return += $payMap->amount;
+                        }
+                    }
+                }
+            }
+        }
+        return $return;
+    }
+    public static function getTotalDEPFee($account_no, $from, $to){
+        $return = 0;
+        //get transactions between these dates.
+        $models = Self::find()->where("(fk_account_chart = $account_no) and ( entry_date between '$from' and '$to')")->all();
+        if($models){
+            foreach($models as $model){
+                //get payment mappings of this transaction.
+                $pay = \app\models\OccupancyPayments::findone(['id'=>$model->origin_id]);
+                $payMaps = \app\models\OccupancyPaymentsMapping::findAll(['fk_occupancy_payment'=>$model->origin_id]);
+                if($payMaps){
+                    $agency_term_id = Term::getTermID("Rent Deposit");
+
+                    foreach($payMaps as $payMap){
+                        //check if the bill for this mapping is what we are looking for
+                        if($payMap->fkOccupancyRent->fk_term == $agency_term_id ){ //Agency fee.
+                           $return += $payMap->amount;
+                        }
+                    }
+                }
+            }
+        }
+        return $return;
+    }
 
 }

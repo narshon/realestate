@@ -114,13 +114,16 @@ class SysUsersController extends Controller
     
     public function actionLandlordStatement($id){
         
+        $query = \app\models\LandlordImprest::find()->where(['fk_landlord'=>$id,'_status'=>1])->orderBy("id DESC");
+        
         $searchModel = new SysUsersSearch();
-        $dataProvider = new ActiveDataProvider(['query' => \app\models\LandlordImprest::find()->where(['fk_landlord'=>$id,'_status'=>1])->orderBy("id DESC")]);
+        $dataProvider = new ActiveDataProvider(['query' => $query]);
         
 
         return $this->render("../landlord-imprest/statement", [
             'dataProvider' => $dataProvider,
-            'searchModel' => $searchModel, 'model' => $this->findModel($id)
+            'searchModel' => $searchModel, 'model' => $this->findModel($id),
+            'query' => $query,
         ]);
     }
     /**

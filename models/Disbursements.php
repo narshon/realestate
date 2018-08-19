@@ -25,6 +25,7 @@ class Disbursements extends \yii\db\ActiveRecord
     public $payments_pool;
     public $payments_advance;
     public $payments_advance_ids;
+    public $period;
 
     /**
      * @inheritdoc
@@ -43,7 +44,7 @@ class Disbursements extends \yii\db\ActiveRecord
             [['fk_occupancy_rent', 'amount', 'entry_date'], 'required'],
             [['fk_occupancy_rent', 'fk_landlord', 'batch_id', 'created_by', '_status','month','year'], 'integer'],
             [['amount','payments_advance'], 'number'],
-            [['entry_date', 'created_on','payments_pool','payments_advance_ids'], 'safe'],
+            [['entry_date', 'created_on','payments_pool','payments_advance_ids', 'period'], 'safe'],
             [['fk_landlord'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['fk_landlord' => 'id']],
             [['fk_occupancy_rent'], 'exist', 'skipOnError' => true, 'targetClass' => OccupancyRent::className(), 'targetAttribute' => ['fk_occupancy_rent' => 'id']],
         ];
@@ -131,10 +132,21 @@ class Disbursements extends \yii\db\ActiveRecord
         return $disburse->save();
     }
     
-    public static function getUnsettledDisbursementList($id)
+    public static function getUnsettledDisbursementList($id, $period='')
     {
-        $list = [];
-        $bills = Self::findAll(['_status' => 1, 'fk_landlord'=>$id]);
+        $list = []; $month=''; $year='';
+        $period_array = explode("_", $period);
+        if($period_array){
+            $month = isset($period_array[0])?$period_array[0]:"";
+            $year = isset($period_array[1])?$period_array[1]:"";
+        }
+        if($year){
+            $bills = Self::findAll(['_status' => 1, 'fk_landlord'=>$id,'month'=>$month,'year'=>$year]);
+        }
+        else{
+           $bills = Self::findAll(['_status' => 1, 'fk_landlord'=>$id]); 
+        }
+        
         if(is_array($bills)) {
             foreach($bills as $bill) {
                 $key = $bill->id.'_'.$bill->amount;
@@ -354,6 +366,18 @@ class Disbursements extends \yii\db\ActiveRecord
       else{
           return "insufficient";
       }
+    }
+    
+    public static function getPeriodOptions($owner_id){
+        $return = ['all'=>"All"];
+        $records = Self::find()->select("month, year")->where(['fk_landlord'=>$owner_id,'_status'=>1])->all();
+        if($records){
+            foreach($records as $record){
+                $return[$record->month."_".$record->year] =  $record->month."_".$record->year;
+            }
+        }
+        
+        return $return;
     }
     
     

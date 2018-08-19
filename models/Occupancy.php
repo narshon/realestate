@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\Url;
+use yii\helpers\Html;
 
 /**
  * This is the model class for table "re_occupancy".
@@ -666,7 +668,7 @@ class Occupancy extends \yii\db\ActiveRecord
         
      public static function getTenantOccupancies($fk_user_id){
          $return = [];
-         $models = Self::find()->where(['fk_user_id'=>$fk_user_id, '_status'=>1])->all();
+         $models = Self::find()->where(['fk_user_id'=>$fk_user_id])->orderBy("id desc")->all();
          if($models){
              foreach($models as $model){
                  $return[$model->id] = $model->fkProperty->property_name.'_'.$model->fkSublet->sublet_name;
@@ -677,7 +679,7 @@ class Occupancy extends \yii\db\ActiveRecord
      }
      
      public static function getDefaultOccupancy($fk_user_id){
-         $model = Self::find()->where(['fk_user_id'=>$fk_user_id,'_status'=>1])->one();
+         $model = Self::find()->where(['fk_user_id'=>$fk_user_id])->orderBy("id desc")->one();
          if($model){
              return $model->id;
          }
@@ -714,5 +716,11 @@ class Occupancy extends \yii\db\ActiveRecord
          
          return null;
      }
+     
+     public function getTenantViewLink(){
+         return Html::a(Html::encode($this->fkTenant->getNames()), ['sys-users/tenantview', 'id' => $this->fk_user_id]);
+     }
+     
+   
     
 }

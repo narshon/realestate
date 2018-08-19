@@ -94,4 +94,11 @@ class AccountType extends \yii\db\ActiveRecord
         
         return $return;
     }
+    
+    public static function getAccountTypeID($type_name){
+        $model = Self::find()->where(['name'=>$type_name])->one();
+        if($model){
+           return $model->id;
+        }
+    }
 }

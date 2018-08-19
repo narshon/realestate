@@ -6,44 +6,39 @@ use app\models\LookupCategory;
 /* @var $this yii\web\View */
 /* @var $model app\models\OccupancyPayments */
 /* @var $form yii\widgets\ActiveForm */
-
 ?>
-<div id="print_area">
-   <div class="col-md-12">
-       <div class="col-md-12">
-            <h3 style="text-align: center">
+<div id="print_area" class="row">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="reciept-agency-name" style="text-align: center">
                 <strong><?= Html::encode(Yii::$app->user->identity->fkManagement->management_name) ?></strong>
             </h3>
-		
-            <h3 style="text-align: center; width:100%;"> Property Management, </h3>
-			<h4 style="text-align: center; width:100%"> City Grocers House, Opposite Blue Room cafe,Above KCB </h4>
-			<h4 style="text-align: center; width:100%"> Tel:2224316,0722756723-Mombasa-Kenya. </h4>
-       </div>
-       
-       <div class="row" style ="margin-top: 13%;" >
-           
-           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3"><label>Receipt NO :</label><?= $model->fkReceipt->receipt_no ?></div>
-           <div class="col-xs-12 col-sm-12 col-md-4 col-lg-4"><label>House: </label><?=$model->fkOccupancy->fk_property_id.' '.$model->fkOccupancy->fkProperty->property_name;?>
-                <label>Sublet: <?=$model->fkOccupancy->fkSublet->sublet_name ?></label>
-           </div>
-                 <label>DATE: <?=$model->payment_date?></label>
-           </div>
+           <h4 class="reciept-agency-desc" style="text-align: center; width:100%"> <i><?php echo Html::decode(Yii::$app->user->identity->fkManagement->address) ?></i> </h4>
 
-	   </div>
-	   <div class="row">
-               <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3"> <label>RECEIVED from: </label><?=$model->fkOccupancy->fkUsers->getNames()?> </div>
-               <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3"> <label>Payment Method: </label><?= Lookup::getLookupCategoryValue(LookupCategory::getLookupCategoryID("Payment Method"), $model->payment_method)   ?> </div>
-               <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3"> <label>Payment Ref: </label><?= $model->ref_no ?> </div>
-           </div>
-           <div class="row"><label>The sum of shillings: </label><?php 
-            echo $model->amount.": "; 
-            $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
-            echo $f->format($model->amount);
-            
-            ?></div>
-	   <div class="row">
-               <div class = "col-xs-2 col-sm-2 col-md-1 col-lg-1"></div>
-           <div class="col-xs-10 col-sm-10 col-md-8 col-lg-8">
+       </div>
+    </div> 
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 receipt-text">
+            <label>Receipt NO :</label><?= $model->fkReceipt->receipt_no ?> &nbsp;&nbsp;&nbsp;
+            <label>House: </label><?=$model->fkOccupancy->fk_property_id.' '.$model->fkOccupancy->fkProperty->property_name." "."Sublet:".$model->fkOccupancy->fkSublet->sublet_name ?> &nbsp;&nbsp;&nbsp;
+            <span class="receipt-text">  <label> DATE: <?=$model->payment_date?> </label> </span>
+            <label>Payment Method: </label><?= Lookup::getLookupCategoryValue(LookupCategory::getLookupCategoryID("Payment Method"), $model->payment_method)   ?>
+            <label>Payment Ref: </label><?= $model->ref_no ?> 
+         </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12  receipt-text"> 
+            <label>RECEIVED from: </label><?=$model->fkOccupancy->fkUsers->getNames()?>
+            <label>The sum of shillings: </label><?php 
+               echo $model->amount.": "; 
+               $f = new NumberFormatter("en", NumberFormatter::SPELLOUT);
+               echo $f->format($model->amount);
+
+               ?>
+        </div>
+    </div>
+    <div class="row">
+       <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 receipt-table-text">
            <table id="t01">   
               <tr>
                 <th>Item</th>
@@ -84,36 +79,20 @@ EOF;
                    
               ?>
             </table>
+           </div> 
+    </div>
            
-           
-           </div>
-		</div>
-           <div class="row">
-               <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1"></div>
-               <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11"><label>Payment  Method: </label><?=$model->getPaymentMethod();?></div>
-           </div>
 		<div class="row">
-                    <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1"></div>
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-                            <span> REMARKS: </span>
+                            <span class="receipt-text"> REMARKS: </span>
                             <?php
                              //check for pending bills.
+                            $pending_balance = 0; $periods = [];
                             $pendingBills = \app\models\OccupancyRent::find()->where(" fk_occupancy_id = $model->fk_occupancy_id AND (_status = 0 OR _status = 2)")->all();
                             if($pendingBills){
-                                ?>
-                            <small>Please note of the below pending bills...</small>
-                             <table id="t02">   
-                                <tr>
-                                  <th>Item</th>
-                                  <th>Period</th> 
-                                  <th>Amount Billed</th>
-                                  <th>Amount Paid</th>
-                                  <th>Balance</th>
-                                </tr>
-                      <?php
-                             foreach($pendingBills as $pending){
+                                foreach($pendingBills as $pending){
                                  $pending_item = $pending->fkTerm->term_name;
-                                 $pending_period = $pending->period;
+                                 $pending_period = $pending->month;
                                  $pending_billed_amount = $pending->amount;
                                  $pending_amount_paid = '';
                                  //check if a payment exist on this bill
@@ -121,33 +100,21 @@ EOF;
                                  if($pendingPaid){
                                      $pending_amount_paid = $pendingPaid->amount;
                                  }
-                                 $epending_balance = $pending_billed_amount - $pending_amount_paid;
-                                 echo <<<EOF
-                                 
-                              <tr>
-                                  <td>$pending_item</td>
-                                  <td>$pending_period</td> 
-                                  <td>$pending_billed_amount</td>
-                                  <td>$pending_amount_paid</td>
-                                  <td>$epending_balance</td>
-                                </tr>
-EOF;
+                                 $pending_balance += $pending_billed_amount - $pending_amount_paid;
+                                 $dt = DateTime::createFromFormat('!m', $pending_period);
+                                 $periods[$pending_period]= $dt->format('F');
                                  
                              }
-                             echo "</table>";
-                             
-                            }
-                            
-                            ?>
+                            } ksort($periods);
+                                ?>
+                            <small><?php echo implode(",", $periods) ?> Rent Balance = <?=  $pending_balance ?></small>
+                            <span class="receipt-text" >Served By: <?= Yii::$app->user->identity->username ?> Signature:___________ </span>
                         </div>
 			
 		</div>
        <div class="row">
-           <div class="col-xs-2 col-sm-1 col-md-1 col-lg-1"></div>
-           <div class="col-xs-12 col-sm-12 col-md-5 col-lg-5">signature:</div>
            <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11" align=" center"><small>Printed on: <?=date('Y-m-d h:s')?> Thank you for making payments with us.</small>
-               <br/>
-               <small> Rent to be paid in office only. </small>
+             <small> Rent to be paid in office only. </small>  
            </div>
        </div>
         </div> 

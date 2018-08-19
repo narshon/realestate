@@ -114,6 +114,18 @@ class AccountChart extends \yii\db\ActiveRecord
         
         return $return;
     }
+    public static function getAccountsByType($type_name){
+        $return = [];
+        $accounts = AccountChart::findall(['fk_re_account_type'=> AccountType::getAccountTypeID($type_name)]);
+        if($accounts){
+            foreach($accounts as $account){
+                //no check roles
+                  $return[$account->id] = $account->name;
+            }
+        }
+        
+        return $return;
+    }
     
     public static function getAccountByCode($code){
         $model = Self::findone(['code'=>$code]);

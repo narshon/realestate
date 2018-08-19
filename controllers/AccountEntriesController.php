@@ -212,16 +212,13 @@ class AccountEntriesController extends Controller
     
     public function actionDailySummary()
     {
+        $account_id = Yii::$app->request->post('id');
+        $report_type = Yii::$app->request->post('report_type');
         if(\yii::$app->request->isAjax) {
             Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
         }
-        if(($account_id = Yii::$app->request->post('id')) !== null) {
-            
-            $query = AccountEntries::getEntrieQuery(date('Y-m-d'), $account_id, true);
-            $payments = $query->andwhere(['trasaction_type'=>'debit'])->orderBy("id DESC")->all();
-            return $this->render('partials/cash_summary', [ 'transactions' => $payments, 'account'=> \app\models\AccountChart::findOne(['id'=>$account_id])
-            ]);
-              
+        if( $account_id !== null) {
+          return  $this->getAssetsReport($account_id, $report_type);  
         }
     }
     public function actionAccountStatement($string){
@@ -299,12 +296,37 @@ class AccountEntriesController extends Controller
         $query = AccountEntries::find()->where("(entry_date between '$date1' and '$date2') AND fk_account_chart = $account_no ")->groupBy("entry_date")->orderBy("id DESC")->all();
         //$dataProvider = new \yii\data\ActiveDataProvider(['query'=>$query]);
         $view = $this->render('partials/monthly_report', [
-                'query' => $query, 'account'=>\app\models\AccountChart::findone($account_no)
+                'query' => $query, 'account'=>\app\models\AccountChart::findone($account_no), 'date1'=>$date1, 'date2'=>$date2
             ]);
         return array(
                      'status'=>'success', 
                      'div'=>$view,
-
+                   );
+    }
+    
+    public function getAssetsReport($account_id, $report_type){
+        
+       $query = AccountEntries::getEntrieQuery(date('Y-m-d'), $account_id, true);
+       $payments = $query->andwhere(['trasaction_type'=>'debit'])->orderBy("id DESC")->all();
+      return $this->renderPartial('partials/cash_summary', [ 'transactions' => $payments, 'account'=> \app\models\AccountChart::findOne(['id'=>$account_id]),'report_type'=>$report_type]);
+    }
+    
+    public function actionAccountReport($string){
+        
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $range = explode("_", $string);
+        $date1 = date("Y-m-d", strtotime($range[0]));
+        $date2 = date("Y-m-d", strtotime($range[1]));
+        $account_no = $range[2];
+        
+        $query = AccountEntries::find()->where("(entry_date between '$date1' and '$date2') AND fk_account_chart = $account_no ")->groupBy("entry_date")->orderBy("id DESC")->all();
+        //$dataProvider = new \yii\data\ActiveDataProvider(['query'=>$query]);
+        $view = $this->render('partials/monthly_report', [
+                'query' => $query, 'account'=>\app\models\AccountChart::findone($account_no), 'date1'=>$date1, 'date2'=>$date2
+            ]); 
+        return array(
+                     'status'=>'success', 
+                     'div'=>$view,
                    );
     }
     

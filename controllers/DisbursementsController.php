@@ -198,4 +198,31 @@ class DisbursementsController extends Controller
             }
         }
     }
+    
+    public function actionSelectPeriod($owner_id){
+        
+        $model = new Disbursements();
+
+        if ($model->load(Yii::$app->request->post())) {
+            Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                //display the disbursement form.
+                //get all the pending disbursements
+                $nsettled_bills = \app\models\Disbursements::getUnsettledDisbursementList($owner_id, $model->period);
+                //advances and advance ids
+                $model->getPaymentAdvances($owner_id);
+                $form = $this->renderAjax('disburse',[
+                        'model' => $model,
+                        'bills' => $nsettled_bills,
+                        'owner_id' => $owner_id
+                ]);
+                return array('div'=>$form);
+              
+        } else {
+            return $this->renderAjax('selectperiod', [
+                'model' => $model,
+                'owner_id' => $owner_id
+            ]);
+        }
+        
+    }
 }

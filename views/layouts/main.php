@@ -42,7 +42,7 @@ AppAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Jongeto Agency',
+        'brandLabel' => !Yii::$app->user->isGuest? Html::encode(Yii::$app->user->identity->fkManagement->management_name):"Welcome!",
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'my-navbar navbar-inverse navbar-fixed-top',
@@ -127,7 +127,7 @@ $this->registerJsFile($url, ['depends' => [\yii\web\JqueryAsset::className()]]);
           
         Modal::end();  
      ?>
-<footer class="footer">
+<footer class="footer no-print">
     <div class="container">
         <p class="pull-left">&copy; Etagservice Ltd <?= date('Y') ?></p>
 

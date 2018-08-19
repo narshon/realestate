@@ -116,9 +116,15 @@ class PropertySublet extends \yii\db\ActiveRecord
         else{
             //check if this property is available for letting.
             if($this->fkProperty->_status == 1){
-                $dh = new \app\utilities\DataHelper();
-                $url = Url::to(['occupancy/set', 'fk_sublet_id' => $this->id]);
-                return $dh->getModalButton(new \app\models\PropertySublet, 'occupancy/set', 'Find Tenant', 'btn btn-success btn-sm','Set',$url); 
+                //check if this sublet is available for letting.
+                if($this->_status == 1){
+                    $dh = new \app\utilities\DataHelper();
+                    $url = Url::to(['occupancy/set', 'fk_sublet_id' => $this->id]);
+                    return $dh->getModalButton(new \app\models\PropertySublet, 'occupancy/set', 'Find Tenant', 'btn btn-success btn-sm','Set',$url); 
+                }
+                else{
+                    return "N/A";
+                }
             }
             else{
                 return "N/A";
@@ -138,4 +144,13 @@ class PropertySublet extends \yii\db\ActiveRecord
             return $instance->sublet_name;
         }
     }
+    
+      public function getPreviousTenants(){
+         $tenants = Occupancy::find()->where(['fk_sublet_id'=>$this->id, '_status'=>2])->all();  //have moved.
+         if($tenants){
+             return $tenants;
+         }
+     }
+    
+
 }

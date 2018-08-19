@@ -343,5 +343,58 @@ class OccupancyPayments extends \yii\db\ActiveRecord
         }
         
     }
+    
+    public function getAmountOfBillPaid($terms){
+        $amount = 0;
+        if(is_array($terms)){
+            $term_condition = "fk_term IN (".implode(",", $terms).")";
+        }
+        else{
+            $term_condition = "fk_term = $terms";
+        }
+        $mappings = OccupancyPaymentsMapping::find()->where(["fk_occupancy_payment"=>$this->id])->all();
+        if($mappings){
+            foreach($mappings as $map){
+                $bill_id = $map->fk_occupancy_rent;
+                $bill = OccupancyRent::find()->where("id = $bill_id AND $term_condition ")->one();
+                if($bill){
+                    $amount += $map->amount;
+                }
+            }
+        }
+        
+        return $amount;
+    }
+    
+    public function getTotalAmountOfBill($terms, $from, $to, $occupancy_id){
+        $amount = 0;
+        if(is_array($terms)){
+            $term_condition = "fk_term IN (".implode(",", $terms).")";
+        }
+        else{
+            $term_condition = "fk_term = $terms";
+        }
+        $payments = OccupancyPayments::find()->where("fk_occupancy_id = $occupancy_id AND (payment_date BETWEEN '$from' and '$to')")->all();
+       // return $payments->createCommand()->getRawSql(); 
+        if($payments){  
+          foreach($payments as $payment){
+            $mappings = OccupancyPaymentsMapping::find()->where(["fk_occupancy_payment"=>$payment->id])->all();
+            if($mappings){
+                foreach($mappings as $map){
+                    $bill_id = $map->fk_occupancy_rent;
+                    $bill = OccupancyRent::find()->where("id = $bill_id AND $term_condition ")->one();
+                    if($bill){
+                        $amount += $map->amount;
+                    }
+                }
+            }  
+          }
+            
+        }
+        
+        
+        
+        return $amount;
+    }
      
 }

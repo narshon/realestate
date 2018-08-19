@@ -382,7 +382,14 @@ $('body').on('change', '#users-selected_property', function(){
 });
 
 $('body').on('change', '#daily-summary', function(){
-    getFinanceDailySummary($(this));
+    var id = $(this).val();
+    var report_type = $("#report-type").val();
+    getFinanceDailySummary(id, report_type);
+});
+$('body').on('change', '#report-type', function(){
+     var report_type = $(this).val();
+    var id = $("#daily-summary").val();
+    getFinanceDailySummary(id, report_type);
 });
 
 $('body').on('change', '#account-statement', function(){
@@ -428,13 +435,12 @@ function printSection(elem)
     
 }
 
-function getFinanceDailySummary(elem)
+function getFinanceDailySummary(id, report_type)
 {
-    var item = elem.find(':selected');
     $.ajax({
         url: 'daily-summary',
         type: 'post',
-        data: {id:item.val()},
+        data: {id:id, report_type:report_type},
         beforeSend: function(){
             $('.summary-loader').addClass('container-loader');
             $('.summary-content').html('');
@@ -478,6 +484,38 @@ function getMonthlyReportParams(){
     var account_no = $("#account-no").val();
     
     return from+"_"+to+"_"+account_no;
+}
+
+function getAccountReportParams(){
+    var to = $("#to").val();
+    var from = $("#from").val();
+    var account_no = $("#account-no").val();
+    
+    return from+"_"+to+"_"+account_no;
+}
+
+function getTenantReportParams(){
+    var to = $("#to").val();
+    var from = $("#from").val();
+    var occupancy_id = $("#occupancy-statement-id").val();
+    return from+"_"+to+"_"+occupancy_id;
+}
+
+function printDiv(DivIdToPrint, css_url) 
+{
+  var css = '<link rel="stylesheet" type="text/css" href="'+css_url+'" > ';
+  var divToPrint=document.getElementById(DivIdToPrint);
+
+  var newWin=window.open('','Print-Window');
+
+  newWin.document.open();
+
+  newWin.document.write('<html><head> '+ css +' </head> <body onload="window.print()">'+divToPrint.innerHTML+'</body></html>');
+
+  newWin.document.close();
+
+  setTimeout(function(){newWin.close();},10);
+
 }
 
 

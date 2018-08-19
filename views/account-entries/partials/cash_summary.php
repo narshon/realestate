@@ -34,12 +34,16 @@ $this->registerCss("
 ?>
 
 <div id="print_area">
+    <div class="row mbl">
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3"> <h3> <?php echo $account->name; ?> Report</h3></div>
     </div>
-    <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> <br/> <strong> OPENING BALANCE: <span><?= \app\models\AccountEntries::getDailyReportItem($account->code, date("Y-m-d",strtotime("-1 days")))?></span></strong></div>
     </div>
+    <?php if($report_type=="cumulative"): ?>
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> <br/> <strong> OPENING BALANCE: <span><?= \app\models\AccountEntries::getCumulativeReportItem($account->code, date("Y-m-d",strtotime("-1 days")))?></span></strong></div>
+    </div>
+    <?php endif  ?>
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
            <table id="t01">   
@@ -48,7 +52,9 @@ $this->registerCss("
                 <th>HSE</th> 
                 <th>C/RENT</th>
                 <th>BAL</th>
-                <th>Visit/Locking Fee</th>
+                <th>Lock/Visit Fee</th>
+                <th>Pen Fee</th>
+                <th>Dep Fee</th>
                 <th>Agency Fee</th>
                 <th>Other Fees</th>
                 <th>Total</th>
@@ -80,6 +86,14 @@ $this->registerCss("
                         echo "</td>";
                         
                         echo "<td>";
+                        echo $data->getPenaltyFee();
+                        echo "</td>";
+                        
+                        echo "<td>";
+                        echo $data->getDepositFee();
+                        echo "</td>";
+                        
+                        echo "<td>";
                         echo $data->getAgencyFee();
                         echo "</td>";
                         
@@ -102,6 +116,8 @@ $this->registerCss("
                 <td><strong><?php echo app\models\AccountEntries::getTotalCRent($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
                 <td><strong><?php echo app\models\AccountEntries::getTotalBalance($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
                 <td><strong><?php echo app\models\AccountEntries::getTotalVLockFee($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalPENFee($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
+                <td><strong><?php echo app\models\AccountEntries::getTotalDEPFee($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
                 <td><strong><?php echo app\models\AccountEntries::getTotalAgencyFee($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
                 <td><strong><?php echo app\models\AccountEntries::getTotalOtherFee($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
                 <td><strong><?php echo app\models\AccountEntries::getTotalAmountReceived($account->id, date("Y-m-d"), date("Y-m-d")); ?></strong></td>
@@ -146,8 +162,14 @@ $this->registerCss("
             </table>
         </div>
     </div>
+    <?php if($report_type=="cumulative"): ?>
       <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> <br/> <strong> CLOSING BALANCE: <span><?= \app\models\AccountEntries::getDailyReportItem($account->code, date("Y-m-d"))?></span></strong></div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> <br/> <strong> CLOSING BALANCE: <span><?= \app\models\AccountEntries::getCumulativeReportItem($account->code, date("Y-m-d"))?></span></strong></div>
     </div>
+    <?php else: ?>
+       <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12"> <br/> <strong> DAILY BALANCE: <span><?= \app\models\AccountEntries::getDailyReportItem($account->code, date("Y-m-d"))?></span></strong></div>
+    </div>
+   <?php endif ?>
 </div>
  

@@ -347,6 +347,32 @@ class OccupancyController extends Controller
                    );
         }
     }
+    
+    public function actionStatement($tenant_id){
+        $occupancies = Occupancy::find()->where(['fk_user_id'=>$tenant_id])->all();
+        $tenant = Users::findone($tenant_id);
+        return $this->render('statement', [
+                'model' => $occupancies, 'occupancies'=>$occupancies, 'tenant'=>$tenant
+            ]);
+    }
+    
+    public function actionTenantReport($string){
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $range = explode("_", $string);
+        $date1 = date("Y-m-d", strtotime($range[0]));
+        $date2 = date("Y-m-d", strtotime($range[1]));
+        $occupancy_id = $range[2];
+        
+        $query = \app\models\OccupancyPayments::find()->where("fk_occupancy_id=$occupancy_id AND (payment_date between '$date1' and '$date2') ")->all();
+       
+        $view = $this->render('statementdetails', [
+                'query' => $query, 'date1'=>$date1, 'date2'=>$date2, 'occupancy_id'=>$occupancy_id
+            ]);
+        return array(
+                     'status'=>'success', 
+                     'div'=>$view,
+                   );
+    }
 
     
 }

@@ -38,7 +38,43 @@ $this->params['breadcrumbs'][] = $this->title;
       }
     ?>
     <span>Mr/Mrs: <?php echo $names ?></span> 
-<?php Pjax::begin(['id'=>'pjax-landlord-imprest']); ?>    <?= GridView::widget([
+    <table id="t01">
+  <tr>
+    <th>Date</th>
+    <th>Type</th> 
+    <th>Amount</th> 
+    <th>Narration</th>
+  </tr>
+  
+   <?php $total_amount = 0;
+    $imprests = $query->all();
+    if($imprests){
+        
+        foreach($imprests as $imprest){
+            echo "<tr>";
+            echo "<td> ".$imprest->entry_date."</td>";
+            echo "<td> ".$imprest->imprest_type."</td>";
+            echo "<td> ".$imprest->amount."</td>";
+            echo "<td> ".$imprest->narration."</td>";
+            echo "</tr>";
+            
+            $total_amount += $imprest->amount;
+            
+        }
+    }
+   
+   ?>
+  
+  <tr>
+      <td><strong> Total </strong></td>
+    <td></td> 
+    <td><strong><?= $total_amount ?> </strong></td> 
+    <td></td>
+  </tr>
+    </table>
+<?php 
+
+/* Pjax::begin(['id'=>'pjax-landlord-imprest']); ?>    <?= GridView::widget([
         'dataProvider' => $dataProvider,
       //  'filterModel' => $searchModel,
         'columns' => [
@@ -50,10 +86,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'value'=>'fkLandlord.name1'                
             ],  */
             //'fk_landlord',
-            'amount',
-            'narration',
+         //   'amount',
+         //   'narration',
            
-        ],
-    ]); ?>
-<?php Pjax::end(); ?></div>
+       // ],
+   // ]);  ?>
+<?php // Pjax::end(); ?>
+
+</div>
 </div>
